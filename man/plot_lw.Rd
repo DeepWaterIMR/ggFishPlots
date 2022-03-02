@@ -17,9 +17,10 @@ plot_lw(
   filter.exp = NULL,
   xlab = "Total length",
   ylab = "Weight",
-  base_size = 8,
   use.nls = FALSE,
-  log.axes = FALSE
+  log.axes = FALSE,
+  base_size = 8,
+  legend.position = "bottom"
 )
 }
 \arguments{
@@ -47,17 +48,28 @@ plot_lw(
 
 \item{ylab}{Character giving the x-axis label without unit.}
 
-\item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
-
 \item{use.nls}{Logical indicating whether the parameters should be calculated using the nonlinear least squares (\code{nls; TRUE}) method over the log-log transformed linear model (\code{lm; FALSE}) method.}
 
 \item{log.axes}{Logical indicating whether logarithmic axes should be used instead of cartesian ones.}
+
+\item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
+
+\item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.}
 }
 \value{
 A ggplot together with the a and b parameters.
 }
 \description{
 Plot length-weight relationships
+}
+\examples{
+data(survey_ghl)
+
+# Simple plot
+plot_lw(survey_ghl, length = "length", weight = "weight")
+
+# Split by sex
+plot_lw(survey_ghl, split.by.sex = TRUE)$plot
 }
 \author{
 Mikko Vihtakari // Institute of Marine Research.

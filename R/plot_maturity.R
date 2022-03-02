@@ -12,12 +12,13 @@
 #' @param filter.exp Expression to filter data. E.g. 'sampling_type == "ENS"'
 #' @param xlab Character giving the x-axis label without unit
 #' @param base_size Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.
+#' @param legend.position Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.
 #' @return Returns a ggplot2 or tibble depending on the \code{plot} argument showing the maturity ogives.
 #' @details Depends on the tidyverse and ggridges packages. The dplyr and ggplot2 packages must be loaded into the workspace.
 #' @author Mikko Vihtakari // Institute of Marine Research.
 #' @import dplyr ggplot2
 #' @importFrom ggridges geom_density_ridges
-#' @importFrom stats na.omit binomial coef glm predict confint
+#' @importFrom stats na.omit binomial coef glm predict
 #' @examples
 #' # Simple L50 plot
 #' data(survey_ghl)
@@ -30,7 +31,7 @@
 
 # Debug parameters
 # dt = survey_ghl; length = "length"; maturity = "maturity"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; split.by.sex = T; filter.exp = NULL; xlab = "Total length"; plot = TRUE; base_size = 8
-plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", length.bin.width = 2, split.by.sex = FALSE, filter.exp = NULL, xlab = "Total length",  base_size = 8) {
+plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", length.bin.width = 2, split.by.sex = FALSE, filter.exp = NULL, xlab = "Total length",  base_size = 8, legend.position = "bottom") {
 
   # Checks
 
@@ -176,7 +177,7 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
       # theme_bw(base_size = 8) +
       guides(color=guide_legend(override.aes=list(fill=NA))) +
       theme_fishplots(base_size = base_size) +
-      theme(legend.position = "none",
+      theme(legend.position = legend.position,
             text = element_text(size = base_size))
 
   } else {
@@ -204,7 +205,7 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
       # theme_bw(base_size = 8) +
       guides(color=guide_legend(override.aes=list(fill=NA))) +
       theme_fishplots(base_size = base_size) +
-      theme(legend.position = "none",
+      theme(legend.position = legend.position,
             text = element_text(size = base_size))
   }
 

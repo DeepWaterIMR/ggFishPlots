@@ -24,7 +24,7 @@
 
 # Debug parameters:
 # dt = x; length = "Length"; age = "Age"; sex = "Sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; filter.exp = NULL; split.by.sex = FALSE; growth.model = 1; force.zero.group.length = NA; force.zero.group.strength = 10
-plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", filter.exp = NULL, split.by.sex = FALSE, growth.model = 1, force.zero.group.length = NA, force.zero.group.strength = 10, boxplot = TRUE, base_size = 8) {
+plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", filter.exp = NULL, split.by.sex = FALSE, growth.model = 1, force.zero.group.length = NA, force.zero.group.strength = 10, boxplot = TRUE, base_size = 8, legend.position = "bottom") {
 
   # Growth model
 
@@ -136,7 +136,7 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         xlab("Age (years)") +
         coord_cartesian(expand = FALSE, clip = "off") +
         theme_fishplots(base_size = base_size) +
-        theme(legend.position = "bottom",
+        theme(legend.position = legend.position,
               text = element_text(size = base_size))
 
       Text <- paste0(
@@ -197,7 +197,7 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
             labs(y = paste0("Total length (", length.unit, ")"),  x = "Age (years)") +
             coord_cartesian(expand = FALSE, clip = "off") +
             theme_fishplots(base_size = base_size) +
-            theme(legend.position = "bottom",
+            theme(legend.position = legend.position,
                   text = element_text(size = base_size))
         })
 
@@ -241,7 +241,7 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         xlab("Age (years)") +
         coord_cartesian(expand = FALSE, clip = "off") +
         theme_fishplots(base_size = base_size) +
-        theme(legend.position = "none",
+        theme(legend.position = legend.position,
               text = element_text(size = base_size))
 
       Text <- paste0(
@@ -270,7 +270,7 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
             labs(y = paste0("Total length (", length.unit, ")"),  x = "Age (years)") +
             coord_cartesian(expand = FALSE, clip = "off") +
             theme_fishplots(base_size = base_size) +
-            theme(legend.position = "none",
+            theme(legend.position = legend.position,
                   text = element_text(size = base_size))
         })
 

@@ -22,7 +22,7 @@
 
 # Debug parameters:
 # dt = survey_ghl; length = "length"; weight = "weight"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; weight.unit = "kg"; split.by.sex = FALSE; filter.exp = NULL; xlab = "Total length"; ylab = "Weight"; base_size = 8; use.nls = TRUE; log.axes = FALSE
-plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", weight.unit = "kg", split.by.sex = FALSE, filter.exp = NULL, xlab = "Total length", ylab = "Weight", base_size = 8, use.nls = FALSE, log.axes = FALSE) {
+plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", weight.unit = "kg", split.by.sex = FALSE, filter.exp = NULL, xlab = "Total length", ylab = "Weight", use.nls = FALSE, log.axes = FALSE, base_size = 8, legend.position = "bottom") {
 
   # Add row number ####
 
@@ -159,7 +159,7 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
         labs(x = paste0("Total length (", length.unit, ")"), y = paste0("Weight (", weight.unit, ")")) +
         coord_cartesian(expand = FALSE, clip = "off") +
         theme_fishplots(base_size = base_size) +
-        theme(legend.position = "none",
+        theme(legend.position = legend.position,
               text = element_text(size = base_size))
     })
 
@@ -206,7 +206,7 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
         labs(x = paste0("Total length (", length.unit, ")"), y = paste0("Weight (", weight.unit, ")")) +
         coord_cartesian(expand = FALSE, clip = "off") +
         theme_fishplots(base_size = base_size) +
-        theme(legend.position = "none",
+        theme(legend.position = legend.position,
               text = element_text(size = base_size))
     })
 

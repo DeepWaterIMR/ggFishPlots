@@ -16,6 +16,7 @@ round_any <- function(x, accuracy, f = round) {
 #' @param model a \code{glm} model object
 #' @return A data frame
 #' @keywords internal
+#' @importFrom stats confint
 #' @export
 
 unlogit <- function(p, model) {

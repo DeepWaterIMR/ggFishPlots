@@ -2,7 +2,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.1.0**
+using ggplot2. R package version 0.1.1**
 
 <!-- badges: start -->
 
@@ -13,7 +13,7 @@ using ggplot2. R package version 0.1.0**
 
 The ggFishPlots package for [R](https://www.r-project.org/) allows
 quickly plotting and calculating life history parameters required by
-stock assessment models from data. The package uses
+stock assessment models. The package uses
 [ggplot2](https://ggplot2.tidyverse.org/reference) for plotting and the
 [tidyverse](https://www.tidyverse.org/) packages for calculations.
 
@@ -24,7 +24,6 @@ fixes](https://github.com/DeepWaterIMR/ggFishPlots/issues) are warmly
 welcomed. See [*Contributions*](#contributions) for further details.
 
 If you are looking for other similar packages, make sure to check out
-the
 [AquaticLifeHistory](https://jonathansmart.github.io/AquaticLifeHistory/articles/Maturity_analyses.html).
 
 ## Installation
@@ -43,8 +42,11 @@ devtools::install_github("DeepWaterIMR/ggFishPlots")
 
 At the time of writing, the package produces three kinds of plots:
 growth curves, maturity plots, and length-weight relationships. Each
-function returns a ggplot2 plot and the estimated parameters as a list.
-The package contains example data to illustrate the functionality.
+function returns a ggplot2 plot and the estimated parameters as a text
+string that can be used in Rmarkdown and Shiny applications as well as a
+data frame for further use of the parameters. The elements are returned
+as a list. The package contains example data to illustrate the
+functionality.
 
 ### Growth curves
 
@@ -55,6 +57,17 @@ together with `plot`.
 library(ggFishPlots)
 
 data(survey_ghl) # example data
+
+head(survey_ghl)
+#> # A tibble: 6 × 5
+#>     age sex   length weight maturity
+#>   <dbl> <chr>  <dbl>  <dbl>    <int>
+#> 1    NA <NA>      35     NA        0
+#> 2    NA <NA>      43     NA        0
+#> 3    NA <NA>      51     NA        0
+#> 4    NA <NA>      31     NA        0
+#> 5    NA <NA>      32     NA        0
+#> 6    NA <NA>      32     NA        0
 
 plot_growth(survey_ghl, length = "length", age = "age")
 #> $plot
@@ -74,9 +87,9 @@ plot_growth(survey_ghl, length = "length", age = "age")
     #> 2 K       0.0633   0.00231      27.4 4.90e-160   0.0586    0.0680
     #> 3 t0     -3.04     0.139       -21.8 1.71e-103  -3.34     -2.77
 
-Split by sex. Specifying `length`, `age` and `sex` arguments omitted
-since they are the argument names by default and the same than in the
-example data. Only the `plot` element returned this time.
+Split by sex. Specifying `length`, `age` and `sex` arguments have been
+omitted since they are the argument names by default and the same than
+in the example data. Only the `plot` element is returned this time.
 
 ``` r
 plot_growth(survey_ghl, split.by.sex = TRUE)$plot
@@ -85,9 +98,9 @@ plot_growth(survey_ghl, split.by.sex = TRUE)$plot
 ![](man/figures/README-unnamed-chunk-4-1.png)<!-- -->
 
 The dashed lines are *S*<sub>*i**n**f*</sub>. Data behind the growth
-curves are shown as boxplots by default. It is possible to plot the data
-as points by defining `boxplot = FALSE`. We can also force zero group
-into the curves if know the length of it. Assumed as 10 cm here:
+curves are shown as box plots by default. It is possible to plot the
+data as points by defining `boxplot = FALSE`. We can also force zero
+group into the curves if know the length of it. Assumed as 10 cm here:
 
 ``` r
 plot_growth(survey_ghl, force.zero.group.length = 10, boxplot = FALSE)$plot
@@ -113,6 +126,12 @@ plot_maturity(survey_ghl, length = "length", maturity = "maturity")
     #> $params
     #>       mean   ci.min ci.max     n
     #> 1 54.78361 52.85249 56.787 64265
+
+The error bars represent 95% confidence intervals calculated from the
+model object using the
+[`confint()`](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/confint.html)
+function and back-transformed to the original scale. The grey stepped
+line is a binned average defined using the `length.bin.width` argument.
 
 Split by sex:
 
@@ -154,7 +173,8 @@ plot_lw(survey_ghl, length = "length", weight = "weight")
     #> 1 a     0.00000382   0.00491    -2540.       0 0.00000379 0.00000386
     #> 2 b     3.22         0.00128     2519.       0 3.22       3.22
 
-Use non-linear least squares instead:
+The dashed lines represent 95% confidence intervals. Use non-linear
+least squares instead:
 
 ``` r
 plot_lw(survey_ghl, use.nls = TRUE)
@@ -193,8 +213,8 @@ plot_lw(survey_ghl, split.by.sex = TRUE, log.axes = TRUE)$plot
 Note that the floating point in the parameters depends on the [length
 and weight
 units](https://www.fishbase.de/manual/fishbasethe_length_weight_table.htm).
-According to FishBase one should use centimeters and grams but you can
-also transform the parameters according to the formulas given in
+According to the FishBase, one should use centimeters and grams but you
+can also transform the parameters according to the formulas given in the
 FishBase too.
 
 ``` r
@@ -208,11 +228,13 @@ plot_lw(survey_ghl %>% dplyr::mutate(weight = weight*1000), weight.unit = "g")$p
 
 ## Citations and data sources
 
-The data used in the package is property of the Institute of Marine
-Research and are open domain as long as the source (IMR) is cited. We
-ask any user to refer to the package if plots or estimates are used in
-reports or scientific articles. For up-to-date citation information,
-please use:
+The data used in the package are a property of the Institute of Marine
+Research and the Norwegian Government. They are distributed under the
+Creative Commons ([CCBY](https://creativecommons.org/licenses/by/4.0/)
+or [NLOD](https://data.norge.no/nlod/no/1.0/)) licenses allowing free
+use as long as the source (IMR) is cited. We ask any user to refer to
+the package if plots or estimates are used in reports or scientific
+articles. For up-to-date citation information, please use:
 
 ``` r
 citation("ggFishPlots")
@@ -221,7 +243,7 @@ citation("ggFishPlots")
 #> 
 #>   Mikko Vihtakari (2022). ggFishPlots: Visualise and calculate life
 #>   history parameters for fisheries science using 'ggplot2'. R package
-#>   version 0.1.0. https://github.com/DeepWaterIMR/ggFishPlots
+#>   version 0.1.1. https://github.com/DeepWaterIMR/ggFishPlots
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -229,7 +251,7 @@ citation("ggFishPlots")
 #>     title = {ggFishPlots: Visualise and calculate life history parameters for fisheries science using 'ggplot2'},
 #>     author = {Mikko Vihtakari},
 #>     year = {2022},
-#>     note = {R package version 0.1.0},
+#>     note = {R package version 0.1.1},
 #>     url = {https://github.com/DeepWaterIMR/ggFishPlots},
 #>   }
 ```

@@ -18,7 +18,8 @@ plot_growth(
   force.zero.group.length = NA,
   force.zero.group.strength = 10,
   boxplot = TRUE,
-  base_size = 8
+  base_size = 8,
+  legend.position = "bottom"
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ plot_growth(
 \item{boxplot}{Logical indicating whether boxplots (\code{TRUE}) should be used to show data over points (\code{FALSE})}
 
 \item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
+
+\item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.}
 }
 \value{
 A list containing the \code{plot}, \code{text} for Rmarkdown and Shiny applications, and estimated parameters (\code{params}).

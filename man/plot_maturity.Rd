@@ -16,7 +16,8 @@ plot_maturity(
   split.by.sex = FALSE,
   filter.exp = NULL,
   xlab = "Total length",
-  base_size = 8
+  base_size = 8,
+  legend.position = "bottom"
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ plot_maturity(
 \item{xlab}{Character giving the x-axis label without unit}
 
 \item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
+
+\item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.}
 }
 \value{
 Returns a ggplot2 or tibble depending on the \code{plot} argument showing the maturity ogives.
@@ -57,9 +60,8 @@ Depends on the tidyverse and ggridges packages. The dplyr and ggplot2 packages m
 # Simple L50 plot
 data(survey_ghl)
 plot_maturity(survey_ghl, length = "length", maturity = "maturity")
-# Split by sex
-plot_maturity(survey_ghl, split.by.sex = TRUE)$plot
-# A50 plot
+
+# A50 plot, split by sex
 plot_maturity(survey_ghl, length = "age", length.unit = "years",
 xlab = "Age", length.bin.width = 1, split.by.sex = TRUE)$plot
 }

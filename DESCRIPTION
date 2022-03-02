@@ -1,0 +1,22 @@
+Package: ggFishPlots
+Type: Package
+Title: Visualise and calculate life history parameters for fisheries science using 'ggplot2'
+Version: 0.1.0
+Date: 2022-03-02
+Authors@R: c(person("Mikko", "Vihtakari", email = "mikko.vihtakari@hi.no",
+                  role = c("aut", "cre"), 
+                  comment = c(affiliation = "Institute of Marine Research", 
+                  ORCID = "0000-0003-0371-4319"))
+            )
+URL: https://github.com/DeepWaterIMR/ggFishPlots
+BugReports: https://github.com/DeepWaterIMR/ggFishPlots/issues
+Description: Contains functions to create life history parameter plots from raw data. 
+	The plots are created using ggplot2, and calculations done using the tidyverse
+	collection of packages. 
+Depends: R (>= 3.5.0), ggplot2
+Imports: dplyr, tibble, tidyr, ggridges, fishmethods, broom, rlang, tidyselect,
+  magrittr
+Suggests: knitr, rmarkdown
+License: GPL-3
+Encoding: UTF-8
+RoxygenNote: 7.1.2

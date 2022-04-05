@@ -19,7 +19,8 @@ plot_maturity(
   force.zero.group.cv = 0,
   xlab = "Total length",
   base_size = 8,
-  legend.position = "bottom"
+  legend.position = "bottom",
+  ...
 )
 }
 \arguments{
@@ -41,10 +42,11 @@ plot_maturity(
 
 \item{length.bin.width}{Numeric specifying the increment (delta length) by which length data should be binned to calculate maturity proportions. Use \code{NULL} to remove from the plot.}
 
-\item{force.zero.group.length}{Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.
-#' @param force.zero.group.cv Numeric indicating the coefficient of variation for the forced 0-group (all immature) length. Resulting lengths will be randomly generated.}
+\item{force.zero.group.length}{Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.}
 
 \item{force.zero.group.strength}{Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}.}
+
+\item{force.zero.group.cv}{Numeric indicating the coefficient of variation for the forced 0-group (all immature) length. Resulting lengths will be randomly generated from a normal distribution.}
 
 \item{xlab}{Character giving the x-axis label without unit}
 

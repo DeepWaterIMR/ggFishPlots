@@ -22,7 +22,7 @@
 
 # Debug parameters:
 # dt = survey_ghl; length = "length"; weight = "weight"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; weight.unit = "kg"; split.by.sex = TRUE; filter.exp = NULL; xlab = "Total length"; ylab = "Weight"; base_size = 8; use.nls = TRUE; log.axes = FALSE
-plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", weight.unit = "kg", split.by.sex = FALSE, filter.exp = NULL, xlab = "Total length", ylab = "Weight", use.nls = FALSE, log.axes = FALSE, base_size = 8, legend.position = "bottom") {
+plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", weight.unit = "kg", split.by.sex = FALSE, xlab = "Total length", ylab = "Weight", use.nls = FALSE, log.axes = FALSE, base_size = 8, legend.position = "bottom") {
 
   # Add row number ####
 
@@ -45,7 +45,6 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
 
   # Filter
 
-  if(is.null(filter.exp)) {
     if(!exists("orig.nrow")) orig.nrow <- nrow(dt)
 
     dt <- dt %>%
@@ -57,22 +56,6 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
     weight.missing <- sum(is.na(dt$weight))
 
     dt <- dt %>% dplyr::filter(!is.na(weight) & !is.na(length))
-
-  } else {
-    if(!exists("orig.nrow")) orig.nrow <- nrow(dt)
-
-    dt <- dt %>%
-      dplyr::filter(!!rlang::parse_expr(filter.exp)) %>%
-      dplyr::rename("weight" = tidyselect::all_of(weight),
-                    "length" = tidyselect::all_of(length)
-      )
-
-    length.missing <- sum(is.na(dt$length))
-    weight.missing <- sum(is.na(dt$weight))
-
-    dt <- dt %>% dplyr::filter(!is.na(weight) & !is.na(length))
-
-  }
 
   ## Select columns
 

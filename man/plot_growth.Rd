@@ -12,11 +12,12 @@ plot_growth(
   female.sex = "F",
   male.sex = "M",
   length.unit = "cm",
-  filter.exp = NULL,
   split.by.sex = FALSE,
   growth.model = 1,
   force.zero.group.length = NA,
   force.zero.group.strength = 10,
+  force.zero.group.cv = 0,
+  show.Linf = TRUE,
   boxplot = TRUE,
   base_size = 8,
   legend.position = "bottom"
@@ -44,6 +45,10 @@ plot_growth(
 \item{force.zero.group.length}{Numeric indicating the length to which 0-group should be forced. Use \code{NA} ignore the forcing.}
 
 \item{force.zero.group.strength}{Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}.}
+
+\item{force.zero.group.cv}{Numeric indicating the coefficient of variation for the forced 0-group length. Resulting lengths will be randomly generated from a normal distribution.}
+
+\item{show.Linf}{Logical indicating whether Linf values should be shown as dashed vertical lines.}
 
 \item{boxplot}{Logical indicating whether boxplots (\code{TRUE}) should be used to show data over points (\code{FALSE})}
 

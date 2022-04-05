@@ -10,7 +10,7 @@
 #' @param female.sex A character denoting female sex in the \code{sex} column of \code{dt}
 #' @param male.sex A character denoting male sex in the \code{sex} column of \code{dt}
 #' @param force.zero.group.length Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.
-#' #' @param force.zero.group.cv Numeric indicating the coefficient of variation for the forced 0-group (all immature) length. Resulting lengths will be randomly generated.
+#' @param force.zero.group.cv Numeric indicating the coefficient of variation for the forced 0-group (all immature) length. Resulting lengths will be randomly generated from a normal distribution.
 #' @param force.zero.group.strength Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}.
 #' @param xlab Character giving the x-axis label without unit
 #' @param base_size Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.
@@ -21,7 +21,7 @@
 #' @author Mikko Vihtakari // Institute of Marine Research.
 #' @import dplyr ggplot2
 #' @importFrom ggridges geom_density_ridges
-#' @importFrom stats na.omit binomial coef glm predict
+#' @importFrom stats na.omit binomial coef glm predict rnorm
 #' @examples
 #' # Simple L50 plot
 #' data(survey_ghl)
@@ -36,7 +36,7 @@
 # dt = survey_ghl; length = "length"; maturity = "maturity"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; split.by.sex = T; filter.exp = NULL; xlab = "Total length"; plot = TRUE; base_size = 8
 # dt = x; length = "Length"; maturity = "Mature"; sex = "Sex"; split.by.sex = F; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; force.zero.group.length = 0; force.zero.group.strength = 10; force.zero.group.cv = 0; xlab = "Total length";  base_size = 8; legend.position = "bottom"
 
-plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "sex", split.by.sex = FALSE, female.sex = "F", male.sex = "M", length.unit = "cm", length.bin.width = 2, force.zero.group.length = NA, force.zero.group.strength = 10, force.zero.group.cv = 0, xlab = "Total length",  base_size = 8, legend.position = "bottom") {
+plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "sex", split.by.sex = FALSE, female.sex = "F", male.sex = "M", length.unit = "cm", length.bin.width = 2, force.zero.group.length = NA, force.zero.group.strength = 10, force.zero.group.cv = 0, xlab = "Total length",  base_size = 8, legend.position = "bottom", ...) {
 
   # Checks
 
@@ -224,7 +224,7 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
                   method = "glm", formula = y ~ x,
                   method.args = list(family = "binomial"), size = 1/2.13) +
       scale_x_continuous(paste0(xlab, " (", length.unit, ")"), expand = c(0,0)) +
-      ylab("Maturity") +
+      scale_y_continuous("Maturity", breaks = seq(0,1,0.2)) +
       coord_cartesian(xlim = c(0, ceiling(max(dt$length)))) +
       scale_color_manual("Sex", values = c("#FF5F68", "#449BCF")) +
       scale_fill_manual("Sex", values = c("#FF5F68", "#449BCF")) +
@@ -254,7 +254,7 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
                   method = "glm", formula = y ~ x,
                   method.args = list(family = "binomial"), size = 1/2.13) +
       scale_x_continuous(paste0(xlab, " (", length.unit, ")"), , expand = c(0,0)) +
-      ylab("Maturity") +
+      scale_y_continuous("Maturity", breaks = seq(0,1,0.2)) +
       coord_cartesian(xlim = c(0, ceiling(max(dt$length)))) +
       guides(color=guide_legend(override.aes=list(fill=NA))) +
       theme_fishplots(base_size = base_size) +

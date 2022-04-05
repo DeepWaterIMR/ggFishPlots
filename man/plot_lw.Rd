@@ -14,7 +14,6 @@ plot_lw(
   length.unit = "cm",
   weight.unit = "kg",
   split.by.sex = FALSE,
-  filter.exp = NULL,
   xlab = "Total length",
   ylab = "Weight",
   use.nls = FALSE,

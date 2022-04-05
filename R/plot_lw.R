@@ -21,7 +21,7 @@
 #' @export
 
 # Debug parameters:
-# dt = survey_ghl; length = "length"; weight = "weight"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; weight.unit = "kg"; split.by.sex = FALSE; filter.exp = NULL; xlab = "Total length"; ylab = "Weight"; base_size = 8; use.nls = TRUE; log.axes = FALSE
+# dt = survey_ghl; length = "length"; weight = "weight"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; weight.unit = "kg"; split.by.sex = TRUE; filter.exp = NULL; xlab = "Total length"; ylab = "Weight"; base_size = 8; use.nls = TRUE; log.axes = FALSE
 plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", weight.unit = "kg", split.by.sex = FALSE, filter.exp = NULL, xlab = "Total length", ylab = "Weight", use.nls = FALSE, log.axes = FALSE, base_size = 8, legend.position = "bottom") {
 
   # Add row number ####

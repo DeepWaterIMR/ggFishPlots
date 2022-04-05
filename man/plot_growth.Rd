@@ -37,13 +37,11 @@ plot_growth(
 
 \item{length.unit}{A character argument giving the unit of \code{length}. Will be used in the labels of the figure.}
 
-\item{filter.exp}{Expression to filter data. E.g. 'sampling_type == "ENS"'}
-
 \item{split.by.sex}{Logical indicating whether the result should be split by sex.}
 
 \item{growth.model}{Integer defining the growth model. 1 = von Bertalanffy, 2 = Gompertz, 3 = Logistic.}
 
-\item{force.zero.group.length}{Numeric indicating the length to which 0-group should be forced.}
+\item{force.zero.group.length}{Numeric indicating the length to which 0-group should be forced. Use \code{NA} ignore the forcing.}
 
 \item{force.zero.group.strength}{Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}.}
 
@@ -60,7 +58,7 @@ A list containing the \code{plot}, \code{text} for Rmarkdown and Shiny applicati
 Plot age-length relationships and growth curves
 }
 \details{
-Uses the \code{fishmethods::growth} function to calculate the growth curves.
+Uses the \code{fishmethods::growth} function to calculate the growth curves. Zero group length can be forced to the growth functions using the \code{force.zero.group.*} parameters.
 }
 \examples{
 # Simple plot. Note that a list is returned.

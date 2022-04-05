@@ -42,8 +42,6 @@ plot_lw(
 
 \item{split.by.sex}{Logical indicating whether the result should be split by sex.}
 
-\item{filter.exp}{Expression to filter data. E.g. 'sampling_type == "ENS"'}
-
 \item{xlab}{Character giving the x-axis label without unit}
 
 \item{ylab}{Character giving the x-axis label without unit.}

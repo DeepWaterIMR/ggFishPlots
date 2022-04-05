@@ -9,10 +9,13 @@
 #' @param split.by.sex Logical indicating whether the result should be split by sex.
 #' @param female.sex A character denoting female sex in the \code{sex} column of \code{dt}
 #' @param male.sex A character denoting male sex in the \code{sex} column of \code{dt}
-#' @param filter.exp Expression to filter data. E.g. 'sampling_type == "ENS"'
+#' @param force.zero.group.length Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.
+#' #' @param force.zero.group.cv Numeric indicating the coefficient of variation for the forced 0-group (all immature) length. Resulting lengths will be randomly generated.
+#' @param force.zero.group.strength Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}.
 #' @param xlab Character giving the x-axis label without unit
 #' @param base_size Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.
 #' @param legend.position Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.
+#' @param ... Additional arguments passed to \link[ggridges]{geom_density_ridges}.
 #' @return Returns a ggplot2 or tibble depending on the \code{plot} argument showing the maturity ogives.
 #' @details Depends on the tidyverse and ggridges packages. The dplyr and ggplot2 packages must be loaded into the workspace.
 #' @author Mikko Vihtakari // Institute of Marine Research.
@@ -31,7 +34,9 @@
 
 # Debug parameters
 # dt = survey_ghl; length = "length"; maturity = "maturity"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; split.by.sex = T; filter.exp = NULL; xlab = "Total length"; plot = TRUE; base_size = 8
-plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", length.bin.width = 2, split.by.sex = FALSE, filter.exp = NULL, xlab = "Total length",  base_size = 8, legend.position = "bottom") {
+# dt = x; length = "Length"; maturity = "Mature"; sex = "Sex"; split.by.sex = F; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; force.zero.group.length = 0; force.zero.group.strength = 10; force.zero.group.cv = 0; xlab = "Total length";  base_size = 8; legend.position = "bottom"
+
+plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "sex", split.by.sex = FALSE, female.sex = "F", male.sex = "M", length.unit = "cm", length.bin.width = 2, force.zero.group.length = NA, force.zero.group.strength = 10, force.zero.group.cv = 0, xlab = "Total length",  base_size = 8, legend.position = "bottom") {
 
   # Checks
 
@@ -44,28 +49,54 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
     dt <- dt %>% dplyr::select(-length)
   }
 
-  if(is.null(filter.exp)) {
-    dt <- dt %>%
-      dplyr::rename("maturity" = tidyselect::all_of(maturity),
-                    "length" = tidyselect::all_of(length)) %>%
-      dplyr::filter(!is.na(maturity) &
-                      !is.na(length)) %>%
-      dplyr::mutate(maturity = as.integer(maturity))
-  } else {
-    dt <- dt %>%
-      dplyr::filter(!!rlang::parse_expr(filter.exp)) %>%
-      dplyr::rename("maturity" = tidyselect::all_of(maturity),
-                    "length" = tidyselect::all_of(length)) %>%
-      dplyr::filter(!is.na(maturity) &
-                      !is.na(length)) %>%
-      dplyr::mutate(maturity = as.integer(maturity))
+  if("maturity" %in% colnames(dt) && maturity != "maturity"){
+    dt <- dt %>% dplyr::select(-maturity)
   }
+
+  # Select and rename columns
+
+  dt <- dt %>%
+    dplyr::rename("maturity" = tidyselect::all_of(maturity),
+                  "length" = tidyselect::all_of(length)) %>%
+    dplyr::filter(!is.na(maturity) &
+                    !is.na(length)) %>%
+    dplyr::mutate(maturity = as.integer(maturity))
+
+  # Data manipulation when split by sex
 
   if(split.by.sex) {
 
+    if("sex" %in% colnames(dt) && sex != "sex"){
+      dt <- dt %>% dplyr::select(-sex)
+    }
+
     dt <- dt %>%
       dplyr::rename("sex" = tidyselect::all_of(sex)) %>%
-      dplyr::filter(!is.na(sex))
+      dplyr::filter(!is.na(sex)) %>%
+      dplyr::select(length, sex, maturity)
+
+    if(!is.na(force.zero.group.length)) {
+      dt <- dt %>%
+        tibble::add_column(type = "data") %>%
+        bind_rows(
+          tibble::tibble(
+            length = rnorm(sum(dt$sex == female.sex)*(force.zero.group.strength/100),
+                           force.zero.group.length,
+                           force.zero.group.length*force.zero.group.cv),
+            sex = female.sex,
+            maturity = 0,
+            type = "made"
+          ),
+          tibble::tibble(
+            length = rnorm(sum(dt$sex == male.sex)*(force.zero.group.strength/100),
+                           force.zero.group.length,
+                           force.zero.group.length*force.zero.group.cv),
+            sex = male.sex,
+            maturity = 0,
+            type = "made"
+          )
+        )
+    }
 
     if(!is.null(length.bin.width)) {
       mat.pr.dt <- dt %>%
@@ -84,9 +115,11 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
 
     tmp <- dt %>% group_by(sex, maturity) %>% summarise(mean = mean(length), .groups = "keep")
 
-    if(tmp[tmp$sex == female.sex & tmp$maturity == 0, "mean"] > tmp[tmp$sex == female.sex & tmp$maturity == 1, "mean"]) {
+    if(tmp[tmp$sex == female.sex & tmp$maturity == 0,]$mean > tmp[tmp$sex == female.sex & tmp$maturity == 1, ]$mean) {
+
       warning("Mean size of female immature fish larger than mature fish. Unable to calculate L50 reliably")
       Fdat <- tibble(mean = NA, ci.min = NA, ci.max = NA, sex = female.sex) %>% mutate(across(c("mean", "ci.min", "ci.max"), as.numeric))
+
     } else {
       modF <- glm(maturity ~ length, data = dt %>% dplyr::filter(sex == female.sex),
                   family = binomial(link = "logit"))
@@ -119,6 +152,26 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
 
   } else {
 
+    # Data manipulation when not split by sex
+
+    dt <- dt %>%
+      dplyr::filter(!is.na(sex)) %>%
+      dplyr::select(length, maturity)
+
+    if(!is.na(force.zero.group.length)) {
+      dt <- dt %>%
+        tibble::add_column(type = "data") %>%
+        bind_rows(
+          tibble::tibble(
+            length = rnorm(nrow(dt)*(force.zero.group.strength/100),
+                           force.zero.group.length,
+                           force.zero.group.length*force.zero.group.cv),
+            maturity = 0,
+            type = "made"
+          )
+        )
+    }
+
     tmp <- dt %>% dplyr::group_by(maturity) %>% dplyr::summarise(mean = mean(length))
 
     if(!is.null(length.bin.width)) {
@@ -150,9 +203,10 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
       ggplot() +
       #facet_wrap(~sex, ncol = 1) +
       {if(!is.null(length.bin.width)) geom_step(data = mat.pr.dt, aes(x = bin1, y = mat.pr, color = sex), alpha = 0.5)} +
-      ggridges::geom_density_ridges(data = dt,
-                                    aes(x = length, y = maturity, group = paste(sex, maturity), fill = sex),
-                                    scale = 0.3, size = 0.5/2.13, alpha = 0.5) +
+      ggridges::geom_density_ridges(
+        data = dt,
+        aes(x = length, y = maturity, group = paste(sex, maturity), fill = sex),
+        scale = 0.3, size = 0.5/2.13, alpha = 0.5, ...) +
       geom_segment(data = modDat,
                    aes(x = mean, xend = mean, y = 0, yend = 0.5, color = sex),
                    linetype = 2) +
@@ -169,7 +223,7 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
       stat_smooth(data = dt, aes(x = length, y = maturity, color = sex),
                   method = "glm", formula = y ~ x,
                   method.args = list(family = "binomial"), size = 1/2.13) +
-      xlab(paste0(xlab, " (", length.unit, ")")) +
+      scale_x_continuous(paste0(xlab, " (", length.unit, ")"), expand = c(0,0)) +
       ylab("Maturity") +
       coord_cartesian(xlim = c(0, ceiling(max(dt$length)))) +
       scale_color_manual("Sex", values = c("#FF5F68", "#449BCF")) +
@@ -185,7 +239,7 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
       {if(!is.null(length.bin.width)) geom_step(data = mat.pr.dt, aes(x = bin1, y = mat.pr), alpha = 0.5)} +
       ggridges::geom_density_ridges(data = dt,
                                     aes(x = length, y = maturity, group = maturity),
-                                    scale = 0.3, size = 0.5/2.13, alpha = 0.5) +
+                                    scale = 0.3, size = 0.5/2.13, alpha = 0.5, ...) +
       geom_segment(data = modDat,
                    aes(x = mean, xend = mean, y = 0, yend = 0.5), linetype = 2) +
       geom_segment(data = modDat,
@@ -199,10 +253,9 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
       stat_smooth(data = dt, aes(x = length, y = maturity),
                   method = "glm", formula = y ~ x,
                   method.args = list(family = "binomial"), size = 1/2.13) +
-      xlab(paste0(xlab, " (", length.unit, ")")) +
+      scale_x_continuous(paste0(xlab, " (", length.unit, ")"), , expand = c(0,0)) +
       ylab("Maturity") +
       coord_cartesian(xlim = c(0, ceiling(max(dt$length)))) +
-      # theme_bw(base_size = 8) +
       guides(color=guide_legend(override.aes=list(fill=NA))) +
       theme_fishplots(base_size = base_size) +
       theme(legend.position = legend.position,
@@ -228,12 +281,12 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
 
     Text <-
       paste0(
-      "50% maturity at ",
-      ifelse(length.unit %in% c("mm", "cm", "m", "meter", "metre", "meters", "in", "inches"), "length (L50)", ifelse(length.unit %in% c("year", "years"), "age (A50)", "length or age (L50 or A50)")),
-      " based on logit regressions:",
-      "\n", round(modDat$mean, 3), " ", length.unit, ". 95% confidence intervals: ", round(modDat$ci.min, 3), " - ", round(modDat$ci.max, 3),
-      "\n  Number of specimens: ", modDat$n
-    )
+        "50% maturity at ",
+        ifelse(length.unit %in% c("mm", "cm", "m", "meter", "metre", "meters", "in", "inches"), "length (L50)", ifelse(length.unit %in% c("year", "years"), "age (A50)", "length or age (L50 or A50)")),
+        " based on logit regressions:",
+        "\n", round(modDat$mean, 3), " ", length.unit, ". 95% confidence intervals: ", round(modDat$ci.min, 3), " - ", round(modDat$ci.max, 3),
+        "\n  Number of specimens: ", modDat$n
+      )
   }
 
 

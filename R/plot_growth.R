@@ -2,12 +2,12 @@
 #' @param length Character argument giving the name of the length column in \code{dt}
 #' @param age Character argument giving the name of the age column in \code{dt}
 #' @param growth.model Integer defining the growth model. 1 = von Bertalanffy, 2 = Gompertz, 3 = Logistic.
-#' @param force.zero.group.length Numeric indicating the length to which 0-group should be forced.
+#' @param force.zero.group.length Numeric indicating the length to which 0-group should be forced. Use \code{NA} ignore the forcing.
 #' @param force.zero.group.strength Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}.
 #' @inheritParams plot_maturity
 #' @param boxplot Logical indicating whether boxplots (\code{TRUE}) should be used to show data over points (\code{FALSE})
 #' @param base_size Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.
-#' @details Uses the \code{fishmethods::growth} function to calculate the growth curves.
+#' @details Uses the \code{fishmethods::growth} function to calculate the growth curves. Zero group length can be forced to the growth functions using the \code{force.zero.group.*} parameters.
 #' @return A list containing the \code{plot}, \code{text} for Rmarkdown and Shiny applications, and estimated parameters (\code{params}).
 #' @author Mikko Vihtakari // Institute of Marine Research. Version 2021-10-06
 #' @import dplyr ggplot2

@@ -9,12 +9,14 @@ plot_maturity(
   length = "length",
   maturity = "maturity",
   sex = "sex",
+  split.by.sex = FALSE,
   female.sex = "F",
   male.sex = "M",
   length.unit = "cm",
   length.bin.width = 2,
-  split.by.sex = FALSE,
-  filter.exp = NULL,
+  force.zero.group.length = NA,
+  force.zero.group.strength = 10,
+  force.zero.group.cv = 0,
   xlab = "Total length",
   base_size = 8,
   legend.position = "bottom"
@@ -29,6 +31,8 @@ plot_maturity(
 
 \item{sex}{Character argument giving the name of the sex column in \code{dt}. Ignored if \code{split.by.sex == FALSE}.}
 
+\item{split.by.sex}{Logical indicating whether the result should be split by sex.}
+
 \item{female.sex}{A character denoting female sex in the \code{sex} column of \code{dt}}
 
 \item{male.sex}{A character denoting male sex in the \code{sex} column of \code{dt}}
@@ -37,15 +41,18 @@ plot_maturity(
 
 \item{length.bin.width}{Numeric specifying the increment (delta length) by which length data should be binned to calculate maturity proportions. Use \code{NULL} to remove from the plot.}
 
-\item{split.by.sex}{Logical indicating whether the result should be split by sex.}
+\item{force.zero.group.length}{Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.
+#' @param force.zero.group.cv Numeric indicating the coefficient of variation for the forced 0-group (all immature) length. Resulting lengths will be randomly generated.}
 
-\item{filter.exp}{Expression to filter data. E.g. 'sampling_type == "ENS"'}
+\item{force.zero.group.strength}{Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}.}
 
 \item{xlab}{Character giving the x-axis label without unit}
 
 \item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
 
 \item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.}
+
+\item{...}{Additional arguments passed to \link[ggridges]{geom_density_ridges}.}
 }
 \value{
 Returns a ggplot2 or tibble depending on the \code{plot} argument showing the maturity ogives.

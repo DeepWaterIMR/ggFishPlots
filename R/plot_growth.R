@@ -26,7 +26,7 @@
 #' @export
 
 # Debug parameters:
-# dt = test; length = "length"; age = "age"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; split.by.sex = FALSE; growth.model = 1; force.zero.group.length = NA; force.zero.group.strength = 10; force.zero.group.cv = 0; show.Linf = TRUE; boxplot = FALSE; base_size = 8; legend.position = "bottom"
+# dt = survey_ghl; length = "length"; age = "age"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; split.by.sex = FALSE; growth.model = 1; force.zero.group.length = NA; force.zero.group.strength = 10; force.zero.group.cv = 0; show.Linf = TRUE; boxplot = FALSE; base_size = 8; legend.position = "bottom"
 # dt = x; length = "Length"; age = "Age"; sex = "Sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; filter.exp = NULL; split.by.sex = FALSE; growth.model = 1; force.zero.group.length = NA; force.zero.group.strength = 10
 plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", split.by.sex = FALSE, growth.model = 1, force.zero.group.length = NA, force.zero.group.strength = 10, force.zero.group.cv = 0, show.Linf = TRUE, boxplot = TRUE, base_size = 8, legend.position = "bottom") {
 
@@ -46,6 +46,8 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
 
   if(split.by.sex) {
     if(is.null(sex)) stop("Sex column has to be specified when split.by.sex = TRUE")
+    if(!all(c(female.sex, male.sex) %in% unique(dt[[sex]]))) stop(female.sex, " or ", male.sex, " not found from the ", sex,
+                                                                  " column. Check the female.sex and male.sex parameters.")
     if(dt %>% dplyr::pull(!!rlang::enquo(sex)) %>% na.omit() %>% length() < 10) stop("Either invalid sex column or not enough sex data")
 
     orig.nrow <- nrow(dt)
@@ -155,7 +157,7 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         Sinf = dt %>% dplyr::filter(sex == female.sex) %>% dplyr::pull(length) %>% max,
         K = 0.1, t0 = 0, graph = FALSE)
 
-      if(eval(parse(text = paste0("laModF$", growth.model))) == "Fit failed") stop("Fit of the growth model for females failed. Consider adding force.zero.group.length.")
+      if(all(eval(parse(text = paste0("laModF$", growth.model))) == "Fit failed")) stop("Fit of the growth model for females failed. Consider adding force.zero.group.length.")
 
       laModM <- fishmethods::growth(
         age = dt %>% dplyr::filter(sex == male.sex) %>% dplyr::pull(age),
@@ -163,7 +165,7 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         Sinf = dt %>% dplyr::filter(sex == male.sex) %>% dplyr::pull(length) %>% max,
         K = 0.1, t0 = 0, graph = FALSE)
 
-      if(eval(parse(text = paste0("laModM$", growth.model))) == "Fit failed") stop("Fit of the growth model for males failed. Consider adding force.zero.group.length.")
+      if(all(eval(parse(text = paste0("laModM$", growth.model))) == "Fit failed")) stop("Fit of the growth model for males failed. Consider adding force.zero.group.length.")
 
       laModFpred <- data.frame(age = 0:max(dt$age), length = predict(eval(parse(text = paste0("laModF$", growth.model))), newdata = data.frame(age = 0:max(dt$age))))
       laModMpred <- data.frame(age = 0:max(dt$age), length = predict(eval(parse(text = paste0("laModM$", growth.model))), newdata = data.frame(age = 0:max(dt$age))))
@@ -260,7 +262,7 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
 
       laMod <- fishmethods::growth(age = dt$age, size = dt$length, Sinf = max(dt$length), K = 0.1, t0 = 0, graph = FALSE)
 
-      if(eval(parse(text = paste0("laMod$", growth.model))) == "Fit failed") stop("Fit of the growth model failed. Consider adding force.zero.group.length.")
+      if(all(eval(parse(text = paste0("laMod$", growth.model))) == "Fit failed")) stop("Fit of the growth model failed. Consider adding force.zero.group.length.")
 
       laModpred <- data.frame(age = 0:max(dt$age), length = predict(eval(parse(text = paste0("laMod$", growth.model))), newdata = data.frame(age = 0:max(dt$age))))
 

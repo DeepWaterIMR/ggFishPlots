@@ -42,6 +42,8 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
 
   if(split.by.sex) {
     if(is.null(sex)) stop("Sex column has to be specified when split.by.sex = TRUE")
+    if(!all(c(female.sex, male.sex) %in% unique(dt[[sex]]))) stop(female.sex, " or ", male.sex, " not found from the ", sex,
+                                                                  " column. Check the female.sex and male.sex parameters.")
     if(dt %>% dplyr::pull(!!enquo(sex)) %>% na.omit() %>% length() < 10) stop("Either invalid sex column or not enough sex data")
   }
 

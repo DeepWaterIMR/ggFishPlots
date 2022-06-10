@@ -32,6 +32,8 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
 
   if(split.by.sex) {
     if(is.null(sex)) stop("Sex column has to be specified when split.by.sex = TRUE")
+    if(!all(c(female.sex, male.sex) %in% unique(dt[[sex]]))) stop(female.sex, " or ", male.sex, " not found from the ", sex,
+                                                                  " column. Check the female.sex and male.sex parameters.")
     if(dt %>% dplyr::pull(!!rlang::enquo(sex)) %>% na.omit() %>% length() < 10) stop("Either invalid sex column or not enough sex data")
 
     orig.nrow <- nrow(dt)

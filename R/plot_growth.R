@@ -153,7 +153,7 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         {if(!boxplot) geom_point(data = dt, aes(x = age, y = length, color = sex, text = paste0("row number: ", id)), alpha = 0.5, shape = 21)} +
         annotation_custom(
           grid::textGrob("Failed to fit growth models\nConsider adding force.zero.group.length\nand/or not splitting by sex.",
-                         gp = grid::gpar(fontsize = 8, fontface = "bold")),
+                         gp = grid::gpar(fontsize = base_size, fontface = "bold")),
           xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
         scale_color_manual("Sex", values = c("#FF5F68", "#449BCF")) +
         ylab(paste0("Total length (", length.unit, ")")) +

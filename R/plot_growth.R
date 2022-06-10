@@ -219,12 +219,12 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
             {if(FfitFailed) annotate("text", x = -Inf, y = Inf, label = "Fit failed for females", color = "#FF5F68", size = base_size/2.85, vjust = 3, hjust = -0.5)} +
             {if(!MfitFailed) geom_path(data = laModMpred, aes(x = age, y = length), color = "#449BCF", size = 2/2.13)} +
             {if(MfitFailed) annotate("text", x = -Inf, y = Inf, label = "Fit failed for males", color = "#449BCF", size = base_size/2.85, vjust = 2, hjust = -0.5)} +
-            expand_limits(x = c(0, round_any(max(dt$age), 2, ceiling)), y = c(0, round_any(max(dt$length), 5, ceiling))) +
+            # expand_limits(x = c(0, round_any(max(dt$age), 2, ceiling)), y = c(0, round_any(max(dt$length), 1, ceiling))) +
             # scale_x_continuous(breaks = seq(0,100,2)) +
             # scale_y_continuous(breaks = seq(0,200,5)) +
             scale_color_manual("Sex", values = c("#FF5F68", "#449BCF")) +
             labs(y = paste0("Total length (", length.unit, ")"),  x = "Age (years)") +
-            coord_cartesian(expand = FALSE, clip = "off") +
+            coord_cartesian(expand = FALSE, clip = "off", xlim = c(0, NA), ylim = c(0, NA)) +
             theme_fishplots(base_size = base_size) +
             theme(legend.position = legend.position,
                   text = element_text(size = base_size))

@@ -158,7 +158,7 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         scale_color_manual("Sex", values = c("#FF5F68", "#449BCF")) +
         ylab(paste0("Total length (", length.unit, ")")) +
         xlab("Age (years)") +
-        coord_cartesian(expand = FALSE, clip = "off", xlim = c(0,NA), ylim = c(0,NA)) +
+        coord_cartesian(expand = FALSE, clip = "off", xlim = c(0, NA), ylim = c(0, NA)) +
         theme_fishplots(base_size = base_size) +
         theme(legend.position = legend.position,
               text = element_text(size = base_size))
@@ -219,9 +219,6 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
             {if(FfitFailed) annotate("text", x = -Inf, y = Inf, label = "Fit failed for females", color = "#FF5F68", size = base_size/2.85, vjust = 3, hjust = -0.5)} +
             {if(!MfitFailed) geom_path(data = laModMpred, aes(x = age, y = length), color = "#449BCF", size = 2/2.13)} +
             {if(MfitFailed) annotate("text", x = -Inf, y = Inf, label = "Fit failed for males", color = "#449BCF", size = base_size/2.85, vjust = 2, hjust = -0.5)} +
-            # expand_limits(x = c(0, round_any(max(dt$age), 2, ceiling)), y = c(0, round_any(max(dt$length), 1, ceiling))) +
-            # scale_x_continuous(breaks = seq(0,100,2)) +
-            # scale_y_continuous(breaks = seq(0,200,5)) +
             scale_color_manual("Sex", values = c("#FF5F68", "#449BCF")) +
             labs(y = paste0("Total length (", length.unit, ")"),  x = "Age (years)") +
             coord_cartesian(expand = FALSE, clip = "off", xlim = c(0, NA), ylim = c(0, NA)) +
@@ -268,11 +265,11 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         {if(!boxplot) geom_point(data = dt, aes(x = age, y = length, text = paste0("row number: ", id)), shape = 21, alpha = 0.5)} +
         annotation_custom(
           grid::textGrob("Failed to fit a growth model\nConsider adding force.zero.group.length",
-                         gp = grid::gpar(fontsize = 8, fontface = "bold", col = "red")),
+                         gp = grid::gpar(fontsize = base_size, fontface = "bold", col = "red")),
           xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
         ylab(paste0("Total length (", length.unit, ")")) +
         xlab("Age (years)") +
-        coord_cartesian(expand = FALSE, clip = "off", xlim = c(0,NA), ylim = c(0,NA)) +
+        coord_cartesian(expand = FALSE, clip = "off", xlim = c(0, NA), ylim = c(0, NA)) +
         theme_fishplots(base_size = base_size) +
         theme(legend.position = legend.position,
               text = element_text(size = base_size))
@@ -293,13 +290,11 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
           ggplot() +
             {if(boxplot) geom_boxplot(data = dt, aes(x = age, y = length, group = age), outlier.size = 0.5, alpha = 0.5)} +
             {if(!boxplot) geom_point(data = dt, aes(x = age, y = length, text = paste0("row number: ", id)), shape = 21, alpha = 0.5)} +
-            expand_limits(x = c(0, round_any(max(dt$age), 2, ceiling)), y = c(0, round_any(max(dt$length), 5, ceiling))) + # c(0, max(pretty(c(0, max(dt$length)))))
+            # expand_limits(x = c(0, round_any(max(dt$age), 2, ceiling)), y = c(0, round_any(max(dt$length), 5, ceiling))) + # c(0, max(pretty(c(0, max(dt$length)))))
             {if(show.Linf) geom_hline(yintercept = laModpars$estimate[1], linetype = 2, color = "blue", alpha = 0.5)} +
-            # scale_x_continuous(breaks = seq(0,100,2)) +
-            # scale_y_continuous(breaks = seq(0,200,5)) +
             geom_path(data = laModpred, aes(x = age, y = length), color = "blue") +
             labs(y = paste0("Total length (", length.unit, ")"),  x = "Age (years)") +
-            coord_cartesian(expand = FALSE, clip = "off") +
+            coord_cartesian(expand = FALSE, clip = "off", xlim = c(0, NA), ylim = c(0, NA)) +
             theme_fishplots(base_size = base_size) +
             theme(legend.position = legend.position,
                   text = element_text(size = base_size))

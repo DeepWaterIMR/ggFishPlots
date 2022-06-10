@@ -75,5 +75,5 @@ plot_growth(survey_ghl, split.by.sex = TRUE)$plot
 plot_growth(survey_ghl, force.zero.group.length = 10, boxplot = FALSE)$plot
 }
 \author{
-Mikko Vihtakari // Institute of Marine Research. Version 2021-10-06
+Mikko Vihtakari // Institute of Marine Research.
 }

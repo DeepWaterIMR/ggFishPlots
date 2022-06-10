@@ -11,7 +11,7 @@
 #' @param base_size Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.
 #' @details Uses the \code{fishmethods::growth} function to calculate the growth curves. Zero group length can be forced to the growth functions using the \code{force.zero.group.*} parameters.
 #' @return A list containing the \code{plot}, \code{text} for Rmarkdown and Shiny applications, and estimated parameters (\code{params}).
-#' @author Mikko Vihtakari // Institute of Marine Research. Version 2021-10-06
+#' @author Mikko Vihtakari // Institute of Marine Research.
 #' @import dplyr ggplot2
 #' @importFrom fishmethods growth
 #' @importFrom stats rnorm
@@ -124,66 +124,84 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
     }
   }
 
+  ################
+  ## The Plot ####
+
   # Plot sexed data
 
   if(split.by.sex) {
 
-    if(any(dt %>% group_by(sex) %>% count() %>% pull(n) < 10)) {
+    laModF <- fishmethods::growth(
+      age = dt %>% dplyr::filter(sex == female.sex) %>% dplyr::pull(age),
+      size = dt %>% dplyr::filter(sex == female.sex) %>% dplyr::pull(length),
+      Sinf = dt %>% dplyr::filter(sex == female.sex) %>% dplyr::pull(length) %>% max,
+      K = 0.1, t0 = 0, graph = FALSE)
 
-      Plot <- ggplot(dt, aes(x = age, y = length, color = sex)) +
-        geom_point(shape = 21, alpha = 0.7) +
+    laModM <- fishmethods::growth(
+      age = dt %>% dplyr::filter(sex == male.sex) %>% dplyr::pull(age),
+      size = dt %>% dplyr::filter(sex == male.sex) %>% dplyr::pull(length),
+      Sinf = dt %>% dplyr::filter(sex == male.sex) %>% dplyr::pull(length) %>% max,
+      K = 0.1, t0 = 0, graph = FALSE)
+
+    FfitFailed <- all(eval(parse(text = paste0("laModF$", growth.model))) == "Fit failed")
+    MfitFailed <- all(eval(parse(text = paste0("laModM$", growth.model))) == "Fit failed")
+
+    if(FfitFailed & MfitFailed) {
+
+      Plot <- ggplot() +
+        {if(boxplot) geom_boxplot(data = dt, aes(x = age, y = length, color = sex, group = interaction(age, sex)), alpha = 0.5, outlier.size = 0.5)} +
+        {if(!boxplot) geom_point(data = dt, aes(x = age, y = length, color = sex, text = paste0("row number: ", id)), alpha = 0.5, shape = 21)} +
         annotation_custom(
-          grid::textGrob("Not enough age data for\nsex separated growth models",
+          grid::textGrob("Failed to fit growth models\nConsider adding force.zero.group.length\nand/or not splitting by sex.",
                          gp = grid::gpar(fontsize = 8, fontface = "bold")),
           xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
         scale_color_manual("Sex", values = c("#FF5F68", "#449BCF")) +
         ylab(paste0("Total length (", length.unit, ")")) +
         xlab("Age (years)") +
-        coord_cartesian(expand = FALSE, clip = "off") +
+        coord_cartesian(expand = FALSE, clip = "off", xlim = c(0,NA), ylim = c(0,NA)) +
         theme_fishplots(base_size = base_size) +
         theme(legend.position = legend.position,
               text = element_text(size = base_size))
 
       Text <- paste0(
-        "Not enough age data:",
+        "Failed to fit growth models:",
         "\n Number of included specimens = ", sum(dt$sex == female.sex), " females and ", sum(dt$sex == male.sex), " males"
       )
 
     } else {
 
-      laModF <- fishmethods::growth(
-        age = dt %>% dplyr::filter(sex == female.sex) %>% dplyr::pull(age),
-        size = dt %>% dplyr::filter(sex == female.sex) %>% dplyr::pull(length),
-        Sinf = dt %>% dplyr::filter(sex == female.sex) %>% dplyr::pull(length) %>% max,
-        K = 0.1, t0 = 0, graph = FALSE)
-
-      if(all(eval(parse(text = paste0("laModF$", growth.model))) == "Fit failed")) stop("Fit of the growth model for females failed. Consider adding force.zero.group.length.")
-
-      laModM <- fishmethods::growth(
-        age = dt %>% dplyr::filter(sex == male.sex) %>% dplyr::pull(age),
-        size = dt %>% dplyr::filter(sex == male.sex) %>% dplyr::pull(length),
-        Sinf = dt %>% dplyr::filter(sex == male.sex) %>% dplyr::pull(length) %>% max,
-        K = 0.1, t0 = 0, graph = FALSE)
-
-      if(all(eval(parse(text = paste0("laModM$", growth.model))) == "Fit failed")) stop("Fit of the growth model for males failed. Consider adding force.zero.group.length.")
-
-      laModFpred <- data.frame(age = 0:max(dt$age), length = predict(eval(parse(text = paste0("laModF$", growth.model))), newdata = data.frame(age = 0:max(dt$age))))
-      laModMpred <- data.frame(age = 0:max(dt$age), length = predict(eval(parse(text = paste0("laModM$", growth.model))), newdata = data.frame(age = 0:max(dt$age))))
-
-      tryshit <- try(broom::tidy(eval(parse(text = paste0("laModF$", growth.model))), conf.int = TRUE))
-
-      if(any(class(tryshit) == "try-error")) {
-        laModparsF <- dplyr::bind_cols(sex = female.sex, broom::tidy(eval(parse(text = paste0("laModF$", growth.model))), conf.int = FALSE))
+      # Females
+      if(FfitFailed) {
+        laModFpred <- data.frame(age = 0:max(dt$age), length = NA)
+        laModparsF <- data.frame(sex = female.sex, term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA, conf.low = NA, conf.high = NA)
       } else {
-        laModparsF <- dplyr::bind_cols(sex = female.sex, tryshit)
+        tmpF <- predict(eval(parse(text = paste0("laModF$", growth.model))), newdata = data.frame(age = 0:max(dt$age)))
+        laModFpred <- data.frame(age = 0:max(dt$age), length = tmpF)
+
+        tryshit <- try(broom::tidy(eval(parse(text = paste0("laModF$", growth.model))), conf.int = TRUE))
+
+        if(any(class(tryshit) == "try-error")) {
+          laModparsF <- dplyr::bind_cols(sex = female.sex, broom::tidy(eval(parse(text = paste0("laModF$", growth.model))), conf.int = FALSE))
+        } else {
+          laModparsF <- dplyr::bind_cols(sex = female.sex, tryshit)
+        }
       }
 
-      tryshit <- try(broom::tidy(eval(parse(text = paste0("laModM$", growth.model))), conf.int = TRUE), silent = TRUE)
-
-      if(any(class(tryshit) == "try-error")) {
-        laModparsM <- dplyr::bind_cols(sex = male.sex, broom::tidy(eval(parse(text = paste0("laModM$", growth.model))), conf.int = FALSE))
+      # Males
+      if(MfitFailed) {
+        laModMpred <- data.frame(age = 0:max(dt$age), length = NA)
+        laModparsM <- data.frame(sex = male.sex, term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA, conf.low = NA, conf.high = NA)
       } else {
-        laModparsM <- dplyr::bind_cols(sex = male.sex, tryshit)
+        tmpM <- predict(eval(parse(text = paste0("laModM$", growth.model))), newdata = data.frame(age = 0:max(dt$age)))
+        laModMpred <- data.frame(age = 0:max(dt$age), length = tmpM)
+
+        tryshit <- try(broom::tidy(eval(parse(text = paste0("laModM$", growth.model))), conf.int = TRUE))
+
+        if(any(class(tryshit) == "try-error")) {
+          laModparsM <- dplyr::bind_cols(sex = male.sex, broom::tidy(eval(parse(text = paste0("laModM$", growth.model))), conf.int = FALSE))
+        } else {
+          laModparsM <- dplyr::bind_cols(sex = male.sex, tryshit)
+        }
       }
 
       laModpars <- dplyr::bind_rows(laModparsF, laModparsM)
@@ -195,13 +213,15 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
           ggplot() +
             {if(boxplot) geom_boxplot(data = dt, aes(x = age, y = length, color = sex, group = interaction(age, sex)), alpha = 0.5, outlier.size = 0.5)} +
             {if(!boxplot) geom_point(data = dt, aes(x = age, y = length, color = sex, text = paste0("row number: ", id)), alpha = 0.5, shape = 21)} +
-            {if(show.Linf) geom_hline(yintercept = laModparsF$estimate[1], linetype = 2, color = "#FF5F68", alpha = 0.5)} +
-            {if(show.Linf) geom_hline(yintercept = laModparsM$estimate[1], linetype = 2, color = "#449BCF", alpha = 0.5)} +
-            geom_path(data = laModFpred, aes(x = age, y = length), color = "#FF5F68", size = 2/2.13) +
-            geom_path(data = laModMpred, aes(x = age, y = length), color = "#449BCF", size = 2/2.13) +
+            {if(show.Linf & !FfitFailed) geom_hline(yintercept = laModparsF$estimate[1], linetype = 2, color = "#FF5F68", alpha = 0.5)} +
+            {if(show.Linf & !MfitFailed) geom_hline(yintercept = laModparsM$estimate[1], linetype = 2, color = "#449BCF", alpha = 0.5)} +
+            {if(!FfitFailed) geom_path(data = laModFpred, aes(x = age, y = length), color = "#FF5F68", size = 2/2.13)} +
+            {if(FfitFailed) annotate("text", x = -Inf, y = Inf, label = "Fit failed for females", color = "#FF5F68", size = base_size/2.85, vjust = 3, hjust = -0.5)} +
+            {if(!MfitFailed) geom_path(data = laModMpred, aes(x = age, y = length), color = "#449BCF", size = 2/2.13)} +
+            {if(MfitFailed) annotate("text", x = -Inf, y = Inf, label = "Fit failed for males", color = "#449BCF", size = base_size/2.85, vjust = 2, hjust = -0.5)} +
             expand_limits(x = c(0, round_any(max(dt$age), 2, ceiling)), y = c(0, round_any(max(dt$length), 5, ceiling))) +
-            scale_x_continuous(breaks = seq(0,100,2)) +
-            scale_y_continuous(breaks = seq(0,200,5)) +
+            # scale_x_continuous(breaks = seq(0,100,2)) +
+            # scale_y_continuous(breaks = seq(0,200,5)) +
             scale_color_manual("Sex", values = c("#FF5F68", "#449BCF")) +
             labs(y = paste0("Total length (", length.unit, ")"),  x = "Age (years)") +
             coord_cartesian(expand = FALSE, clip = "off") +
@@ -233,36 +253,36 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
       )
 
     }
+
   } else {
     # Plot non-sex split data
 
-    if(nrow(dt) < 30) {
+    laMod <- fishmethods::growth(age = dt$age, size = dt$length, Sinf = max(dt$length), K = 0.1, t0 = 0, graph = FALSE)
+
+    if(all(eval(parse(text = paste0("laMod$", growth.model))) == "Fit failed")) {
 
       #if(eval(parse(text = paste0("laMod$", growthModelSwitch))) == "Fit failed") {
 
       Plot <- ggplot(dt, aes(x = age, y = length)) +
-        geom_point(shape = 21, alpha = 0.7) +
+        {if(boxplot) geom_boxplot(data = dt, aes(x = age, y = length, group = age), outlier.size = 0.5, alpha = 0.5)} +
+        {if(!boxplot) geom_point(data = dt, aes(x = age, y = length, text = paste0("row number: ", id)), shape = 21, alpha = 0.5)} +
         annotation_custom(
-          grid::textGrob("Not enough age data to\ncalculate a growth model",
+          grid::textGrob("Failed to fit a growth model\nConsider adding force.zero.group.length",
                          gp = grid::gpar(fontsize = 8, fontface = "bold", col = "red")),
           xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
         ylab(paste0("Total length (", length.unit, ")")) +
         xlab("Age (years)") +
-        coord_cartesian(expand = FALSE, clip = "off") +
+        coord_cartesian(expand = FALSE, clip = "off", xlim = c(0,NA), ylim = c(0,NA)) +
         theme_fishplots(base_size = base_size) +
         theme(legend.position = legend.position,
               text = element_text(size = base_size))
 
       Text <- paste0(
-        "Not enough age data:",
+        "Failed to fit a growth model:",
         "  \n Number of included specimens = ", nrow(dt)
       )
 
     } else {
-
-      laMod <- fishmethods::growth(age = dt$age, size = dt$length, Sinf = max(dt$length), K = 0.1, t0 = 0, graph = FALSE)
-
-      if(all(eval(parse(text = paste0("laMod$", growth.model))) == "Fit failed")) stop("Fit of the growth model failed. Consider adding force.zero.group.length.")
 
       laModpred <- data.frame(age = 0:max(dt$age), length = predict(eval(parse(text = paste0("laMod$", growth.model))), newdata = data.frame(age = 0:max(dt$age))))
 
@@ -275,8 +295,8 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
             {if(!boxplot) geom_point(data = dt, aes(x = age, y = length, text = paste0("row number: ", id)), shape = 21, alpha = 0.5)} +
             expand_limits(x = c(0, round_any(max(dt$age), 2, ceiling)), y = c(0, round_any(max(dt$length), 5, ceiling))) + # c(0, max(pretty(c(0, max(dt$length)))))
             {if(show.Linf) geom_hline(yintercept = laModpars$estimate[1], linetype = 2, color = "blue", alpha = 0.5)} +
-            scale_x_continuous(breaks = seq(0,100,2)) +
-            scale_y_continuous(breaks = seq(0,200,5)) +
+            # scale_x_continuous(breaks = seq(0,100,2)) +
+            # scale_y_continuous(breaks = seq(0,200,5)) +
             geom_path(data = laModpred, aes(x = age, y = length), color = "blue") +
             labs(y = paste0("Total length (", length.unit, ")"),  x = "Age (years)") +
             coord_cartesian(expand = FALSE, clip = "off") +

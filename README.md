@@ -2,7 +2,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.1.1**
+using ggplot2. R package version 0.1.7**
 
 <!-- badges: start -->
 
@@ -97,10 +97,12 @@ plot_growth(survey_ghl, split.by.sex = TRUE)$plot
 
 ![](man/figures/README-unnamed-chunk-4-1.png)<!-- -->
 
-The dashed lines are *S*<sub>*i**n**f*</sub>. Data behind the growth
-curves are shown as box plots by default. It is possible to plot the
-data as points by defining `boxplot = FALSE`. We can also force zero
-group into the curves if know the length of it. Assumed as 10 cm here:
+The dashed lines are
+![S\_{inf}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;S_%7Binf%7D "S_{inf}").
+Data behind the growth curves are shown as box plots by default. It is
+possible to plot the data as points by defining `boxplot = FALSE`. We
+can also force zero group into the curves if know the length of it.
+Assumed as 10 cm here:
 
 ``` r
 plot_growth(survey_ghl, force.zero.group.length = 10, boxplot = FALSE)$plot
@@ -121,11 +123,11 @@ plot_maturity(survey_ghl, length = "length", maturity = "maturity")
 
     #> 
     #> $text
-    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.784 cm. 95% confidence intervals: 52.852 - 56.787\n  Number of specimens: 64265"
+    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.781 cm. 95% confidence intervals: 52.848 - 56.787\n  Number of specimens: 64186"
     #> 
     #> $params
-    #>       mean   ci.min ci.max     n
-    #> 1 54.78361 52.85249 56.787 64265
+    #>       mean   ci.min  ci.max     n
+    #> 1 54.78111 52.84785 56.7868 64186
 
 The error bars represent 95% confidence intervals calculated from the
 model object using the
@@ -243,7 +245,7 @@ citation("ggFishPlots")
 #> 
 #>   Mikko Vihtakari (2022). ggFishPlots: Visualise and calculate life
 #>   history parameters for fisheries science using 'ggplot2'. R package
-#>   version 0.1.1. https://github.com/DeepWaterIMR/ggFishPlots
+#>   version 0.1.7. https://github.com/DeepWaterIMR/ggFishPlots
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -251,7 +253,7 @@ citation("ggFishPlots")
 #>     title = {ggFishPlots: Visualise and calculate life history parameters for fisheries science using 'ggplot2'},
 #>     author = {Mikko Vihtakari},
 #>     year = {2022},
-#>     note = {R package version 0.1.1},
+#>     note = {R package version 0.1.7},
 #>     url = {https://github.com/DeepWaterIMR/ggFishPlots},
 #>   }
 ```

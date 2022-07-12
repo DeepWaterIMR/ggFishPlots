@@ -131,6 +131,8 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
 
   if(split.by.sex) {
 
+    # FSA::vbStarts(length~age, data = dt %>% dplyr::filter(sex == female.sex))
+
     laModF <- fishmethods::growth(
       age = dt %>% dplyr::filter(sex == female.sex) %>% dplyr::pull(age),
       size = dt %>% dplyr::filter(sex == female.sex) %>% dplyr::pull(length),

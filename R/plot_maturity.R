@@ -36,15 +36,19 @@
 # dt = survey_ghl; length = "length"; maturity = "maturity"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; split.by.sex = T; filter.exp = NULL; xlab = "Total length"; plot = TRUE; base_size = 8
 # dt = x; length = "Length"; maturity = "Mature"; sex = "Sex"; split.by.sex = F; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; force.zero.group.length = 0; force.zero.group.strength = 10; force.zero.group.cv = 0; xlab = "Total length";  base_size = 8; legend.position = "bottom"
 
-plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "sex", split.by.sex = FALSE, female.sex = "F", male.sex = "M", length.unit = "cm", length.bin.width = 2, force.zero.group.length = NA, force.zero.group.strength = 10, force.zero.group.cv = 0, xlab = "Total length",  base_size = 8, legend.position = "bottom", ...) {
+plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "sex", split.by.sex = FALSE, female.sex = "F", male.sex = "M", length.unit = "cm", length.bin.width = 2, force.zero.group.length = NA, force.zero.group.strength = 10, force.zero.group.cv = 0, xlab = "Total length", base_size = 8, legend.position = "bottom", ...) {
 
   # Checks
 
   if(split.by.sex) {
     if(is.null(sex)) stop("Sex column has to be specified when split.by.sex = TRUE")
-    if(!all(c(female.sex, male.sex) %in% unique(dt[[sex]]))) stop(female.sex, " or ", male.sex, " not found from the ", sex,
-                                                                  " column. Check the female.sex and male.sex parameters.")
-    if(dt %>% dplyr::pull(!!enquo(sex)) %>% na.omit() %>% length() < 10) stop("Either invalid sex column or not enough sex data")
+    if(!all(c(female.sex, male.sex) %in% unique(dt[[sex]]))) {
+      stop(female.sex, " or ", male.sex, " not found from the ", sex,
+           " column. Check the female.sex and male.sex parameters.")
+    }
+    if(dt %>% dplyr::pull(!!enquo(sex)) %>% na.omit() %>% length() < 10) {
+      stop("Either invalid sex column or not enough sex data")
+    }
   }
 
   if("length" %in% colnames(dt) && length != "length"){
@@ -211,16 +215,17 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
         scale = 0.3, size = 0.5/2.13, alpha = 0.5, ...) +
       geom_segment(data = modDat,
                    aes(x = mean, xend = mean, y = 0, yend = 0.5, color = sex),
-                   linetype = 2) +
+                   linetype = 3, size = 0.7/2.13) +
       geom_segment(data = modDat,
                    aes(x = -Inf, xend = mean, y = 0.5, yend = 0.5, color = sex),
-                   linetype = 2) +
+                   linetype = 3, size = 0.7/2.13) +
       geom_errorbarh(data = modDat,
                      aes(xmin = ci.min, xmax = ci.max, y = 0.5, color = sex),
                      height = 0.1) +
       geom_text(data = modDat,
-                aes(x = mean, y = -0.03, label =
-                      paste0(round(mean, 1), " ", length.unit, " (n = ", n, ")"),
+                aes(x = mean*c(1.15,0.85),
+                    y = -0.07, label =
+                      paste0(round(mean, 1), " ", length.unit, "\n(n = ", n, ")"),
                     color = sex), size = base_size/2.845276) +
       stat_smooth(data = dt, aes(x = length, y = maturity, color = sex),
                   method = "glm", formula = y ~ x,
@@ -243,9 +248,11 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
                                     aes(x = length, y = maturity, group = maturity),
                                     scale = 0.3, size = 0.5/2.13, alpha = 0.5, ...) +
       geom_segment(data = modDat,
-                   aes(x = mean, xend = mean, y = 0, yend = 0.5), linetype = 2) +
+                   aes(x = mean, xend = mean, y = 0, yend = 0.5), linetype = 3,
+                   size = 0.7/2.13) +
       geom_segment(data = modDat,
-                   aes(x = -Inf, xend = mean, y = 0.5, yend = 0.5), linetype = 2) +
+                   aes(x = -Inf, xend = mean, y = 0.5, yend = 0.5), linetype = 3,
+                   size = 0.7/2.13) +
       geom_errorbarh(data = modDat,
                      aes(xmin = ci.min, xmax = ci.max, y = 0.5), height = 0.1) +
       geom_text(data = modDat,

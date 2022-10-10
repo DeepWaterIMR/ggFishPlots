@@ -68,6 +68,7 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
                     !is.na(length)) %>%
     dplyr::mutate(maturity = as.integer(maturity))
 
+
   # Data manipulation when split by sex
 
   if(split.by.sex) {
@@ -80,6 +81,11 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
       dplyr::rename("sex" = tidyselect::all_of(sex)) %>%
       dplyr::filter(!is.na(sex)) %>%
       dplyr::select(length, sex, maturity)
+
+    ## More checks
+
+    if(!inherits(female.sex, class(male.sex))) stop("female.sex and male.sex are different class.")
+    if(!inherits(female.sex, class(dt$sex))) stop("female.sex (or male.sex) is not the same class as dt[[sex]].")
 
     if(!is.na(force.zero.group.length)) {
       dt <- dt %>%

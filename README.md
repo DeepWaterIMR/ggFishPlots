@@ -2,7 +2,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.1.7**
+using ggplot2. R package version 0.1.10**
 
 <!-- badges: start -->
 
@@ -97,12 +97,10 @@ plot_growth(survey_ghl, split.by.sex = TRUE)$plot
 
 ![](man/figures/README-unnamed-chunk-4-1.png)<!-- -->
 
-The dashed lines are
-![S\_{inf}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;S_%7Binf%7D "S_{inf}").
-Data behind the growth curves are shown as box plots by default. It is
-possible to plot the data as points by defining `boxplot = FALSE`. We
-can also force zero group into the curves if know the length of it.
-Assumed as 10 cm here:
+The dashed lines are $S_{inf}$. Data behind the growth curves are shown
+as box plots by default. It is possible to plot the data as points by
+defining `boxplot = FALSE`. We can also force zero group into the curves
+if know the length of it. Assumed as 10 cm here:
 
 ``` r
 plot_growth(survey_ghl, force.zero.group.length = 10, boxplot = FALSE)$plot
@@ -155,7 +153,7 @@ plot_maturity(survey_ghl, length = "age", length.unit = "years",
 
 ### Length-weight relationships
 
-Simple plot using log-transformation and linear models by default:
+Simple plot using log-transformation and linear models by default.
 
 ``` r
 plot_lw(survey_ghl, length = "length", weight = "weight")
@@ -196,13 +194,30 @@ plot_lw(survey_ghl, use.nls = TRUE)
     #> 1 a     0.00000173 0.0000000156      110.       0 0.00000170 0.00000176
     #> 2 b     3.42       0.00215          1590.       0 3.42       3.42
 
-Split by sex:
+Split by sex. Note that the length and weight units influence the a and
+b estimates. FishBase uses centimeters and grams. The function can
+correct for the units when asked (but `length.unit` and `weight.unit`
+parameters have to be defined correctly)
 
 ``` r
-plot_lw(survey_ghl, split.by.sex = TRUE)$plot
+plot_lw(survey_ghl, split.by.sex = TRUE, correct.units = TRUE)
+#> $plot
 ```
 
 ![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
+
+    #> 
+    #> $text
+    #> [1] "Logarithm transformed linear length-weight model for females and males, respectively:  \n a = 0.0035 +/- 0.003 - 0.004 (95% CIs) and 0.0051 +/- 0.005 - 0.005 (95% CIs).  \n b = 3.247 +/- 3.24 - 3.25 (95% CIs) and 3.143 +/- 3.14 - 3.15 (95% CIs).  \n Number of included specimens = 34889 and 30354  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 456891; sex = 96645"
+    #> 
+    #> $params
+    #> # A tibble: 4 × 8
+    #>   sex   term  estimate std.error statistic p.value conf.low conf.high
+    #>   <chr> <chr>    <dbl>     <dbl>     <dbl>   <dbl>    <dbl>     <dbl>
+    #> 1 F     a      0.00350   0.00765     -739.       0  0.00344   0.00355
+    #> 2 F     b      3.25      0.00195     1666.       0  3.24      3.25   
+    #> 3 M     a      0.00507   0.0101      -525.       0  0.00497   0.00517
+    #> 4 M     b      3.14      0.00265     1188.       0  3.14      3.15
 
 Log-log axes to see differences:
 
@@ -243,9 +258,9 @@ citation("ggFishPlots")
 #> 
 #> To cite package 'ggFishPlots' in publications use:
 #> 
-#>   Mikko Vihtakari (2022). ggFishPlots: Visualise and calculate life
-#>   history parameters for fisheries science using 'ggplot2'. R package
-#>   version 0.1.7. https://github.com/DeepWaterIMR/ggFishPlots
+#>   Vihtakari M (2022). _ggFishPlots: Visualise and calculate life
+#>   history parameters for fisheries science using 'ggplot2'_. R package
+#>   version 0.1.10, <https://github.com/DeepWaterIMR/ggFishPlots>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -253,7 +268,7 @@ citation("ggFishPlots")
 #>     title = {ggFishPlots: Visualise and calculate life history parameters for fisheries science using 'ggplot2'},
 #>     author = {Mikko Vihtakari},
 #>     year = {2022},
-#>     note = {R package version 0.1.7},
+#>     note = {R package version 0.1.10},
 #>     url = {https://github.com/DeepWaterIMR/ggFishPlots},
 #>   }
 ```

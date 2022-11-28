@@ -2,10 +2,14 @@
 #' @param length Character argument giving the name of the length column in \code{dt}
 #' @param weight Character argument giving the name of the age column in \code{dt}
 #' @param ylab Character giving the x-axis label without unit.
-#' @param weight.unit Character argument giving the unit of \code{weight}. Will be used in the labels of the figure.
+#' @param length.unit Character argument giving the unit of \code{length}. Will be used in the labels of the figure and for conversion of the a parameter. Allowed values for the conversion: "mm" (millimmeters), "cm" (centimeters), and "m" (meters).
+#' @param weight.unit Character argument giving the unit of \code{weight}. Will be used in the labels of the figure and for conversion of the a parameter. Allowed values: "g" (grams), "kg" (kilograms), and "t" (metric tons).
 #' @param use.nls Logical indicating whether the parameters should be calculated using the nonlinear least squares (\code{nls; TRUE}) method over the log-log transformed linear model (\code{lm; FALSE}) method.
 #' @param log.axes Logical indicating whether logarithmic axes should be used instead of cartesian ones.
+#' @param correct.units Logical indicating whether a and b parameters should be converted for centimeters and grams as in FishBase.
+#' @param verbose Logical indicating whether to return warnings and messages.
 #' @inheritParams plot_maturity
+#' @details It is crucial to get the units right when calculating length-weight relationships. In models, the length and weight units should often match those of the data going into the model, while in comparisons with FishBase the units of length and weight should be centimeters and grams, respectively. If the units are wrong, a or b will be off the FishBase scale by orders of magnitude (see \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{FishBase}). If \code{correct.units = TRUE},  \code{plot_lw()} attempts to correct for the units to the FishBase standard (cm and g). The function also returns a warning when the returned parameters are not within expected bounds for cm and g estimation. You can ignore this warning if you want to estimate values. Comparing your a and b with those in FishBase for the species is a good idea. This function may contain bugs.
 #' @return A ggplot together with the a and b parameters.
 #' @author Mikko Vihtakari // Institute of Marine Research.
 #' @import dplyr ggplot2
@@ -21,8 +25,10 @@
 #' @export
 
 # Debug parameters:
-# dt = survey_ghl; length = "length"; weight = "weight"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; weight.unit = "kg"; split.by.sex = TRUE; filter.exp = NULL; xlab = "Total length"; ylab = "Weight"; base_size = 8; use.nls = TRUE; log.axes = FALSE
-plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", weight.unit = "kg", split.by.sex = FALSE, xlab = "Total length", ylab = "Weight", use.nls = FALSE, log.axes = FALSE, base_size = 8, legend.position = "bottom") {
+# dt = survey_ghl;
+# length = "length"; weight = "weight"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; weight.unit = "kg"; split.by.sex = FALSE; xlab = "Total length"; ylab = "Weight"; use.nls = FALSE; log.axes = FALSE; base_size = 8; legend.position = "bottom"; correct.units = FALSE; verbose = TRUE
+
+plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", weight.unit = "kg", split.by.sex = FALSE, xlab = "Total length", ylab = "Weight", use.nls = FALSE, log.axes = FALSE, base_size = 8, legend.position = "bottom", correct.units = FALSE, verbose = TRUE) {
 
   # Add row number ####
 
@@ -32,8 +38,10 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
 
   if(split.by.sex) {
     if(is.null(sex)) stop("Sex column has to be specified when split.by.sex = TRUE")
-    if(!all(c(female.sex, male.sex) %in% unique(dt[[sex]]))) stop(female.sex, " or ", male.sex, " not found from the ", sex,
-                                                                  " column. Check the female.sex and male.sex parameters.")
+    if(!all(c(female.sex, male.sex) %in% unique(dt[[sex]]))) {
+      stop(female.sex, " or ", male.sex, " not found from the ", sex,
+           " column. Check the female.sex and male.sex parameters.")
+    }
     if(dt %>% dplyr::pull(!!rlang::enquo(sex)) %>% na.omit() %>% length() < 10) stop("Either invalid sex column or not enough sex data")
 
     orig.nrow <- nrow(dt)
@@ -47,17 +55,17 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
 
   # Filter
 
-    if(!exists("orig.nrow")) orig.nrow <- nrow(dt)
+  if(!exists("orig.nrow")) orig.nrow <- nrow(dt)
 
-    dt <- dt %>%
-      dplyr::rename("weight" = tidyselect::all_of(weight),
-                    "length" = tidyselect::all_of(length)
-      )
+  dt <- dt %>%
+    dplyr::rename("weight" = tidyselect::all_of(weight),
+                  "length" = tidyselect::all_of(length)
+    )
 
-    length.missing <- sum(is.na(dt$length))
-    weight.missing <- sum(is.na(dt$weight))
+  length.missing <- sum(is.na(dt$length))
+  weight.missing <- sum(is.na(dt$weight))
 
-    dt <- dt %>% dplyr::filter(!is.na(weight) & !is.na(length))
+  dt <- dt %>% dplyr::filter(!is.na(weight) & !is.na(length))
 
   ## Select columns
 
@@ -65,6 +73,31 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
     dt <- dt %>% dplyr::select(id, sex, weight, length)
   } else {
     dt <- dt %>% dplyr::select(id, weight, length)
+  }
+
+  ## Convert data
+
+  if(correct.units) {
+    if(length.unit == "mm") {
+      if(verbose) message("length unit converted from mm to cm")
+      dt$length <- dt$length/100
+      length.unit <- "cm"
+    }
+    if(length.unit == "m") {
+      if(verbose) message("length unit converted from m to cm")
+      dt$length <- dt$length*100
+      length.unit <- "cm"
+    }
+    if(weight.unit == "kg") {
+      if(verbose) message("weight unit converted from kg to g")
+      dt$weight <- dt$weight*1e3
+      weight.unit <- "g"
+    }
+    if(weight.unit == "t") {
+      if(verbose) message("weight unit converted from t to g")
+      dt$weight <- dt$weight*1e6
+      weight.unit <- "g"
+    }
   }
 
   # Calculate a and b ####
@@ -107,6 +140,14 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
         exp(lwModPars[lwModPars$term == "a", c("estimate", "conf.low", "conf.high")])
     }
   }
+
+  ## a tests
+  tmp <- log10(lwModPars[lwModPars$term == "a", "estimate"])
+  if(verbose & any(tmp <= -5 | tmp >= -1)) warning("The a parameter appears out of its bounds for cm and g estimation. Check that you got the units right.")
+
+  ## b tests
+  tmp <- lwModPars[lwModPars$term == "b", "estimate"]
+  if(verbose & any(tmp <= 2.8 | tmp >= 3.8)) warning("The b parameter appears out of its bounds for cm and g estimation. Check that you got the units right.")
 
   # Plot
 

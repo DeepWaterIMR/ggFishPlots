@@ -93,7 +93,7 @@ plot_maturity(survey_ghl, length = "age", length.unit = "years",
 
 ### Length-weight relationships
 
-Simple plot using log-transformation and linear models by default:
+Simple plot using log-transformation and linear models by default.
 
 ```{r}
 plot_lw(survey_ghl, length = "length", weight = "weight")
@@ -105,10 +105,10 @@ The dashed lines represent 95% confidence intervals. Use non-linear least square
 plot_lw(survey_ghl, use.nls = TRUE)
 ```
 
-Split by sex:
+Split by sex. Note that the length and weight units influence the a and b estimates. FishBase uses centimeters and grams. The function can correct for the units when asked (but `length.unit` and `weight.unit` parameters have to be defined correctly)
 
 ```{r}
-plot_lw(survey_ghl, split.by.sex = TRUE)$plot
+plot_lw(survey_ghl, split.by.sex = TRUE, correct.units = TRUE)
 ```
 
 Log-log axes to see differences:

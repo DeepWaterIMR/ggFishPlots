@@ -85,7 +85,7 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
     ## More checks
 
     if(!inherits(female.sex, class(male.sex))) stop("female.sex and male.sex are different class.")
-    if(!inherits(female.sex, class(dt$sex))) stop("female.sex (or male.sex) is not the same class as dt[[sex]].")
+    # if(!inherits(female.sex, class(dt$sex))) stop("female.sex (or male.sex) is not the same class as dt[[sex]].")
 
     if(!is.na(force.zero.group.length)) {
       dt <- dt %>%

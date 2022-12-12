@@ -17,6 +17,8 @@ plot_lw(
   xlab = "Total length",
   ylab = "Weight",
   use.nls = FALSE,
+  init.a = NULL,
+  init.b = NULL,
   log.axes = FALSE,
   base_size = 8,
   legend.position = "bottom",
@@ -49,6 +51,8 @@ plot_lw(
 
 \item{use.nls}{Logical indicating whether the parameters should be calculated using the nonlinear least squares (\code{nls; TRUE}) method over the log-log transformed linear model (\code{lm; FALSE}) method.}
 
+\item{init.a, init.b}{Numeric values giving the starting value for a and b parameters respecitively for non-linear least-squares estimation (i.e. when \code{use.nls = TRUE}). If \code{NULL}, default values are guessed.}
+
 \item{log.axes}{Logical indicating whether logarithmic axes should be used instead of cartesian ones.}
 
 \item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
@@ -66,7 +70,7 @@ A ggplot together with the a and b parameters.
 Plot length-weight relationships
 }
 \details{
-It is crucial to get the units right when calculating length-weight relationships. In models, the length and weight units should often match those of the data going into the model, while in comparisons with FishBase the units of length and weight should be centimeters and grams, respectively. If the units are wrong, a or b will be off the FishBase scale by orders of magnitude (see \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{FishBase}). If \code{correct.units = TRUE},  \code{plot_lw()} attempts to correct for the units to the FishBase standard (cm and g). The function also returns a warning when the returned parameters are not within expected bounds for cm and g estimation. You can ignore this warning if you want to estimate values. Comparing your a and b with those in FishBase for the species is a good idea. This function may contain bugs.
+It is crucial to get the units right when calculating length-weight relationships. In models, the length and weight units should often match those of the data going into the model, while in comparisons with FishBase, the units of length and weight should be centimetres and grams, respectively. If the units are wrong, the intercept, a, will be off the FishBase scale by orders of magnitude (see \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{FishBase}). If \code{correct.units = TRUE}, \code{plot_lw()} attempts to correct for the units to the FishBase standard (cm and g). The function also returns a warning when the returned parameters are not within expected bounds for cm and g estimation. You can ignore this warning if you want to estimate values. Comparing your a and b with those in FishBase for the species is a good idea. This function may contain bugs.
 }
 \examples{
 data(survey_ghl)

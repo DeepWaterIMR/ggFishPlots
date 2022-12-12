@@ -5,11 +5,12 @@
 #' @param length.unit Character argument giving the unit of \code{length}. Will be used in the labels of the figure and for conversion of the a parameter. Allowed values for the conversion: "mm" (millimmeters), "cm" (centimeters), and "m" (meters).
 #' @param weight.unit Character argument giving the unit of \code{weight}. Will be used in the labels of the figure and for conversion of the a parameter. Allowed values: "g" (grams), "kg" (kilograms), and "t" (metric tons).
 #' @param use.nls Logical indicating whether the parameters should be calculated using the nonlinear least squares (\code{nls; TRUE}) method over the log-log transformed linear model (\code{lm; FALSE}) method.
+#' @param init.a,init.b Numeric values giving the starting value for a and b parameters respecitively for non-linear least-squares estimation (i.e. when \code{use.nls = TRUE}). If \code{NULL}, default values are guessed.
 #' @param log.axes Logical indicating whether logarithmic axes should be used instead of cartesian ones.
 #' @param correct.units Logical indicating whether a and b parameters should be converted for centimeters and grams as in FishBase.
 #' @param verbose Logical indicating whether to return warnings and messages.
 #' @inheritParams plot_maturity
-#' @details It is crucial to get the units right when calculating length-weight relationships. In models, the length and weight units should often match those of the data going into the model, while in comparisons with FishBase the units of length and weight should be centimeters and grams, respectively. If the units are wrong, a or b will be off the FishBase scale by orders of magnitude (see \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{FishBase}). If \code{correct.units = TRUE},  \code{plot_lw()} attempts to correct for the units to the FishBase standard (cm and g). The function also returns a warning when the returned parameters are not within expected bounds for cm and g estimation. You can ignore this warning if you want to estimate values. Comparing your a and b with those in FishBase for the species is a good idea. This function may contain bugs.
+#' @details It is crucial to get the units right when calculating length-weight relationships. In models, the length and weight units should often match those of the data going into the model, while in comparisons with FishBase, the units of length and weight should be centimetres and grams, respectively. If the units are wrong, the intercept, a, will be off the FishBase scale by orders of magnitude (see \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{FishBase}). If \code{correct.units = TRUE}, \code{plot_lw()} attempts to correct for the units to the FishBase standard (cm and g). The function also returns a warning when the returned parameters are not within expected bounds for cm and g estimation. You can ignore this warning if you want to estimate values. Comparing your a and b with those in FishBase for the species is a good idea. This function may contain bugs.
 #' @return A ggplot together with the a and b parameters.
 #' @author Mikko Vihtakari // Institute of Marine Research.
 #' @import dplyr ggplot2
@@ -28,7 +29,7 @@
 # dt = survey_ghl;
 # length = "length"; weight = "weight"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; weight.unit = "kg"; split.by.sex = FALSE; xlab = "Total length"; ylab = "Weight"; use.nls = FALSE; log.axes = FALSE; base_size = 8; legend.position = "bottom"; correct.units = FALSE; verbose = TRUE
 
-plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", weight.unit = "kg", split.by.sex = FALSE, xlab = "Total length", ylab = "Weight", use.nls = FALSE, log.axes = FALSE, base_size = 8, legend.position = "bottom", correct.units = FALSE, verbose = TRUE) {
+plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", weight.unit = "kg", split.by.sex = FALSE, xlab = "Total length", ylab = "Weight", use.nls = FALSE, init.a = NULL, init.b = NULL, log.axes = FALSE, base_size = 8, legend.position = "bottom", correct.units = FALSE, verbose = TRUE) {
 
   # Add row number ####
 
@@ -98,6 +99,16 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
       dt$weight <- dt$weight*1e6
       weight.unit <- "g"
     }
+    if(is.null(init.a)) init.a <- 1e-3
+    if(is.null(init.b)) init.b <- 3
+  } else {
+    if(length.unit == "cm" & weight.unit == "kg") {
+      if(is.null(init.a)) init.a <- 1e-6
+      if(is.null(init.b)) init.b <- 3
+    } else {
+      if(is.null(init.a)) init.a <- 1e-3
+      if(is.null(init.b)) init.b <- 3
+    }
   }
 
   # Calculate a and b ####
@@ -108,12 +119,16 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
       lwModPars <-
         dt %>%
         dplyr::group_by(sex) %>%
-        dplyr::do(mod = broom::tidy(nls(I(weight)~a*length^b,., start = list(a = 1e-6, b = 3)), conf.int = TRUE)) %>%
+        dplyr::do(mod = broom::tidy(nls(I(weight)~a*length^b,.,
+                                        start = list(a = init.a, b = init.b)),
+                                    conf.int = TRUE)) %>%
         tidyr::unnest(mod)
     } else {
       lwModPars <-
         dt %>%
-        dplyr::do(mod = broom::tidy(nls(I(weight)~a*length^b,., start = list(a = 1e-6, b = 3)), conf.int = TRUE)) %>%
+        dplyr::do(mod = broom::tidy(nls(I(weight)~a*length^b,.,
+                                        start = list(a = init.a, b = init.b)),
+                                    conf.int = TRUE)) %>%
         tidyr::unnest(mod)
     }
 

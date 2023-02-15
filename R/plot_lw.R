@@ -158,11 +158,11 @@ plot_lw <- function(dt, length = "length", weight = "weight", sex = "sex", femal
 
   ## a tests
   tmp <- log10(lwModPars[lwModPars$term == "a", "estimate"])
-  if(verbose & any(tmp <= -5 | tmp >= -1)) warning("The a parameter appears out of its bounds for cm and g estimation. Check that you got the units right.")
+  if(verbose & any(tmp <= -5 | tmp >= -1) & length.unit == "cm" & weight.unit == "g") warning("The a parameter appears out of its bounds for cm and g estimation. Check that you got the units right.")
 
   ## b tests
   tmp <- lwModPars[lwModPars$term == "b", "estimate"]
-  if(verbose & any(tmp <= 2.8 | tmp >= 3.8)) warning("The b parameter appears out of its bounds for cm and g estimation. Check that you got the units right.")
+  if(verbose & any(tmp <= 2.8 | tmp >= 3.8)  & length.unit == "cm" & weight.unit == "g") warning("The b parameter appears out of its bounds for cm and g estimation. Check that you got the units right.")
 
   # Plot
 

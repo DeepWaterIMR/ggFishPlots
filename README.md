@@ -2,7 +2,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.1.10**
+using ggplot2. R package version 0.1.13**
 
 <!-- badges: start -->
 
@@ -77,7 +77,7 @@ plot_growth(survey_ghl, length = "length", age = "age")
 
     #> 
     #> $text
-    #> [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.3 - -2.8 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"
+    #> [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"
     #> 
     #> $params
     #> # A tibble: 3 × 7
@@ -258,17 +258,17 @@ citation("ggFishPlots")
 #> 
 #> To cite package 'ggFishPlots' in publications use:
 #> 
-#>   Vihtakari M (2022). _ggFishPlots: Visualise and calculate life
+#>   Vihtakari M (2023). _ggFishPlots: Visualise and calculate life
 #>   history parameters for fisheries science using 'ggplot2'_. R package
-#>   version 0.1.10, <https://github.com/DeepWaterIMR/ggFishPlots>.
+#>   version 0.1.13, <https://github.com/DeepWaterIMR/ggFishPlots>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {ggFishPlots: Visualise and calculate life history parameters for fisheries science using 'ggplot2'},
 #>     author = {Mikko Vihtakari},
-#>     year = {2022},
-#>     note = {R package version 0.1.10},
+#>     year = {2023},
+#>     note = {R package version 0.1.13},
 #>     url = {https://github.com/DeepWaterIMR/ggFishPlots},
 #>   }
 ```

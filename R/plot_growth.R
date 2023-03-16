@@ -180,7 +180,9 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         tmpF <- predict(eval(parse(text = paste0("laModF$", growth.model))), newdata = data.frame(age = 0:max(dt$age)))
         laModFpred <- data.frame(age = 0:max(dt$age), length = tmpF)
 
-        tryshit <- try(broom::tidy(eval(parse(text = paste0("laModF$", growth.model))), conf.int = TRUE))
+        tryshit <- try({
+          broom::tidy(eval(parse(text = paste0("laModF$", growth.model))), conf.int = TRUE)},
+          silent = TRUE)
 
         if(any(class(tryshit) == "try-error")) {
           laModparsF <- dplyr::bind_cols(sex = female.sex, broom::tidy(eval(parse(text = paste0("laModF$", growth.model))), conf.int = FALSE))
@@ -197,7 +199,9 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         tmpM <- predict(eval(parse(text = paste0("laModM$", growth.model))), newdata = data.frame(age = 0:max(dt$age)))
         laModMpred <- data.frame(age = 0:max(dt$age), length = tmpM)
 
-        tryshit <- try(broom::tidy(eval(parse(text = paste0("laModM$", growth.model))), conf.int = TRUE))
+        tryshit <- try({
+          broom::tidy(eval(parse(text = paste0("laModM$", growth.model))), conf.int = TRUE)},
+          silent = TRUE)
 
         if(any(class(tryshit) == "try-error")) {
           laModparsM <- dplyr::bind_cols(sex = male.sex, broom::tidy(eval(parse(text = paste0("laModM$", growth.model))), conf.int = FALSE))
@@ -285,7 +289,15 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
 
       laModpred <- data.frame(age = 0:max(dt$age), length = predict(eval(parse(text = paste0("laMod$", growth.model))), newdata = data.frame(age = 0:max(dt$age))))
 
-      laModpars <- broom::tidy(eval(parse(text = paste0("laMod$", growth.model))), conf.int = TRUE)
+      tryshit <- try(
+        {broom::tidy(eval(parse(text = paste0("laMod$", growth.model))), conf.int = TRUE)},
+        silent = TRUE)
+
+      if(any(class(tryshit) == "try-error")) {
+        laModpars <- dplyr::bind_cols(broom::tidy(eval(parse(text = paste0("laMod$", growth.model))), conf.int = FALSE))
+      } else {
+        laModpars <- dplyr::bind_cols(tryshit)
+      }
 
       Plot <-
         suppressWarnings({
@@ -304,11 +316,14 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
 
       Text <- paste0(
         mod.name, " growth function coefficients:  \n Linf (asymptotic average length) = ",
-        round(laModpars$estimate[1], 1), " ", length.unit, " +/- ", round(laModpars$conf.low[1], 1), " - ", round(laModpars$conf.high[1], 1), " (95% CIs)",
+        round(laModpars$estimate[1], 1), " ", length.unit, " +/- ",
+        if("conf.low" %in% names(laModpars)) {paste0(round(laModpars$conf.low[1], 1), " - ", round(laModpars$conf.high[1], 1), " (95% CIs)")} else {paste0("no CIs")},
         "  \n K (growth rate coefficient) = ",
-        round(laModpars$estimate[2], 4), " +/- ", round(laModpars$conf.low[2], 3), " - ", round(laModpars$conf.high[2], 3), " (95% CIs)",
+        round(laModpars$estimate[2], 4), " +/- ",
+        if("conf.low" %in% names(laModpars)) {paste0(round(laModpars$conf.low[2], 3), " - ", round(laModpars$conf.high[2], 3), " (95% CIs)")} else {paste0("no CIs")},
         "  \n t0 (age at length 0) = ",
-        round(laModpars$estimate[3], 2), " (years) +/- ", round(laModpars$conf.low[3], 1), " - ", round(laModpars$conf.high[3], 1), " (95% CIs)",
+        round(laModpars$estimate[3], 2), " (years) +/- ",
+        if("conf.low" %in% names(laModpars)) {paste0(round(laModpars$conf.low[3], 3), " - ", round(laModpars$conf.high[3], 3), " (95% CIs)")} else {paste0("no CIs")},
         "  \n tmax (life span; t0 + 3/K) = ", round(laModpars$estimate[3] + 3 / laModpars$estimate[2], 1), " years",
         "  \n Number of included specimens = ", nrow(dt),
         "  \n Total number of measured = ", orig.nrow,

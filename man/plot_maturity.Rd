@@ -15,7 +15,8 @@ plot_maturity(
   length.unit = "cm",
   length.bin.width = 2,
   force.zero.group.length = NA,
-  force.zero.group.strength = 10,
+  force.zero.group.strength = NA,
+  force.zero.group.n = NA,
   force.zero.group.cv = 0,
   xlab = "Total length",
   base_size = 8,
@@ -44,7 +45,9 @@ plot_maturity(
 
 \item{force.zero.group.length}{Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.}
 
-\item{force.zero.group.strength}{Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}.}
+\item{force.zero.group.strength}{Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}. Cannot be used simultaneously with \code{force.zero.group.n}}
+
+\item{force.zero.group.n}{Numeric indicating how many observations should be added to the specified \code{force.zero.group.length}. If \code{split.by.sex = TRUE}, use a named vector of length two with names referring to \code{female.sex} and \code{male.sex}. Cannot be used simultaneously with \code{force.zero.group.strength}}
 
 \item{force.zero.group.cv}{Numeric indicating the coefficient of variation for the forced 0-group (all immature) length. Resulting lengths will be randomly generated from a normal distribution.}
 

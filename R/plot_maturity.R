@@ -11,7 +11,8 @@
 #' @param male.sex A character denoting male sex in the \code{sex} column of \code{dt}
 #' @param force.zero.group.length Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.
 #' @param force.zero.group.cv Numeric indicating the coefficient of variation for the forced 0-group (all immature) length. Resulting lengths will be randomly generated from a normal distribution.
-#' @param force.zero.group.strength Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}.
+#' @param force.zero.group.strength Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}. Cannot be used simultaneously with \code{force.zero.group.n}
+#' @param force.zero.group.n Numeric indicating how many observations should be added to the specified \code{force.zero.group.length}. If \code{split.by.sex = TRUE}, use a named vector of length two with names referring to \code{female.sex} and \code{male.sex}. Cannot be used simultaneously with \code{force.zero.group.strength}
 #' @param xlab Character giving the x-axis label without unit
 #' @param base_size Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.
 #' @param legend.position Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.
@@ -34,9 +35,9 @@
 
 # Debug parameters
 # dt = survey_ghl; length = "length"; maturity = "maturity"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; split.by.sex = T; filter.exp = NULL; xlab = "Total length"; plot = TRUE; base_size = 8
-# dt = x; length = "Length"; maturity = "Mature"; sex = "Sex"; split.by.sex = F; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; force.zero.group.length = 0; force.zero.group.strength = 10; force.zero.group.cv = 0; xlab = "Total length";  base_size = 8; legend.position = "bottom"
+# dt = x; length = "Length"; maturity = "Mature"; sex = "Sex"; split.by.sex = T; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; force.zero.group.length = 0; force.zero.group.strength = NA; force.zero.group.n = c("F" = 488, "M" = 181); force.zero.group.cv = 0; xlab = "Total length";  base_size = 8; legend.position = "bottom"
 
-plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "sex", split.by.sex = FALSE, female.sex = "F", male.sex = "M", length.unit = "cm", length.bin.width = 2, force.zero.group.length = NA, force.zero.group.strength = 10, force.zero.group.cv = 0, xlab = "Total length", base_size = 8, legend.position = "bottom", ...) {
+plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "sex", split.by.sex = FALSE, female.sex = "F", male.sex = "M", length.unit = "cm", length.bin.width = 2, force.zero.group.length = NA, force.zero.group.strength = NA, force.zero.group.n = NA, force.zero.group.cv = 0, xlab = "Total length", base_size = 8, legend.position = "bottom", ...) {
 
   # Checks
 
@@ -48,6 +49,22 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
     }
     if(dt %>% dplyr::pull(!!enquo(sex)) %>% na.omit() %>% length() < 10) {
       stop("Either invalid sex column or not enough sex data")
+    }
+  }
+
+  if(!is.na(force.zero.group.length)) {
+    if(is.na(force.zero.group.strength) & any(is.na(force.zero.group.n))) {
+      stop("You want to use force.zero.group? Specify either force.zero.group.strength or force.zero.group.n")
+    }
+
+    if(!is.na(force.zero.group.strength) & !all(is.na(force.zero.group.n))) {
+      stop("force.zero.group.strength and force.zero.group.n cannot be used simultaneously. Set either of these to NA")
+    }
+
+    if(all(!is.na(force.zero.group.n)) & split.by.sex) {
+      if(length(force.zero.group.n) != 2) stop("force.zero.group.n has to be a numeric vector of length 2 when split.by.sex = TRUE")
+      if(is.null(names(force.zero.group.n))) stop("force.zero.group.n has to be a named vector when split.by.sex = TRUE. Use same names than female.sex and male.sex")
+      if(any(!names(force.zero.group.n) %in% c(female.sex, male.sex))) stop("Names of force.zero.group.n have to equal those of female.sex and male.sex")
     }
   }
 
@@ -88,26 +105,39 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
     # if(!inherits(female.sex, class(dt$sex))) stop("female.sex (or male.sex) is not the same class as dt[[sex]].")
 
     if(!is.na(force.zero.group.length)) {
-      dt <- dt %>%
-        tibble::add_column(type = "data") %>%
-        bind_rows(
-          tibble::tibble(
-            length = rnorm(sum(dt$sex == female.sex)*(force.zero.group.strength/100),
-                           force.zero.group.length,
-                           force.zero.group.length*force.zero.group.cv),
-            sex = female.sex,
-            maturity = 0,
-            type = "made"
-          ),
-          tibble::tibble(
-            length = rnorm(sum(dt$sex == male.sex)*(force.zero.group.strength/100),
-                           force.zero.group.length,
-                           force.zero.group.length*force.zero.group.cv),
-            sex = male.sex,
-            maturity = 0,
-            type = "made"
+
+        dt <- dt %>%
+          tibble::add_column(type = "data") %>%
+          bind_rows(
+            tibble::tibble(
+              length = if(!is.na(force.zero.group.strength)) {
+                rnorm(sum(dt$sex == female.sex)*(force.zero.group.strength/100),
+                               force.zero.group.length,
+                               force.zero.group.length*force.zero.group.cv)
+              } else {
+                rnorm(force.zero.group.n[[female.sex]],
+                               force.zero.group.length,
+                               force.zero.group.length*force.zero.group.cv)
+              },
+              sex = female.sex,
+              maturity = 0,
+              type = "made"
+            ),
+            tibble::tibble(
+              length = if(!is.na(force.zero.group.strength)) {
+                rnorm(sum(dt$sex == male.sex)*(force.zero.group.strength/100),
+                      force.zero.group.length,
+                      force.zero.group.length*force.zero.group.cv)
+              } else {
+                rnorm(force.zero.group.n[[male.sex]],
+                      force.zero.group.length,
+                      force.zero.group.length*force.zero.group.cv)
+              },
+              sex = male.sex,
+              maturity = 0,
+              type = "made"
+            )
           )
-        )
     }
 
     if(!is.null(length.bin.width)) {
@@ -221,10 +251,10 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
         scale = 0.3, size = 0.5/2.13, alpha = 0.5, ...) +
       geom_segment(data = modDat,
                    aes(x = mean, xend = mean, y = 0, yend = 0.5, color = sex),
-                   linetype = 3, size = 0.7/2.13) +
+                   linetype = 3, linewidth = 0.7/2.13) +
       geom_segment(data = modDat,
                    aes(x = -Inf, xend = mean, y = 0.5, yend = 0.5, color = sex),
-                   linetype = 3, size = 0.7/2.13) +
+                   linetype = 3, linewidth = 0.7/2.13) +
       geom_errorbarh(data = modDat,
                      aes(xmin = ci.min, xmax = ci.max, y = 0.5, color = sex),
                      height = 0.1) +
@@ -235,7 +265,7 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
                     color = sex), size = base_size/2.845276) +
       stat_smooth(data = dt, aes(x = length, y = maturity, color = sex),
                   method = "glm", formula = y ~ x,
-                  method.args = list(family = "binomial"), size = 1/2.13) +
+                  method.args = list(family = "binomial"), linewidth = 1/2.13) +
       scale_x_continuous(paste0(xlab, " (", length.unit, ")"), expand = c(0,0)) +
       scale_y_continuous("Maturity", breaks = seq(0,1,0.2)) +
       coord_cartesian(xlim = c(0, ceiling(max(dt$length)))) +
@@ -255,10 +285,10 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
                                     scale = 0.3, size = 0.5/2.13, alpha = 0.5, ...) +
       geom_segment(data = modDat,
                    aes(x = mean, xend = mean, y = 0, yend = 0.5), linetype = 3,
-                   size = 0.7/2.13) +
+                   linewidth = 0.7/2.13) +
       geom_segment(data = modDat,
                    aes(x = -Inf, xend = mean, y = 0.5, yend = 0.5), linetype = 3,
-                   size = 0.7/2.13) +
+                   linewidth = 0.7/2.13) +
       geom_errorbarh(data = modDat,
                      aes(xmin = ci.min, xmax = ci.max, y = 0.5), height = 0.1) +
       geom_text(data = modDat,
@@ -267,7 +297,7 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
                 size = base_size/2.845276) +
       stat_smooth(data = dt, aes(x = length, y = maturity),
                   method = "glm", formula = y ~ x,
-                  method.args = list(family = "binomial"), size = 1/2.13) +
+                  method.args = list(family = "binomial"), linewidth = 1/2.13) +
       scale_x_continuous(paste0(xlab, " (", length.unit, ")"), , expand = c(0,0)) +
       scale_y_continuous("Maturity", breaks = seq(0,1,0.2)) +
       coord_cartesian(xlim = c(0, ceiling(max(dt$length)))) +

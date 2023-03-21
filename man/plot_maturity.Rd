@@ -14,6 +14,7 @@ plot_maturity(
   male.sex = "M",
   length.unit = "cm",
   length.bin.width = 2,
+  bootstrap.n = NA,
   force.zero.group.length = NA,
   force.zero.group.strength = NA,
   force.zero.group.n = NA,
@@ -43,6 +44,8 @@ plot_maturity(
 
 \item{length.bin.width}{Numeric specifying the increment (delta length) by which length data should be binned to calculate maturity proportions. Use \code{NULL} to remove from the plot.}
 
+\item{bootstrap.n}{Integer defining the number of bootstrap replicates to be used to calculate 95\% confidence intervals for the mean 50\% mature estimate. If \code{NA} (default), the confidence intervals are calculated from the glm object without boostrapping. See Details.}
+
 \item{force.zero.group.length}{Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.}
 
 \item{force.zero.group.strength}{Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}. Cannot be used simultaneously with \code{force.zero.group.n}}
@@ -66,16 +69,26 @@ Returns a ggplot2 or tibble depending on the \code{plot} argument showing the ma
 Plots an estimate of length or age at 50\% mature for a dataset
 }
 \details{
-Depends on the tidyverse and ggridges packages. The dplyr and ggplot2 packages must be loaded into the workspace.
+The 95\% confidence intervals for the mean 50\% mature estimate are calculated using the \link[stats]{glm} function by default. This routine might not be optimal when zero group fish are added. Hence, the function contains an option to bootstrap confidence intervals using \emph{the same number of data than observations} (i.e. excluding the added data from the number of randomly resampled rows). Adding an integer to the \code{bootstrap.n} argument turns on this feature. Note that the confidence intervals calculated this way tend to be narrower than the \code{glm()} confidence intervals.
 }
 \examples{
 # Simple L50 plot
 data(survey_ghl)
 plot_maturity(survey_ghl, length = "length", maturity = "maturity")
+\donttest{
+# Bootstrapped CIs are narrower than the glm ones
+plot_maturity(survey_ghl, bootstrap.n = 10)
 
 # A50 plot, split by sex
 plot_maturity(survey_ghl, length = "age", length.unit = "years",
 xlab = "Age", length.bin.width = 1, split.by.sex = TRUE)$plot
+
+# Add juveniles
+plot_maturity(survey_ghl, length = "age", length.unit = "years",
+xlab = "Age", length.bin.width = 1, split.by.sex = TRUE,
+force.zero.group.length = 0,
+force.zero.group.strength = 100)$plot
+}
 }
 \author{
 Mikko Vihtakari // Institute of Marine Research.

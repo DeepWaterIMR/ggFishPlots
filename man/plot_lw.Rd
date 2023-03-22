@@ -77,9 +77,10 @@ data(survey_ghl)
 
 # Simple plot
 plot_lw(survey_ghl, length = "length", weight = "weight")
-
+\donttest{
 # Split by sex
 plot_lw(survey_ghl, split.by.sex = TRUE)$plot
+}
 }
 \author{
 Mikko Vihtakari // Institute of Marine Research.

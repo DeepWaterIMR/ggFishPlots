@@ -19,7 +19,9 @@ knitr::opts_chunk$set(
 **Visualise and calculate life history parameters for fisheries science using ggplot2. R package version `r packageVersion("ggFishPlots")`**
 
 <!-- badges: start -->
+<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4554714.svg)](https://doi.org/10.5281/zenodo.4554714) -->
 [![R-CMD-check](https://github.com/DeepWaterIMR/ggFishPlots/workflows/R-CMD-check/badge.svg)](https://github.com/DeepWaterIMR/ggFishPlots/actions)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/ggFishPlots)](https://CRAN.R-project.org/package=ggFishPlots)
 <!-- badges: end -->
 
 ## Overview
@@ -28,11 +30,11 @@ The ggFishPlots package for [R](https://www.r-project.org/) allows quickly plott
 
 The ggOceanMaps package has been developed by the [Institute of Marine Research](https://www.hi.no/en). Note that the package comes with absolutely no warranty. Any [bug reports and code fixes](https://github.com/DeepWaterIMR/ggFishPlots/issues) are warmly welcomed. See [*Contributions*](#contributions) for further details.
 
-If you are looking for other similar packages, make sure to check out  [AquaticLifeHistory](https://jonathansmart.github.io/AquaticLifeHistory/articles/Maturity_analyses.html).
+If you are looking for other similar packages, make sure to check out  the [AquaticLifeHistory](https://jonathansmart.github.io/AquaticLifeHistory/articles/Maturity_analyses.html) and [FSA](https://CRAN.R-project.org/package=FSA) packages, as well as the [FishR webpage](https://fishr-core-team.github.io/fishR/pages/packages.html).
 
 ## Installation
 
-The package is currently available only on [GitHub](https://github.com/DeepWaterIMR/ggFishPlots). It can be installed directly using the [**devtools**](https://cran.r-project.org/web/packages/devtools/index.html) or remotes packages. 
+The package most up to date version of the package can always be found from [GitHub](https://github.com/DeepWaterIMR/ggFishPlots). If the [CRAN version](https://CRAN.R-project.org/package=ggFishPlots) does not work as shown in shown in the examples on this website, try installing the GitHub version. You can do this by using the [devtools](https://cran.r-project.org/web/packages/devtools/index.html) or [remotes](https://cran.r-project.org/web/packages/remotes/index.html) packages. 
 
 ```{r eval = FALSE}
 devtools::install_github("DeepWaterIMR/ggFishPlots")
@@ -40,11 +42,11 @@ devtools::install_github("DeepWaterIMR/ggFishPlots")
 
 ## Usage
 
-At the time of writing, the package produces three kinds of plots: growth curves, maturity plots, and length-weight relationships. Each function returns a ggplot2 plot and the estimated parameters as a text string that can be used in Rmarkdown and Shiny applications as well as a data frame for further use of the parameters. The elements are returned as a list. The package contains example data to illustrate the functionality.
+At the time of writing, the package produces four kinds of plots: growth curves, maturity plots, length-weight relationships, and catch curves. Each function returns a ggplot2 plot and the estimated parameters as a text string that can be used in Rmarkdown and Shiny applications as well as a data frame for further use of the parameters. The elements are returned as a list. The package contains example data to illustrate the functionality.
 
 ### Growth curves
 
-Simple plot. Note how the `text` and `params` are returned as a list together with `plot`.
+Note how the `text` and `params` are returned as a list together with `plot`.
 
 ```{r}
 library(ggFishPlots)
@@ -56,33 +58,55 @@ head(survey_ghl)
 plot_growth(survey_ghl, length = "length", age = "age")
 ```
 
-Split by sex. Specifying `length`, `age` and `sex` arguments have been omitted since they are the argument names by default and the same than in the example data. Only the `plot` element is returned this time.
+The `text` object can be rendered to R markdown documents using the `results = 'asis'` setting in the code chunk header (i.e. `{r, results = 'asis'}`) and the `cat()` function after replacing `"\n"` by `"\  n"`:
+
+```{r, results='asis'}
+htmlcat <- function(text){
+  cat(gsub(pattern = "\n", replacement = "  \n", x = text))
+}
+
+htmlcat(plot_growth(survey_ghl)$text)
+```
+
+#### Split by sex
+
+Specifying `length`, `age` and `sex` arguments have been omitted since they are the argument names by default and the same than in the example data. Only the `plot` element is returned this time.
 
 ```{r}
 plot_growth(survey_ghl, split.by.sex = TRUE)$plot
 ```
 
-The dashed lines are $S_{inf}$. Data behind the growth curves are shown as box plots by default. It is possible to plot the data as points by defining `boxplot = FALSE`. We can also force zero group into the curves if know the length of it. Assumed as 10 cm here: 
+The dashed lines are $S_{inf}$. Data behind the growth curves are shown as box plots by default. It is possible to plot the data as points by defining `boxplot = FALSE`. We can also force zero group into the curves if know the length of it. Assumed as 14 cm here. Zero group forcing strength is 10 % of number of observations by default and can be adjusted using the `force.zero.group.strength` argument.
 
 ```{r}
-plot_growth(survey_ghl, force.zero.group.length = 10, boxplot = FALSE)$plot
+plot_growth(survey_ghl, force.zero.group.length = 14, boxplot = FALSE)$plot
 ```
 
 ### Maturity plots
 
-Simple L50 plot:
+#### L50 plots
+
+Maturity ogives are estimated using a logistic (`family = binomial(link = "logit")`) [`glm()`](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/glm)
 
 ```{r}
 plot_maturity(survey_ghl, length = "length", maturity = "maturity")
 ```
 
-The error bars represent 95% confidence intervals calculated from the model object using the [`confint()`](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/confint.html) function and back-transformed to the original scale. The grey stepped line is a binned average defined using the `length.bin.width` argument.
+The error bars represent 95% confidence intervals calculated from the model object using the [`confint()`](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/confint.html) function and back-transformed to the original scale. The grey stepped line is a binned average defined using the `length.bin.width` argument. 
 
-Split by sex:
+The function also contains an option to bootstrap the confidence intervals (CIs) which will produce narrower CIs. Bootstrapping is probably a more correct way of estimating CIs in this application. Using only 10 replicates here to save processing time. In real application use at least 1000.
+
+```{r}
+plot_maturity(survey_ghl, bootstrap.n = 10)
+```
+
+#### Split by sex
 
 ```{r}
 plot_maturity(survey_ghl, split.by.sex = TRUE)$plot
 ```
+
+#### A50 plots
 
 The same principle can be used to produce A50 (50% maturity at age) plots:
 
@@ -91,7 +115,33 @@ plot_maturity(survey_ghl, length = "age", length.unit = "years",
               xlab = "Age", length.bin.width = 1, split.by.sex = TRUE)$plot
 ```
 
+#### Addition of juveniles
+
+Also the `plot_maturity()` function has the option to add juveniles (zero group fish). The addition of juveniles can be necessary for to make the `glm()` to converge if small immature fish are scarce in the dataset. 
+
+```{r}
+plot_maturity(survey_ghl, length = "age", length.unit = "years",
+              xlab = "Age", length.bin.width = 1, 
+              force.zero.group.length = 0,
+              force.zero.group.strength = 100,
+              split.by.sex = TRUE)$plot
+```
+
+Note how the addition increases the estimate for males because the dataset did not contain a sufficient number of young males which the number of females seems sufficient because females mature older in this species.
+
+One option can be to estimate the number of added juveniles using the [`plot_catchcurve()`](#catchcurvesep) function:
+
+```{r}
+plot_maturity(survey_ghl, length = "age", length.unit = "years",
+              xlab = "Age", length.bin.width = 1, 
+              force.zero.group.length = 0,
+              force.zero.group.n = c("F" = exp(11.363), "M" = exp(11.885)),
+              split.by.sex = TRUE)$plot
+```
+
 ### Length-weight relationships
+
+#### Log-linearized models
 
 Simple plot using log-transformation and linear models by default.
 
@@ -99,28 +149,71 @@ Simple plot using log-transformation and linear models by default.
 plot_lw(survey_ghl, length = "length", weight = "weight")
 ```
 
-The dashed lines represent 95% confidence intervals. Use non-linear least squares instead:
+The dashed lines represent 95% confidence intervals. 
+
+#### Non-linear least square models
+
+Use non-linear least squares instead:
 
 ```{r}
 plot_lw(survey_ghl, use.nls = TRUE)
 ```
 
-Split by sex. Note that the length and weight units influence the a and b estimates. FishBase uses centimeters and grams. The function can correct for the units when asked (but `length.unit` and `weight.unit` parameters have to be defined correctly)
+#### Split by sex
+
+The decimal point of a and b estimates depends on the length and weight units. [FishBase](https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm) uses centimeters and grams. The function can correct for the units when asked (but `length.unit` and `weight.unit` parameters have to be defined correctly).
 
 ```{r}
 plot_lw(survey_ghl, split.by.sex = TRUE, correct.units = TRUE)
 ```
 
-Log-log axes to see differences:
+You can also transform the parameters according to the formulas given in the FishBase.
+
+```{r}
+plot_lw(survey_ghl %>% dplyr::mutate(weight = weight*1000), weight.unit = "g")$params
+```
+
+
+#### Log-log axes to see differences
 
 ```{r}
 plot_lw(survey_ghl, split.by.sex = TRUE, log.axes = TRUE)$plot
 ```
 
-Note that the floating point in the parameters depends on the [length and weight units](https://www.fishbase.de/manual/fishbasethe_length_weight_table.htm). According to the FishBase, one should use centimeters and grams but you can also transform the parameters according to the formulas given in the FishBase too.
+### Catch curves to estimate instantaneous total mortality (Z)
+
+Catch curves were added to the version 0.2.3 and may not be available in the CRAN version. [A FishR tutorial written by Ogle (2013)](https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm) contains a nice explanation of catch curves. At the time of writing ggFishPlots calculates only the simple log-linearised regression. 
 
 ```{r}
-plot_lw(survey_ghl %>% dplyr::mutate(weight = weight*1000), weight.unit = "g")$params
+plot_catchcurve(survey_ghl)
+```
+
+The ages to be included to the Z estimation can be adjusted using the `age.range` argument.
+
+```{r}
+plot_catchcurve(survey_ghl, age.range = c(10,26))$plot
+```
+
+In the plot above, -b is Z (i.e. Z = 0.356) and exp(a) (i.e. 68391) is the number of 0 age fish assuming constant mortality.
+
+#### Split by sex {#catchcurvesep}
+
+```{r}
+plot_catchcurve(survey_ghl, age.range = c(10,26), split.by.sex = TRUE)$plot
+```
+
+Use a named list to use separate age ranges for females and males.
+
+```{r}
+tmp <- plot_catchcurve(survey_ghl,
+age.range = list(female = c(13,26), male = c(10,26)),
+split.by.sex = TRUE)
+
+tmp$plot
+```
+
+```{r, results='asis'}
+htmlcat(tmp$text)
 ```
 
 ## Citations and data sources

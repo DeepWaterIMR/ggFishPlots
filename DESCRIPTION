@@ -1,7 +1,7 @@
 Package: ggFishPlots
 Type: Package
 Title: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'
-Version: 0.2.2
+Version: 0.2.3
 Date: 2023-03-21
 Authors@R: c(person("Mikko", "Vihtakari", email = "mikko.vihtakari@hi.no",
                   role = c("aut", "cre"), 
@@ -16,7 +16,7 @@ Description: Contains functions to create life history parameter plots from raw 
 	(Froese R., Pauly. D., 2023) <https://www.fishbase.se/>.
 Depends: R (>= 3.5.0), ggplot2
 Imports: dplyr, tibble, tidyr, ggridges, fishmethods, broom, rlang, tidyselect,
-  magrittr, ggrepel
+  magrittr, ggrepel, scales
 Suggests: knitr, rmarkdown
 License: GPL-3
 Encoding: UTF-8

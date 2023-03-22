@@ -2,11 +2,13 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.1.13**
+using ggplot2. R package version 0.2.3**
 
 <!-- badges: start -->
+<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4554714.svg)](https://doi.org/10.5281/zenodo.4554714) -->
 
 [![R-CMD-check](https://github.com/DeepWaterIMR/ggFishPlots/workflows/R-CMD-check/badge.svg)](https://github.com/DeepWaterIMR/ggFishPlots/actions)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/ggFishPlots)](https://CRAN.R-project.org/package=ggFishPlots)
 <!-- badges: end -->
 
 ## Overview
@@ -24,15 +26,22 @@ fixes](https://github.com/DeepWaterIMR/ggFishPlots/issues) are warmly
 welcomed. See [*Contributions*](#contributions) for further details.
 
 If you are looking for other similar packages, make sure to check out
-[AquaticLifeHistory](https://jonathansmart.github.io/AquaticLifeHistory/articles/Maturity_analyses.html).
+the
+[AquaticLifeHistory](https://jonathansmart.github.io/AquaticLifeHistory/articles/Maturity_analyses.html)
+and [FSA](https://CRAN.R-project.org/package=FSA) packages, as well as
+the [FishR
+webpage](https://fishr-core-team.github.io/fishR/pages/packages.html).
 
 ## Installation
 
-The package is currently available only on
-[GitHub](https://github.com/DeepWaterIMR/ggFishPlots). It can be
-installed directly using the
-[**devtools**](https://cran.r-project.org/web/packages/devtools/index.html)
-or remotes packages.
+The package most up to date version of the package can always be found
+from [GitHub](https://github.com/DeepWaterIMR/ggFishPlots). If the [CRAN
+version](https://CRAN.R-project.org/package=ggFishPlots) does not work
+as shown in shown in the examples on this website, try installing the
+GitHub version. You can do this by using the
+[devtools](https://cran.r-project.org/web/packages/devtools/index.html)
+or [remotes](https://cran.r-project.org/web/packages/remotes/index.html)
+packages.
 
 ``` r
 devtools::install_github("DeepWaterIMR/ggFishPlots")
@@ -40,18 +49,18 @@ devtools::install_github("DeepWaterIMR/ggFishPlots")
 
 ## Usage
 
-At the time of writing, the package produces three kinds of plots:
-growth curves, maturity plots, and length-weight relationships. Each
-function returns a ggplot2 plot and the estimated parameters as a text
-string that can be used in Rmarkdown and Shiny applications as well as a
-data frame for further use of the parameters. The elements are returned
-as a list. The package contains example data to illustrate the
+At the time of writing, the package produces four kinds of plots: growth
+curves, maturity plots, length-weight relationships, and catch curves.
+Each function returns a ggplot2 plot and the estimated parameters as a
+text string that can be used in Rmarkdown and Shiny applications as well
+as a data frame for further use of the parameters. The elements are
+returned as a list. The package contains example data to illustrate the
 functionality.
 
 ### Growth curves
 
-Simple plot. Note how the `text` and `params` are returned as a list
-together with `plot`.
+Note how the `text` and `params` are returned as a list together with
+`plot`.
 
 ``` r
 library(ggFishPlots)
@@ -87,45 +96,76 @@ plot_growth(survey_ghl, length = "length", age = "age")
     #> 2 K       0.0633   0.00231      27.4 4.90e-160   0.0586    0.0680
     #> 3 t0     -3.04     0.139       -21.8 1.71e-103  -3.34     -2.77
 
-Split by sex. Specifying `length`, `age` and `sex` arguments have been
-omitted since they are the argument names by default and the same than
-in the example data. Only the `plot` element is returned this time.
+The `text` object can be rendered to R markdown documents using the
+`results = 'asis'` setting in the code chunk header
+(i.e. `{r, results = 'asis'}`) and the `cat()` function after replacing
+`"\n"` by `"\  n"`:
+
+``` r
+htmlcat <- function(text){
+  cat(gsub(pattern = "\n", replacement = "  \n", x = text))
+}
+
+htmlcat(plot_growth(survey_ghl)$text)
+```
+
+von Bertalanffy growth function coefficients:  
+Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  
+K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  
+t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  
+tmax (life span; t0 + 3/K) = 44.4 years  
+Number of included specimens = 10401  
+Total number of measured = 618779  
+Excluded (length or age missing):  
+Length = 0; age = 608378
+
+#### Split by sex
+
+Specifying `length`, `age` and `sex` arguments have been omitted since
+they are the argument names by default and the same than in the example
+data. Only the `plot` element is returned this time.
 
 ``` r
 plot_growth(survey_ghl, split.by.sex = TRUE)$plot
 ```
 
-![](man/figures/README-unnamed-chunk-4-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-5-1.png)<!-- -->
 
 The dashed lines are $S_{inf}$. Data behind the growth curves are shown
 as box plots by default. It is possible to plot the data as points by
 defining `boxplot = FALSE`. We can also force zero group into the curves
-if know the length of it. Assumed as 10 cm here:
+if know the length of it. Assumed as 14 cm here. Zero group forcing
+strength is 10 % of number of observations by default and can be
+adjusted using the `force.zero.group.strength` argument.
 
 ``` r
-plot_growth(survey_ghl, force.zero.group.length = 10, boxplot = FALSE)$plot
+plot_growth(survey_ghl, force.zero.group.length = 14, boxplot = FALSE)$plot
 ```
 
-![](man/figures/README-unnamed-chunk-5-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-6-1.png)<!-- -->
 
 ### Maturity plots
 
-Simple L50 plot:
+#### L50 plots
+
+Maturity ogives are estimated using a logistic
+(`family = binomial(link = "logit")`)
+[`glm()`](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/glm)
 
 ``` r
 plot_maturity(survey_ghl, length = "length", maturity = "maturity")
 #> $plot
 ```
 
-![](man/figures/README-unnamed-chunk-6-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-7-1.png)<!-- -->
 
     #> 
     #> $text
-    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.781 cm. 95% confidence intervals: 52.848 - 56.787\n  Number of specimens: 64186"
+    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.784 cm. 95% confidence intervals: 52.852 - 56.787\n  Number of specimens: 64265.\n Confidence intervals estimated from the glm object."
     #> 
     #> $params
-    #>       mean   ci.min  ci.max     n
-    #> 1 54.78111 52.84785 56.7868 64186
+    #>       mean   ci.min ci.max  sex intercept     slope     n
+    #> 1 54.78361 52.85249 56.787 both -5.755492 0.1050587 64265
 
 The error bars represent 95% confidence intervals calculated from the
 model object using the
@@ -133,13 +173,36 @@ model object using the
 function and back-transformed to the original scale. The grey stepped
 line is a binned average defined using the `length.bin.width` argument.
 
-Split by sex:
+The function also contains an option to bootstrap the confidence
+intervals (CIs) which will produce narrower CIs. Bootstrapping is
+probably a more correct way of estimating CIs in this application. Using
+only 10 replicates here to save processing time. In real application use
+at least 1000.
+
+``` r
+plot_maturity(survey_ghl, bootstrap.n = 10)
+#> $plot
+```
+
+![](man/figures/README-unnamed-chunk-8-1.png)<!-- -->
+
+    #> 
+    #> $text
+    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.754 cm. 95% confidence intervals: 54.674 - 54.818\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
+    #> 
+    #> $params
+    #>       mean   ci.min   ci.max  sex intercept     slope     n
+    #> 1 54.75423 54.67441 54.81768 both -5.755492 0.1050587 64265
+
+#### Split by sex
 
 ``` r
 plot_maturity(survey_ghl, split.by.sex = TRUE)$plot
 ```
 
-![](man/figures/README-unnamed-chunk-7-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-9-1.png)<!-- -->
+
+#### A50 plots
 
 The same principle can be used to produce A50 (50% maturity at age)
 plots:
@@ -149,9 +212,46 @@ plot_maturity(survey_ghl, length = "age", length.unit = "years",
               xlab = "Age", length.bin.width = 1, split.by.sex = TRUE)$plot
 ```
 
-![](man/figures/README-unnamed-chunk-8-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->
+
+#### Addition of juveniles
+
+Also the `plot_maturity()` function has the option to add juveniles
+(zero group fish). The addition of juveniles can be necessary for to
+make the `glm()` to converge if small immature fish are scarce in the
+dataset.
+
+``` r
+plot_maturity(survey_ghl, length = "age", length.unit = "years",
+              xlab = "Age", length.bin.width = 1, 
+              force.zero.group.length = 0,
+              force.zero.group.strength = 100,
+              split.by.sex = TRUE)$plot
+```
+
+![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
+
+Note how the addition increases the estimate for males because the
+dataset did not contain a sufficient number of young males which the
+number of females seems sufficient because females mature older in this
+species.
+
+One option can be to estimate the number of added juveniles using the
+[`plot_catchcurve()`](#catchcurvesep) function:
+
+``` r
+plot_maturity(survey_ghl, length = "age", length.unit = "years",
+              xlab = "Age", length.bin.width = 1, 
+              force.zero.group.length = 0,
+              force.zero.group.n = c("F" = exp(11.363), "M" = exp(11.885)),
+              split.by.sex = TRUE)$plot
+```
+
+![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
 
 ### Length-weight relationships
+
+#### Log-linearized models
 
 Simple plot using log-transformation and linear models by default.
 
@@ -160,7 +260,7 @@ plot_lw(survey_ghl, length = "length", weight = "weight")
 #> $plot
 ```
 
-![](man/figures/README-unnamed-chunk-9-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-13-1.png)<!-- -->
 
     #> 
     #> $text
@@ -173,15 +273,18 @@ plot_lw(survey_ghl, length = "length", weight = "weight")
     #> 1 a     0.00000382   0.00491    -2540.       0 0.00000379 0.00000386
     #> 2 b     3.22         0.00128     2519.       0 3.22       3.22
 
-The dashed lines represent 95% confidence intervals. Use non-linear
-least squares instead:
+The dashed lines represent 95% confidence intervals.
+
+#### Non-linear least square models
+
+Use non-linear least squares instead:
 
 ``` r
 plot_lw(survey_ghl, use.nls = TRUE)
 #> $plot
 ```
 
-![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-14-1.png)<!-- -->
 
     #> 
     #> $text
@@ -194,17 +297,21 @@ plot_lw(survey_ghl, use.nls = TRUE)
     #> 1 a     0.00000173 0.0000000156      110.       0 0.00000170 0.00000176
     #> 2 b     3.42       0.00215          1590.       0 3.42       3.42
 
-Split by sex. Note that the length and weight units influence the a and
-b estimates. FishBase uses centimeters and grams. The function can
-correct for the units when asked (but `length.unit` and `weight.unit`
-parameters have to be defined correctly)
+#### Split by sex
+
+The decimal point of a and b estimates depends on the length and weight
+units.
+[FishBase](https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm)
+uses centimeters and grams. The function can correct for the units when
+asked (but `length.unit` and `weight.unit` parameters have to be defined
+correctly).
 
 ``` r
 plot_lw(survey_ghl, split.by.sex = TRUE, correct.units = TRUE)
 #> $plot
 ```
 
-![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-15-1.png)<!-- -->
 
     #> 
     #> $text
@@ -219,20 +326,8 @@ plot_lw(survey_ghl, split.by.sex = TRUE, correct.units = TRUE)
     #> 3 M     a      0.00507   0.0101      -525.       0  0.00497   0.00517
     #> 4 M     b      3.14      0.00265     1188.       0  3.14      3.15
 
-Log-log axes to see differences:
-
-``` r
-plot_lw(survey_ghl, split.by.sex = TRUE, log.axes = TRUE)$plot
-```
-
-![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
-
-Note that the floating point in the parameters depends on the [length
-and weight
-units](https://www.fishbase.de/manual/fishbasethe_length_weight_table.htm).
-According to the FishBase, one should use centimeters and grams but you
-can also transform the parameters according to the formulas given in the
-FishBase too.
+You can also transform the parameters according to the formulas given in
+the FishBase.
 
 ``` r
 plot_lw(survey_ghl %>% dplyr::mutate(weight = weight*1000), weight.unit = "g")$params
@@ -242,6 +337,89 @@ plot_lw(survey_ghl %>% dplyr::mutate(weight = weight*1000), weight.unit = "g")$p
 #> 1 a      0.00382   0.00491    -1133.       0  0.00379   0.00386
 #> 2 b      3.22      0.00128     2519.       0  3.22      3.22
 ```
+
+#### Log-log axes to see differences
+
+``` r
+plot_lw(survey_ghl, split.by.sex = TRUE, log.axes = TRUE)$plot
+```
+
+![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
+
+### Catch curves to estimate instantaneous total mortality (Z)
+
+Catch curves were added to the version 0.2.3 and may not be available in
+the CRAN version. [A FishR tutorial written by Ogle
+(2013)](https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm)
+contains a nice explanation of catch curves. At the time of writing
+ggFishPlots calculates only the simple log-linearised regression.
+
+``` r
+plot_catchcurve(survey_ghl)
+#> $plot
+```
+
+![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
+
+    #> 
+    #> $text
+    #> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 (23.8-68.8 95% CIs)\n\n"
+    #> 
+    #> $params
+    #> # A tibble: 2 × 8
+    #>   sex   term        estimate std.error statistic  p.value conf.low conf.high
+    #>   <chr> <chr>          <dbl>     <dbl>     <dbl>    <dbl>    <dbl>     <dbl>
+    #> 1 both  (Intercept)    7.28     0.573      12.7  2.25e-13    6.11      8.45 
+    #> 2 both  age           -0.190    0.0328     -5.79 2.85e- 6   -0.257    -0.123
+
+The ages to be included to the Z estimation can be adjusted using the
+`age.range` argument.
+
+``` r
+plot_catchcurve(survey_ghl, age.range = c(10,26))$plot
+```
+
+![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
+
+In the plot above, -b is Z (i.e. Z = 0.356) and exp(a) (i.e. 68391) is
+the number of 0 age fish assuming constant mortality.
+
+#### Split by sex
+
+``` r
+plot_catchcurve(survey_ghl, age.range = c(10,26), split.by.sex = TRUE)$plot
+```
+
+![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
+
+Use a named list to use separate age ranges for females and males.
+
+``` r
+tmp <- plot_catchcurve(survey_ghl,
+age.range = list(female = c(13,26), male = c(10,26)),
+split.by.sex = TRUE)
+
+tmp$plot
+```
+
+![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
+
+``` r
+htmlcat(tmp$text)
+```
+
+Instantenous total mortality (Z) estimated using a catch curve and  
+age range 13-26 for females and 10-26 for males.
+
+Females:  
+Z = 0.37 (0.31-0.431 95% CIs)  
+N at age 0 = 86119 (25990-285354 95% CIs)  
+Longevity = 30.7 (23.6-40.5 95% CIs)
+
+Males:  
+Z = 0.511 (0.492-0.53 95% CIs)  
+N at age 0 = 145002 (105241-199785 95% CIs)  
+Longevity = 23.3 (21.8-24.8 95% CIs)
 
 ## Citations and data sources
 
@@ -258,17 +436,17 @@ citation("ggFishPlots")
 #> 
 #> To cite package 'ggFishPlots' in publications use:
 #> 
-#>   Vihtakari M (2023). _ggFishPlots: Visualise and calculate life
-#>   history parameters for fisheries science using 'ggplot2'_. R package
-#>   version 0.1.13, <https://github.com/DeepWaterIMR/ggFishPlots>.
+#>   Vihtakari M (2023). _ggFishPlots: Visualise and Calculate Life
+#>   History Parameters for Fisheries Science using 'ggplot2'_. R package
+#>   version 0.2.3, <https://github.com/DeepWaterIMR/ggFishPlots>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
-#>     title = {ggFishPlots: Visualise and calculate life history parameters for fisheries science using 'ggplot2'},
+#>     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'},
 #>     author = {Mikko Vihtakari},
 #>     year = {2023},
-#>     note = {R package version 0.1.13},
+#>     note = {R package version 0.2.3},
 #>     url = {https://github.com/DeepWaterIMR/ggFishPlots},
 #>   }
 ```

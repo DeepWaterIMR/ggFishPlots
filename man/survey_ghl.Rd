@@ -8,7 +8,7 @@
 A dataframe
 }
 \source{
-Institute of Marine Research (\url{https://www.imr.no})
+Institute of Marine Research (\url{https://www.hi.no/hi})
 }
 \usage{
 data(survey_ghl)

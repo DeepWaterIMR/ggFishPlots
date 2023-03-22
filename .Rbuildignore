@@ -1,3 +1,8 @@
+[.]DS_Store$
+\\.DS_Store$
+^.*\.DS_Store$
+^\.DS_Store$
+"(^|/)\\.DS_Store$"
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.md$
@@ -10,5 +15,3 @@
 ^\.github$
 ^LICENSE$
 ^NEWS\.md$
-^ggOceanMapsData
-^vignettes$

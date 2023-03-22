@@ -24,6 +24,7 @@
 #' @import dplyr ggplot2
 #' @importFrom ggridges geom_density_ridges
 #' @importFrom stats na.omit binomial coef glm predict rnorm quantile
+#' @importFrom ggrepel geom_text_repel
 #' @examples
 #' # Simple L50 plot
 #' data(survey_ghl)
@@ -315,11 +316,12 @@ if(split.by.sex) {
     geom_errorbarh(data = modDat,
                    aes(xmin = ci.min, xmax = ci.max, y = 0.5, color = sex),
                    height = 0.1) +
-    geom_text(data = modDat,
+    ggrepel::geom_text_repel(data = modDat,
               aes(x = mean,
                   y = -0.07, label =
                     paste0(round(mean, 1), " ", length.unit, "\n(n = ", n, ")"),
-                  color = sex), size = base_size/2.845276) +
+                  color = sex), size = base_size/2.845276,
+              direction = "x", min.segment.length = 100) +
     stat_smooth(data = dt, aes(x = length, y = maturity, color = sex),
                 method = "glm", formula = y ~ x,
                 method.args = list(family = "binomial"), linewidth = 1/2.13) +

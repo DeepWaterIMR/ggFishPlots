@@ -69,10 +69,12 @@ Uses the \code{fishmethods::growth} function to calculate the growth curves. Zer
 # Simple plot. Note that a list is returned.
 data(survey_ghl)
 plot_growth(survey_ghl, length = "length", age = "age")
+\donttest{
 # Split by sex
 plot_growth(survey_ghl, split.by.sex = TRUE)$plot
 # Data as points. Forcing zero group to 10 cm
 plot_growth(survey_ghl, force.zero.group.length = 10, boxplot = FALSE)$plot
+}
 }
 \author{
 Mikko Vihtakari // Institute of Marine Research.

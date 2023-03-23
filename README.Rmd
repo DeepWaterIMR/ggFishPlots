@@ -26,23 +26,23 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The ggFishPlots package for [R](https://www.r-project.org/) allows quickly plotting and calculating life history parameters required by stock assessment models. The package uses [ggplot2](https://ggplot2.tidyverse.org/reference) for plotting and the [tidyverse](https://www.tidyverse.org/) packages for calculations.
+The [ggFishPlots](https://deepwaterimr.github.io/ggFishPlots/) package for [R](https://www.r-project.org/) allows quickly plotting and calculating life history parameters required by stock assessment models. The package uses [ggplot2](https://ggplot2.tidyverse.org/reference) for plotting and the [tidyverse](https://www.tidyverse.org/) packages for calculations.
 
 The ggOceanMaps package has been developed by the [Institute of Marine Research](https://www.hi.no/en). Note that the package comes with absolutely no warranty. Any [bug reports and code fixes](https://github.com/DeepWaterIMR/ggFishPlots/issues) are warmly welcomed. See [*Contributions*](#contributions) for further details.
 
-If you are looking for other similar packages, make sure to check out  the [AquaticLifeHistory](https://jonathansmart.github.io/AquaticLifeHistory/articles/Maturity_analyses.html) and [FSA](https://CRAN.R-project.org/package=FSA) packages, as well as the [FishR webpage](https://fishr-core-team.github.io/fishR/pages/packages.html).
+If you are looking for other similar packages, make sure to check out the [AquaticLifeHistory](https://jonathansmart.github.io/AquaticLifeHistory/articles/Maturity_analyses.html),  [FSA](https://CRAN.R-project.org/package=FSA), and [fishmethods](https://CRAN.R-project.org/package=fishmethods) packages, as well as the [FishR webpage](https://fishr-core-team.github.io/fishR/pages/packages.html).
 
 ## Installation
 
-The package most up to date version of the package can always be found from [GitHub](https://github.com/DeepWaterIMR/ggFishPlots). If the [CRAN version](https://CRAN.R-project.org/package=ggFishPlots) does not work as shown in shown in the examples on this website, try installing the GitHub version. You can do this by using the [devtools](https://cran.r-project.org/web/packages/devtools/index.html) or [remotes](https://cran.r-project.org/web/packages/remotes/index.html) packages. 
+The most up to date version of the package can always be found from [GitHub](https://github.com/DeepWaterIMR/ggFishPlots). If the [CRAN version](https://CRAN.R-project.org/package=ggFishPlots) does not work as shown in the examples on this website, try installing the GitHub version. You can do this by using the [devtools](https://cran.r-project.org/web/packages/devtools/index.html) or [remotes](https://cran.r-project.org/web/packages/remotes/index.html) packages. 
 
 ```{r eval = FALSE}
-devtools::install_github("DeepWaterIMR/ggFishPlots")
+remotes::install_github("DeepWaterIMR/ggFishPlots")
 ```
 
 ## Usage
 
-At the time of writing, the package produces four kinds of plots: growth curves, maturity plots, length-weight relationships, and catch curves. Each function returns a ggplot2 plot and the estimated parameters as a text string that can be used in Rmarkdown and Shiny applications as well as a data frame for further use of the parameters. The elements are returned as a list. The package contains example data to illustrate the functionality.
+The package has a [website](https://deepwaterimr.github.io/ggFishPlots/). At the time of writing, the package produces four kinds of plots: [growth curves](#growth-curves), [maturity plots](#maturity-plots), [length-weight relationships](#length-weight-relationships), and [catch curves](#catch-curves-to-estimate-instantaneous-total-mortality-z). Each function returns a ggplot2 plot and the estimated parameters as a text string that can be used in Rmarkdown and Shiny applications as well as a data frame for further use of the parameters. The elements are returned as a list. The package contains example data to illustrate the functionality.
 
 ### Growth curves
 
@@ -206,11 +206,13 @@ Use a named list to use separate age ranges for females and males.
 
 ```{r}
 tmp <- plot_catchcurve(survey_ghl,
-age.range = list(female = c(13,26), male = c(10,26)),
+age.range = list("F" = c(13,26), "M" = c(10,26)),
 split.by.sex = TRUE)
 
 tmp$plot
 ```
+
+Parameter estimates for the catch curve above:
 
 ```{r, results='asis'}
 htmlcat(tmp$text)

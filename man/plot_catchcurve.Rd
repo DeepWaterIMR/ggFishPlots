@@ -8,6 +8,7 @@ plot_catchcurve(
   dt,
   age = "age",
   sex = "sex",
+  time = NULL,
   age.range = NULL,
   female.sex = "F",
   male.sex = "M",
@@ -23,7 +24,9 @@ plot_catchcurve(
 
 \item{sex}{Character argument giving the name of the sex column in \code{dt}. Ignored if \code{split.by.sex == FALSE}.}
 
-\item{age.range}{Defines the age range to be used for Z estimation. If \code{NULL}, all ages are used. If a numeric vector of length 2, the first number defines the minimum age to include and the last number the maximum age. It is also possible to use differring ranges by sex when \code{split.by.sex = TRUE}: use a named list with 'female' and 'male' as names. Provide a numeric vector of length 2 to each element. See Examples.}
+\item{time}{Split analysis by time? If \code{NULL}, all data are assumed to stem from one time point. Using a character argument giving the name of a time column splits the analysis by unique values in that column and produces a faceted plot.}
+
+\item{age.range}{Defines the age range to be used for Z estimation. If \code{NULL}, all ages are used. If a numeric vector of length 2, the first number defines the minimum age to include and the last number the maximum age. It is also possible to use differing ranges by sex when \code{split.by.sex = TRUE}: use a named list  of length two with names referring to \code{female.sex} and \code{male.sex}. Provide a numeric vector of length 2 to each element (first number defining the minimum age to include and the last number the maximum age). See Examples.}
 
 \item{female.sex}{A character denoting female sex in the \code{sex} column of \code{dt}}
 
@@ -52,7 +55,7 @@ plot_catchcurve(survey_ghl, age.range = c(10,26))
 plot_catchcurve(survey_ghl, age.range = c(10,26), split.by.sex = TRUE)
 # Split by sex, separate age.range
 plot_catchcurve(survey_ghl,
-age.range = list(female = c(13,26), male = c(10,26)),
+age.range = list("F" = c(13,26), "M" = c(10,26)),
 split.by.sex = TRUE)
 }
 }

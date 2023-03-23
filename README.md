@@ -2,7 +2,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.2.3**
+using ggplot2. R package version 0.2.4**
 
 <!-- badges: start -->
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4554714.svg)](https://doi.org/10.5281/zenodo.4554714) -->
@@ -13,11 +13,12 @@ using ggplot2. R package version 0.2.3**
 
 ## Overview
 
-The ggFishPlots package for [R](https://www.r-project.org/) allows
-quickly plotting and calculating life history parameters required by
-stock assessment models. The package uses
-[ggplot2](https://ggplot2.tidyverse.org/reference) for plotting and the
-[tidyverse](https://www.tidyverse.org/) packages for calculations.
+The [ggFishPlots](https://deepwaterimr.github.io/ggFishPlots/) package
+for [R](https://www.r-project.org/) allows quickly plotting and
+calculating life history parameters required by stock assessment models.
+The package uses [ggplot2](https://ggplot2.tidyverse.org/reference) for
+plotting and the [tidyverse](https://www.tidyverse.org/) packages for
+calculations.
 
 The ggOceanMaps package has been developed by the [Institute of Marine
 Research](https://www.hi.no/en). Note that the package comes with
@@ -27,34 +28,39 @@ welcomed. See [*Contributions*](#contributions) for further details.
 
 If you are looking for other similar packages, make sure to check out
 the
-[AquaticLifeHistory](https://jonathansmart.github.io/AquaticLifeHistory/articles/Maturity_analyses.html)
-and [FSA](https://CRAN.R-project.org/package=FSA) packages, as well as
-the [FishR
+[AquaticLifeHistory](https://jonathansmart.github.io/AquaticLifeHistory/articles/Maturity_analyses.html),
+[FSA](https://CRAN.R-project.org/package=FSA), and
+[fishmethods](https://CRAN.R-project.org/package=fishmethods) packages,
+as well as the [FishR
 webpage](https://fishr-core-team.github.io/fishR/pages/packages.html).
 
 ## Installation
 
-The package most up to date version of the package can always be found
-from [GitHub](https://github.com/DeepWaterIMR/ggFishPlots). If the [CRAN
+The most up to date version of the package can always be found from
+[GitHub](https://github.com/DeepWaterIMR/ggFishPlots). If the [CRAN
 version](https://CRAN.R-project.org/package=ggFishPlots) does not work
-as shown in shown in the examples on this website, try installing the
-GitHub version. You can do this by using the
+as shown in the examples on this website, try installing the GitHub
+version. You can do this by using the
 [devtools](https://cran.r-project.org/web/packages/devtools/index.html)
 or [remotes](https://cran.r-project.org/web/packages/remotes/index.html)
 packages.
 
 ``` r
-devtools::install_github("DeepWaterIMR/ggFishPlots")
+remotes::install_github("DeepWaterIMR/ggFishPlots")
 ```
 
 ## Usage
 
-At the time of writing, the package produces four kinds of plots: growth
-curves, maturity plots, length-weight relationships, and catch curves.
-Each function returns a ggplot2 plot and the estimated parameters as a
-text string that can be used in Rmarkdown and Shiny applications as well
-as a data frame for further use of the parameters. The elements are
-returned as a list. The package contains example data to illustrate the
+The package has a
+[website](https://deepwaterimr.github.io/ggFishPlots/). At the time of
+writing, the package produces four kinds of plots: [growth
+curves](#growth-curves), [maturity plots](#maturity-plots),
+[length-weight relationships](#length-weight-relationships), and [catch
+curves](#catch-curves-to-estimate-instantaneous-total-mortality-z). Each
+function returns a ggplot2 plot and the estimated parameters as a text
+string that can be used in Rmarkdown and Shiny applications as well as a
+data frame for further use of the parameters. The elements are returned
+as a list. The package contains example data to illustrate the
 functionality.
 
 ### Growth curves
@@ -188,11 +194,11 @@ plot_maturity(survey_ghl, bootstrap.n = 10)
 
     #> 
     #> $text
-    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.754 cm. 95% confidence intervals: 54.674 - 54.818\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
+    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.777 cm. 95% confidence intervals: 54.638 - 54.923\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
     #> 
     #> $params
-    #>       mean   ci.min   ci.max  sex intercept     slope     n
-    #> 1 54.75423 54.67441 54.81768 both -5.755492 0.1050587 64265
+    #>       mean  ci.min   ci.max  sex intercept     slope     n
+    #> 1 54.77727 54.6383 54.92337 both -5.755492 0.1050587 64265
 
 #### Split by sex
 
@@ -363,7 +369,7 @@ plot_catchcurve(survey_ghl)
 
     #> 
     #> $text
-    #> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 (23.8-68.8 95% CIs)\n\n"
+    #> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"
     #> 
     #> $params
     #> # A tibble: 2 × 8
@@ -396,7 +402,7 @@ Use a named list to use separate age ranges for females and males.
 
 ``` r
 tmp <- plot_catchcurve(survey_ghl,
-age.range = list(female = c(13,26), male = c(10,26)),
+age.range = list("F" = c(13,26), "M" = c(10,26)),
 split.by.sex = TRUE)
 
 tmp$plot
@@ -404,22 +410,24 @@ tmp$plot
 
 ![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
+Parameter estimates for the catch curve above:
+
 ``` r
 htmlcat(tmp$text)
 ```
 
 Instantenous total mortality (Z) estimated using a catch curve and  
-age range 13-26 for females and 10-26 for males.
+age range for females and for males.
 
 Females:  
 Z = 0.37 (0.31-0.431 95% CIs)  
 N at age 0 = 86119 (25990-285354 95% CIs)  
-Longevity = 30.7 (23.6-40.5 95% CIs)
+Longevity = 30.7 years (23.6 - 40.5 95% CIs)
 
 Males:  
 Z = 0.511 (0.492-0.53 95% CIs)  
 N at age 0 = 145002 (105241-199785 95% CIs)  
-Longevity = 23.3 (21.8-24.8 95% CIs)
+Longevity = 23.3 years (21.8 - 24.8 95% CIs)
 
 ## Citations and data sources
 
@@ -438,7 +446,7 @@ citation("ggFishPlots")
 #> 
 #>   Vihtakari M (2023). _ggFishPlots: Visualise and Calculate Life
 #>   History Parameters for Fisheries Science using 'ggplot2'_. R package
-#>   version 0.2.3, <https://github.com/DeepWaterIMR/ggFishPlots>.
+#>   version 0.2.4, <https://deepwaterimr.github.io/ggFishPlots/>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -446,8 +454,8 @@ citation("ggFishPlots")
 #>     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'},
 #>     author = {Mikko Vihtakari},
 #>     year = {2023},
-#>     note = {R package version 0.2.3},
-#>     url = {https://github.com/DeepWaterIMR/ggFishPlots},
+#>     note = {R package version 0.2.4},
+#>     url = {https://deepwaterimr.github.io/ggFishPlots/},
 #>   }
 ```
 

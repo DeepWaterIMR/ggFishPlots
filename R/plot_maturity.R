@@ -320,8 +320,8 @@ if(split.by.sex) {
               aes(x = mean,
                   y = -0.07, label =
                     paste0(round(mean, 1), " ", length.unit, "\n(n = ", n, ")"),
-                  color = sex), size = base_size/2.845276,
-              direction = "x", min.segment.length = 100) +
+                  color = sex), size = 0.8*base_size/2.845276,
+              direction = "x", min.segment.length = 100, force = 4) +
     stat_smooth(data = dt, aes(x = length, y = maturity, color = sex),
                 method = "glm", formula = y ~ x,
                 method.args = list(family = "binomial"), linewidth = 1/2.13) +
@@ -353,7 +353,7 @@ if(split.by.sex) {
     geom_text(data = modDat,
               aes(x = mean, y = -0.03, label =
                     paste0(round(mean, 1), " ", length.unit, " (n = ", n, ")")),
-              size = base_size/2.845276) +
+              size = 0.8*base_size/2.845276) +
     stat_smooth(data = dt, aes(x = length, y = maturity),
                 method = "glm", formula = y ~ x,
                 method.args = list(family = "binomial"), linewidth = 1/2.13) +

@@ -46,8 +46,7 @@
 #' @export
 
 # Debug parameters
-# dt = survey_ghl; length = "length"; maturity = "maturity"; sex = "sex"; split.by.sex = FALSE; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; bootstrap.n = 10; force.zero.group.length = NA; force.zero.group.strength = NA; force.zero.group.n = NA; force.zero.group.cv = 0; xlab = "Total length"; base_size = 8; legend.position = "bottom"
-# dt = x; length = "Length"; maturity = "Mature"; sex = "Sex"; split.by.sex = T; female.sex = "F"; male.sex = "M"; length.unit = "cm"; bootstrap.n = NA; length.bin.width = 2; force.zero.group.length = 0; force.zero.group.strength = NA; force.zero.group.n = c("F" = 256, "M" = 174); force.zero.group.cv = 0; xlab = "Total length"; base_size = 8; legend.position = "bottom"
+# length = "length"; maturity = "maturity"; sex = "sex"; split.by.sex = FALSE; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; bootstrap.n = NA; force.zero.group.length = NA; force.zero.group.strength = NA; force.zero.group.n = NA; force.zero.group.cv = 0; xlab = "Total length"; base_size = 8; legend.position = "bottom"
 
 plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "sex", split.by.sex = FALSE, female.sex = "F", male.sex = "M", length.unit = "cm", length.bin.width = 2, bootstrap.n = NA, force.zero.group.length = NA, force.zero.group.strength = NA, force.zero.group.n = NA, force.zero.group.cv = 0, xlab = "Total length", base_size = 8, legend.position = "bottom", ...) {
 
@@ -117,6 +116,10 @@ plot_maturity <- function(dt, length = "length", maturity = "maturity", sex = "s
       dplyr::rename("sex" = tidyselect::all_of(sex)) %>%
       dplyr::filter(!is.na(sex)) %>%
       dplyr::select(length, sex, maturity)
+
+    if(inherits(dt$sex, "numeric")) {
+      dt$sex <- as.character(dt$sex)
+    }
 
     ## More checks
     # if(!inherits(female.sex, class(dt$sex))) stop("female.sex (or male.sex) is not the same class as dt[[sex]].")
@@ -302,11 +305,14 @@ if(split.by.sex) {
   p <-
     ggplot() +
     #facet_wrap(~sex, ncol = 1) +
-    {if(!is.null(length.bin.width)) geom_step(data = mat.pr.dt, aes(x = bin1, y = mat.pr, color = sex), alpha = 0.5)} +
+    {if(!is.null(length.bin.width)) {
+      geom_step(data = mat.pr.dt, aes(x = bin1, y = mat.pr, color = sex, group = sex),
+                alpha = 0.5)
+      }} +
     ggridges::geom_density_ridges(
       data = dt,
       aes(x = length, y = maturity, group = paste(sex, maturity), fill = sex),
-      scale = 0.3, size = 0.5/2.13, alpha = 0.5, ...) +
+      scale = 0.3, linewidth = 0.5/2.13, alpha = 0.5, ...) +
     geom_segment(data = modDat,
                  aes(x = mean, xend = mean, y = 0, yend = 0.5, color = sex),
                  linetype = 3, linewidth = 0.7/2.13) +
@@ -322,7 +328,7 @@ if(split.by.sex) {
                     paste0(round(mean, 1), " ", length.unit, "\n(n = ", n, ")"),
                   color = sex), size = 0.8*base_size/2.845276,
               direction = "x", min.segment.length = 100, force = 4) +
-    stat_smooth(data = dt, aes(x = length, y = maturity, color = sex),
+    stat_smooth(data = dt, aes(x = length, y = maturity, color = sex, group = sex),
                 method = "glm", formula = y ~ x,
                 method.args = list(family = "binomial"), linewidth = 1/2.13) +
     scale_x_continuous(paste0(xlab, " (", length.unit, ")"), expand = c(0,0)) +

@@ -1,7 +1,7 @@
 Package: ggFishPlots
 Type: Package
 Title: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'
-Version: 0.2.7
+Version: 0.3.0
 Date: 2024-06-26
 Authors@R: c(person("Mikko", "Vihtakari", email = "mikko.vihtakari@hi.no",
                   role = c("aut", "cre"), 

@@ -2,7 +2,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.2.7**
+using ggplot2. R package version 0.3.0**
 
 <!-- badges: start -->
 
@@ -197,11 +197,11 @@ plot_maturity(survey_ghl, bootstrap.n = 10)
 
     #> 
     #> $text
-    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.783 cm. 95% confidence intervals: 54.604 - 54.932\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
+    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.812 cm. 95% confidence intervals: 54.584 - 54.924\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
     #> 
     #> $params
     #>       mean   ci.min   ci.max  sex intercept     slope     n
-    #> 1 54.78312 54.60357 54.93155 both -5.755492 0.1050587 64265
+    #> 1 54.81204 54.58416 54.92397 both -5.755492 0.1050587 64265
 
 #### Split by sex
 
@@ -465,7 +465,7 @@ citation("ggFishPlots")
 #> 
 #>   Vihtakari M (2024). _ggFishPlots: Visualise and Calculate Life
 #>   History Parameters for Fisheries Science using 'ggplot2'_. R package
-#>   version 0.2.7, <https://deepwaterimr.github.io/ggFishPlots/>.
+#>   version 0.3.0, <https://deepwaterimr.github.io/ggFishPlots/>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -473,7 +473,7 @@ citation("ggFishPlots")
 #>     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'},
 #>     author = {Mikko Vihtakari},
 #>     year = {2024},
-#>     note = {R package version 0.2.7},
+#>     note = {R package version 0.3.0},
 #>     url = {https://deepwaterimr.github.io/ggFishPlots/},
 #>   }
 ```

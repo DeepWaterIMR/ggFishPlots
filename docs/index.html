@@ -5,20 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="Contains functions to create life history parameter plots from raw data. 
-	The plots are created using ggplot2, and calculations done using the tidyverse
-	collection of packages. The package contains references to FishBase 
-	(Froese R., Pauly D., 2023) &lt;https://www.fishbase.se/&gt;.">
+<meta name="description" content="Contains functions to create life history parameter plots from raw data. The plots are created using ggplot2, and calculations done using the tidyverse collection of packages. The package contains references to FishBase (Froese R., Pauly D., 2023) &lt;https://www.fishbase.se/&gt;.">
 <title>Visualise and Calculate Life History Parameters for Fisheries Science using ggplot2 • ggFishPlots</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Visualise and Calculate Life History Parameters for Fisheries Science using ggplot2">
-<meta property="og:description" content="Contains functions to create life history parameter plots from raw data. 
-	The plots are created using ggplot2, and calculations done using the tidyverse
-	collection of packages. The package contains references to FishBase 
-	(Froese R., Pauly D., 2023) &lt;https://www.fishbase.se/&gt;.">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Visualise and Calculate Life History Parameters for Fisheries Science using ggplot2">
+<meta property="og:description" content="Contains functions to create life history parameter plots from raw data. The plots are created using ggplot2, and calculations done using the tidyverse collection of packages. The package contains references to FishBase (Froese R., Pauly D., 2023) &lt;https://www.fishbase.se/&gt;.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -28,11 +22,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="index.html">ggFishPlots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,9 +60,8 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="ggfishplots">ggFishPlots<a class="anchor" aria-label="anchor" href="#ggfishplots"></a>
 </h1></div>
-<p><strong>Visualise and calculate life history parameters for fisheries science using ggplot2. R package version 0.2.4</strong></p>
+<p><strong>Visualise and calculate life history parameters for fisheries science using ggplot2. R package version 0.2.7</strong></p>
 <!-- badges: start -->
-<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4554714.svg)](https://doi.org/10.5281/zenodo.4554714) -->
 
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
@@ -106,24 +99,25 @@
 <span><span class="co">#&gt; 3    NA &lt;NA&gt;      51     NA        0</span></span>
 <span><span class="co">#&gt; 4    NA &lt;NA&gt;      31     NA        0</span></span>
 <span><span class="co">#&gt; 5    NA &lt;NA&gt;      32     NA        0</span></span>
-<span><span class="co">#&gt; 6    NA &lt;NA&gt;      32     NA        0</span></span>
-<span></span>
+<span><span class="co">#&gt; 6    NA &lt;NA&gt;      32     NA        0</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="reference/plot_growth.html">plot_growth</a></span><span class="op">(</span><span class="va">survey_ghl</span>, length <span class="op">=</span> <span class="st">"length"</span>, age <span class="op">=</span> <span class="st">"age"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-3-1.png"><!-- --></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 7</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   term  estimate std.error statistic   p.value conf.low conf.high</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Sinf   91.2      1.51         60.3 0          88.3      94.6   </span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 K       0.0633   0.00231      27.4 4.90e-160   0.0586    0.0680</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 t0     -3.04     0.139       -21.8 1.71e-103  -3.34     -2.77</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 7</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt;   term  estimate std.error statistic   p.value conf.low conf.high</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; 1 Sinf   91.2      1.51         60.3 0          88.3      94.6   </span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; 2 K       0.0633   0.00231      27.4 4.90e-160   0.0586    0.0680</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; 3 t0     -3.04     0.139       -21.8 1.71e-103  -3.34     -2.77</span></span></code></pre></div>
 <p>The <code>text</code> object can be rendered to R markdown documents using the <code>results = 'asis'</code> setting in the code chunk header (i.e. <code>{r, results = 'asis'}</code>) and the <code><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat()</a></code> function after replacing <code>"\n"</code> by <code>"\  n"</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">htmlcat</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">text</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"\n"</span>, replacement <span class="op">=</span> <span class="st">"  \n"</span>, x <span class="op">=</span> <span class="va">text</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -142,11 +136,11 @@ Length = 0; age = 608378</p>
 <h4 id="split-by-sex">Split by sex<a class="anchor" aria-label="anchor" href="#split-by-sex"></a>
 </h4>
 <p>Specifying <code>length</code>, <code>age</code> and <code>sex</code> arguments have been omitted since they are the argument names by default and the same than in the example data. Only the <code>plot</code> element is returned this time.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_growth.html">plot_growth</a></span><span class="op">(</span><span class="va">survey_ghl</span>, split.by.sex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-5-1.png"><!-- --></p>
 <p>The dashed lines are <span class="math inline"><em>S</em><sub><em>i</em><em>n</em><em>f</em></sub></span>. Data behind the growth curves are shown as box plots by default. It is possible to plot the data as points by defining <code>boxplot = FALSE</code>. We can also force zero group into the curves if know the length of it. Assumed as 14 cm here. Zero group forcing strength is 10 % of number of observations by default and can be adjusted using the <code>force.zero.group.strength</code> argument.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_growth.html">plot_growth</a></span><span class="op">(</span><span class="va">survey_ghl</span>, force.zero.group.length <span class="op">=</span> <span class="fl">14</span>, boxplot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-6-1.png"><!-- --></p>
 </div>
@@ -158,35 +152,35 @@ Length = 0; age = 608378</p>
 <h4 id="l50-plots">L50 plots<a class="anchor" aria-label="anchor" href="#l50-plots"></a>
 </h4>
 <p>Maturity ogives are estimated using a logistic (<code>family = binomial(link = "logit")</code>) <a href="https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/glm" class="external-link"><code>glm()</code></a></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_maturity.html">plot_maturity</a></span><span class="op">(</span><span class="va">survey_ghl</span>, length <span class="op">=</span> <span class="st">"length"</span>, maturity <span class="op">=</span> <span class="st">"maturity"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-7-1.png"><!-- --></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "50% maturity at length (L50) based on logit regressions:\n54.784 cm. 95% confidence intervals: 52.852 - 56.787\n  Number of specimens: 64265.\n Confidence intervals estimated from the glm object."</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       mean   ci.min ci.max  sex intercept     slope     n</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 54.78361 52.85249 56.787 both -5.755492 0.1050587 64265</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; [1] "50% maturity at length (L50) based on logit regressions:\n54.784 cm. 95% confidence intervals: 52.852 - 56.787\n  Number of specimens: 64265.\n Confidence intervals estimated from the glm object."</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt;       mean   ci.min ci.max  sex intercept     slope     n</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; 1 54.78361 52.85249 56.787 both -5.755492 0.1050587 64265</span></span></code></pre></div>
 <p>The error bars represent 95% confidence intervals calculated from the model object using the <a href="https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/confint.html" class="external-link"><code>confint()</code></a> function and back-transformed to the original scale. The grey stepped line is a binned average defined using the <code>length.bin.width</code> argument.</p>
 <p>The function also contains an option to bootstrap the confidence intervals (CIs) which will produce narrower CIs. Bootstrapping is probably a more correct way of estimating CIs in this application. Using only 10 replicates here to save processing time. In real application use at least 1000.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_maturity.html">plot_maturity</a></span><span class="op">(</span><span class="va">survey_ghl</span>, bootstrap.n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-8-1.png"><!-- --></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "50% maturity at length (L50) based on logit regressions:\n54.777 cm. 95% confidence intervals: 54.638 - 54.923\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       mean  ci.min   ci.max  sex intercept     slope     n</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 54.77727 54.6383 54.92337 both -5.755492 0.1050587 64265</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; [1] "50% maturity at length (L50) based on logit regressions:\n54.783 cm. 95% confidence intervals: 54.604 - 54.932\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt;       mean   ci.min   ci.max  sex intercept     slope     n</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; 1 54.78312 54.60357 54.93155 both -5.755492 0.1050587 64265</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="split-by-sex-1">Split by sex<a class="anchor" aria-label="anchor" href="#split-by-sex-1"></a>
 </h4>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_maturity.html">plot_maturity</a></span><span class="op">(</span><span class="va">survey_ghl</span>, split.by.sex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-9-1.png"><!-- --></p>
 </div>
@@ -194,7 +188,7 @@ Length = 0; age = 608378</p>
 <h4 id="a50-plots">A50 plots<a class="anchor" aria-label="anchor" href="#a50-plots"></a>
 </h4>
 <p>The same principle can be used to produce A50 (50% maturity at age) plots:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_maturity.html">plot_maturity</a></span><span class="op">(</span><span class="va">survey_ghl</span>, length <span class="op">=</span> <span class="st">"age"</span>, length.unit <span class="op">=</span> <span class="st">"years"</span>,</span>
 <span>              xlab <span class="op">=</span> <span class="st">"Age"</span>, length.bin.width <span class="op">=</span> <span class="fl">1</span>, split.by.sex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-10-1.png"><!-- --></p>
@@ -203,7 +197,7 @@ Length = 0; age = 608378</p>
 <h4 id="addition-of-juveniles">Addition of juveniles<a class="anchor" aria-label="anchor" href="#addition-of-juveniles"></a>
 </h4>
 <p>Also the <code><a href="reference/plot_maturity.html">plot_maturity()</a></code> function has the option to add juveniles (zero group fish). The addition of juveniles can be necessary for to make the <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> to converge if small immature fish are scarce in the dataset.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_maturity.html">plot_maturity</a></span><span class="op">(</span><span class="va">survey_ghl</span>, length <span class="op">=</span> <span class="st">"age"</span>, length.unit <span class="op">=</span> <span class="st">"years"</span>,</span>
 <span>              xlab <span class="op">=</span> <span class="st">"Age"</span>, length.bin.width <span class="op">=</span> <span class="fl">1</span>, </span>
 <span>              force.zero.group.length <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -212,7 +206,7 @@ Length = 0; age = 608378</p>
 <p><img src="reference/figures/README-unnamed-chunk-11-1.png"><!-- --></p>
 <p>Note how the addition increases the estimate for males because the dataset did not contain a sufficient number of young males which the number of females seems sufficient because females mature older in this species.</p>
 <p>One option can be to estimate the number of added juveniles using the <a href="#catchcurvesep"><code>plot_catchcurve()</code></a> function:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_maturity.html">plot_maturity</a></span><span class="op">(</span><span class="va">survey_ghl</span>, length <span class="op">=</span> <span class="st">"age"</span>, length.unit <span class="op">=</span> <span class="st">"years"</span>,</span>
 <span>              xlab <span class="op">=</span> <span class="st">"Age"</span>, length.bin.width <span class="op">=</span> <span class="fl">1</span>, </span>
 <span>              force.zero.group.length <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -228,117 +222,133 @@ Length = 0; age = 608378</p>
 <h4 id="log-linearized-models">Log-linearized models<a class="anchor" aria-label="anchor" href="#log-linearized-models"></a>
 </h4>
 <p>Simple plot using log-transformation and linear models by default.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_lw.html">plot_lw</a></span><span class="op">(</span><span class="va">survey_ghl</span>, length <span class="op">=</span> <span class="st">"length"</span>, weight <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-13-1.png"><!-- --></p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Logarithm transformed linear length-weight model. Not splitted by sex:  \n a = 0 +/- 0 - 0 (95% CIs).  \n b = 3.221 +/- 3.22 - 3.22 (95% CIs).  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322"</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 7</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   term    estimate std.error statistic p.value   conf.low  conf.high</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 a     0.00000382   0.00491    -2540.       0 0.00000379 0.00000386</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 b     3.22         0.00128     2519.       0 3.22       3.22</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="co">#&gt; [1] "Logarithm transformed linear length-weight model. Not splitted by sex:  \n a = 3.8236e-06 +/- 3.7869e-06 - 3.8606e-06 (95% CIs).  \n b = 3.221 +/- 3.22 - 3.22 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 0"</span></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 14</span></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="co">#&gt;   term    estimate std.error statistic p.value   conf.low  conf.high r.squared</span></span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a><span class="co">#&gt; 1 a     0.00000382   0.00491    -2540.       0 0.00000379 0.00000386     0.989</span></span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a><span class="co">#&gt; 2 b     3.22         0.00128     2519.       0 3.22       3.22           0.989</span></span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a><span class="co">#&gt; # ℹ 6 more variables: AIC &lt;dbl&gt;, nobs &lt;int&gt;, length &lt;chr&gt;, length.unit &lt;chr&gt;,</span></span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a><span class="co">#&gt; #   weight &lt;chr&gt;, weight.unit &lt;chr&gt;</span></span></code></pre></div>
 <p>The dashed lines represent 95% confidence intervals.</p>
 </div>
 <div class="section level4">
 <h4 id="non-linear-least-square-models">Non-linear least square models<a class="anchor" aria-label="anchor" href="#non-linear-least-square-models"></a>
 </h4>
 <p>Use non-linear least squares instead:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_lw.html">plot_lw</a></span><span class="op">(</span><span class="va">survey_ghl</span>, use.nls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-14-1.png"><!-- --></p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Nonlinear least squares length-weight model. Not splitted by sex:  \n a = 0 +/- 0 - 0 (95% CIs).  \n b = 3.419 +/- 3.42 - 3.42 (95% CIs).  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322"</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 7</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   term    estimate    std.error statistic p.value   conf.low  conf.high</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;      &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 a     0.00000173 0.0000000156      110.       0 0.00000170 0.00000176</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 b     3.42       0.00215          1590.       0 3.42       3.42</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="co">#&gt; [1] "Nonlinear least squares length-weight model. Not splitted by sex:  \n a = 1.7268e-06 +/- 1.6962e-06 - 1.758e-06 (95% CIs).  \n b = 3.419 +/- 3.42 - 3.42 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 0"</span></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 13</span></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="co">#&gt;   term    estimate  std.error statistic p.value conf.low conf.high     AIC  nobs</span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;      &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt;</span></span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a><span class="co">#&gt; 1 a     0.00000173    1.56e-8      110.       0  1.70e-6   1.76e-6 -27925. 67457</span></span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a><span class="co">#&gt; 2 b     3.42          2.15e-3     1590.       0  3.42e+0   3.42e+0 -27925. 67457</span></span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: length &lt;chr&gt;, length.unit &lt;chr&gt;, weight &lt;chr&gt;,</span></span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a><span class="co">#&gt; #   weight.unit &lt;chr&gt;</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="split-by-sex-2">Split by sex<a class="anchor" aria-label="anchor" href="#split-by-sex-2"></a>
 </h4>
 <p>The decimal point of a and b estimates depends on the length and weight units. <a href="https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm" class="external-link">FishBase</a> uses centimeters and grams. The function can correct for the units when asked (but <code>length.unit</code> and <code>weight.unit</code> parameters have to be defined correctly).</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_lw.html">plot_lw</a></span><span class="op">(</span><span class="va">survey_ghl</span>, split.by.sex <span class="op">=</span> <span class="cn">TRUE</span>, correct.units <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-15-1.png"><!-- --></p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Logarithm transformed linear length-weight model for females and males, respectively:  \n a = 0.0035 +/- 0.003 - 0.004 (95% CIs) and 0.0051 +/- 0.005 - 0.005 (95% CIs).  \n b = 3.247 +/- 3.24 - 3.25 (95% CIs) and 3.143 +/- 3.14 - 3.15 (95% CIs).  \n Number of included specimens = 34889 and 30354  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 456891; sex = 96645"</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 8</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   sex   term  estimate std.error statistic p.value conf.low conf.high</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 F     a      0.00350   0.00765     -739.       0  0.00344   0.00355</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 F     b      3.25      0.00195     1666.       0  3.24      3.25   </span></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 M     a      0.00507   0.0101      -525.       0  0.00497   0.00517</span></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 M     b      3.14      0.00265     1188.       0  3.14      3.15</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="co">#&gt; [1] "Logarithm transformed linear length-weight model for females and males, respectively:  \n a = 0.0035 +/- 0.00344 - 0.00355 (95% CIs) and 0.00507 +/- 0.00497 - 0.00517 (95% CIs).  \n b = 3.247 +/- 3.24 - 3.25 (95% CIs) and 3.143 +/- 3.14 - 3.15 (95% CIs).  \n Length in cm and weight in g  \n Number of included specimens = 34889 and 30354  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 456891; sex = 96645; outlier = 0"</span></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 15</span></span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a><span class="co">#&gt; # Groups:   sex [2]</span></span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a><span class="co">#&gt;   sex   term  estimate std.error statistic p.value conf.low conf.high r.squared</span></span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a><span class="co">#&gt; 1 F     a      0.00350   0.00765     -739.       0  0.00344   0.00355     0.988</span></span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a><span class="co">#&gt; 2 F     b      3.25      0.00195     1666.       0  3.24      3.25        0.988</span></span>
+<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a><span class="co">#&gt; 3 M     a      0.00507   0.0101      -525.       0  0.00497   0.00517     0.979</span></span>
+<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a><span class="co">#&gt; 4 M     b      3.14      0.00265     1188.       0  3.14      3.15        0.979</span></span>
+<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a><span class="co">#&gt; # ℹ 6 more variables: AIC &lt;dbl&gt;, nobs &lt;int&gt;, length &lt;chr&gt;, length.unit &lt;chr&gt;,</span></span>
+<span id="cb21-15"><a href="#cb21-15" tabindex="-1"></a><span class="co">#&gt; #   weight &lt;chr&gt;, weight.unit &lt;chr&gt;</span></span></code></pre></div>
 <p>You can also transform the parameters according to the formulas given in the FishBase.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_lw.html">plot_lw</a></span><span class="op">(</span><span class="va">survey_ghl</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>weight <span class="op">=</span> <span class="va">weight</span><span class="op">*</span><span class="fl">1000</span><span class="op">)</span>, weight.unit <span class="op">=</span> <span class="st">"g"</span><span class="op">)</span><span class="op">$</span><span class="va">params</span></span>
-<span><span class="co">#&gt; # A tibble: 2 × 7</span></span>
-<span><span class="co">#&gt;   term  estimate std.error statistic p.value conf.low conf.high</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 a      0.00382   0.00491    -1133.       0  0.00379   0.00386</span></span>
-<span><span class="co">#&gt; 2 b      3.22      0.00128     2519.       0  3.22      3.22</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 2 × 14</span></span>
+<span><span class="co">#&gt;   term  estimate std.error statistic p.value conf.low conf.high r.squared</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 a      0.00382   0.00491    -1133.       0  0.00379   0.00386     0.989</span></span>
+<span><span class="co">#&gt; 2 b      3.22      0.00128     2519.       0  3.22      3.22        0.989</span></span>
+<span><span class="co">#&gt; # ℹ 6 more variables: AIC &lt;dbl&gt;, nobs &lt;int&gt;, length &lt;chr&gt;, length.unit &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   weight &lt;chr&gt;, weight.unit &lt;chr&gt;</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="log-log-axes-to-see-differences">Log-log axes to see differences<a class="anchor" aria-label="anchor" href="#log-log-axes-to-see-differences"></a>
 </h4>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_lw.html">plot_lw</a></span><span class="op">(</span><span class="va">survey_ghl</span>, split.by.sex <span class="op">=</span> <span class="cn">TRUE</span>, log.axes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-17-1.png"><!-- --></p>
+</div>
+<div class="section level4">
+<h4 id="outlier-removal">Outlier removal<a class="anchor" aria-label="anchor" href="#outlier-removal"></a>
+</h4>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/plot_lw.html">plot_lw</a></span><span class="op">(</span><span class="va">survey_ghl</span>, outlier.percentile <span class="op">=</span> <span class="fl">99.5</span>, annotate.coefficients <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-18-1.png"><!-- --></p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="catch-curves-to-estimate-instantaneous-total-mortality-z">Catch curves to estimate instantaneous total mortality (Z)<a class="anchor" aria-label="anchor" href="#catch-curves-to-estimate-instantaneous-total-mortality-z"></a>
 </h3>
 <p>Catch curves were added to the version 0.2.3 and may not be available in the CRAN version. <a href="https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm" class="external-link">A FishR tutorial written by Ogle (2013)</a> contains a nice explanation of catch curves. At the time of writing ggFishPlots calculates only the simple log-linearised regression.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_catchcurve.html">plot_catchcurve</a></span><span class="op">(</span><span class="va">survey_ghl</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-18-1.png"><!-- --></p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 8</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   sex   term        estimate std.error statistic  p.value conf.low conf.high</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 both  (Intercept)    7.28     0.573      12.7  2.25e-13    6.11      8.45 </span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 both  age           -0.190    0.0328     -5.79 2.85e- 6   -0.257    -0.123</span></span></code></pre></div>
-<p>The ages to be included to the Z estimation can be adjusted using the <code>age.range</code> argument.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/plot_catchcurve.html">plot_catchcurve</a></span><span class="op">(</span><span class="va">survey_ghl</span>, age.range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">26</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-19-1.png"><!-- --></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a><span class="co">#&gt; [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"</span></span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
+<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 8</span></span>
+<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a><span class="co">#&gt;   sex   term        estimate std.error statistic  p.value conf.low conf.high</span></span>
+<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span id="cb26-9"><a href="#cb26-9" tabindex="-1"></a><span class="co">#&gt; 1 both  (Intercept)    7.28     0.573      12.7  2.25e-13    6.11      8.45 </span></span>
+<span id="cb26-10"><a href="#cb26-10" tabindex="-1"></a><span class="co">#&gt; 2 both  age           -0.190    0.0328     -5.79 2.85e- 6   -0.257    -0.123</span></span></code></pre></div>
+<p>The ages to be included to the Z estimation can be adjusted using the <code>age.range</code> argument.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/plot_catchcurve.html">plot_catchcurve</a></span><span class="op">(</span><span class="va">survey_ghl</span>, age.range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">26</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-20-1.png"><!-- --></p>
 <p>In the plot above, -b is Z (i.e. Z = 0.356) and exp(a) (i.e. 68391) is the number of 0 age fish assuming constant mortality.</p>
 <div class="section level4">
 <h4 id="split-by-sex-3">Split by sex<a class="anchor" aria-label="anchor" href="#split-by-sex-3"></a>
 </h4>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_catchcurve.html">plot_catchcurve</a></span><span class="op">(</span><span class="va">survey_ghl</span>, age.range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">26</span><span class="op">)</span>, split.by.sex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-20-1.png"><!-- --></p>
+<p><img src="reference/figures/README-unnamed-chunk-21-1.png"><!-- --></p>
 <p>Use a named list to use separate age ranges for females and males.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/plot_catchcurve.html">plot_catchcurve</a></span><span class="op">(</span><span class="va">survey_ghl</span>,</span>
 <span>age.range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"F"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">13</span>,<span class="fl">26</span><span class="op">)</span>, <span class="st">"M"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">26</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>split.by.sex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tmp</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-21-1.png"><!-- --></p>
+<p><img src="reference/figures/README-unnamed-chunk-22-1.png"><!-- --></p>
 <p>Parameter estimates for the catch curve above:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">htmlcat</span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">text</span><span class="op">)</span></span></code></pre></div>
 <p>Instantenous total mortality (Z) estimated using a catch curve and<br>
 age range for females and for males.</p>
@@ -357,22 +367,21 @@ Longevity = 23.3 years (21.8 - 24.8 95% CIs)</p>
 <h2 id="citations-and-data-sources">Citations and data sources<a class="anchor" aria-label="anchor" href="#citations-and-data-sources"></a>
 </h2>
 <p>The data used in the package are a property of the Institute of Marine Research and the Norwegian Government. They are distributed under the Creative Commons (<a href="https://creativecommons.org/licenses/by/4.0/" class="external-link">CCBY</a> or <a href="https://data.norge.no/nlod/no/1.0/" class="external-link">NLOD</a>) licenses allowing free use as long as the source (IMR) is cited. We ask any user to refer to the package if plots or estimates are used in reports or scientific articles. For up-to-date citation information, please use:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"ggFishPlots"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; To cite package 'ggFishPlots' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Vihtakari M (2023). _ggFishPlots: Visualise and Calculate Life</span></span>
+<span><span class="co">#&gt;   Vihtakari M (2024). _ggFishPlots: Visualise and Calculate Life</span></span>
 <span><span class="co">#&gt;   History Parameters for Fisheries Science using 'ggplot2'_. R package</span></span>
-<span><span class="co">#&gt;   version 0.2.4, &lt;https://deepwaterimr.github.io/ggFishPlots/&gt;.</span></span>
+<span><span class="co">#&gt;   version 0.2.7, &lt;https://deepwaterimr.github.io/ggFishPlots/&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   @Manual{,</span></span>
 <span><span class="co">#&gt;     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'},</span></span>
 <span><span class="co">#&gt;     author = {Mikko Vihtakari},</span></span>
-<span><span class="co">#&gt;     year = {2023},</span></span>
-<span><span class="co">#&gt;     note = {R package version 0.2.4},</span></span>
+<span><span class="co">#&gt;     year = {2024},</span></span>
+<span><span class="co">#&gt;     note = {R package version 0.2.7},</span></span>
 <span><span class="co">#&gt;     url = {https://deepwaterimr.github.io/ggFishPlots/},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
@@ -417,6 +426,7 @@ Longevity = 23.3 years (21.8 - 24.8 95% CIs)</p>
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
+<li><a href="https://doi.org/10.32614/CRAN.package.ggFishPlots" class="external-link"><img src="https://zenodo.org/badge/DOI/10.32614/CRAN.package.ggFishPlots.svg" alt="DOI"></a></li>
 <li><a href="https://github.com/DeepWaterIMR/ggFishPlots/actions" class="external-link"><img src="https://github.com/DeepWaterIMR/ggFishPlots/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://CRAN.R-project.org/package=ggFishPlots" class="external-link"><img src="https://www.r-pkg.org/badges/version/ggFishPlots" alt="CRAN_Status_Badge"></a></li>
 </ul>
@@ -427,13 +437,11 @@ Longevity = 23.3 years (21.8 - 24.8 95% CIs)</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by Mikko Vihtakari.</p>
+  <p>Developed by Mikko Vihtakari.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
     </footer>

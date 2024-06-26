@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 **Visualise and calculate life history parameters for fisheries science using ggplot2. R package version `r packageVersion("ggFishPlots")`**
 
 <!-- badges: start -->
-<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4554714.svg)](https://doi.org/10.5281/zenodo.4554714) -->
+[![DOI](https://zenodo.org/badge/DOI/10.32614/CRAN.package.ggFishPlots.svg)](https://doi.org/10.32614/CRAN.package.ggFishPlots)
 [![R-CMD-check](https://github.com/DeepWaterIMR/ggFishPlots/workflows/R-CMD-check/badge.svg)](https://github.com/DeepWaterIMR/ggFishPlots/actions)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/ggFishPlots)](https://CRAN.R-project.org/package=ggFishPlots)
 <!-- badges: end -->
@@ -173,11 +173,16 @@ You can also transform the parameters according to the formulas given in the Fis
 plot_lw(survey_ghl %>% dplyr::mutate(weight = weight*1000), weight.unit = "g")$params
 ```
 
-
 #### Log-log axes to see differences
 
 ```{r}
 plot_lw(survey_ghl, split.by.sex = TRUE, log.axes = TRUE)$plot
+```
+
+#### Outlier removal 
+
+```{r}
+plot_lw(survey_ghl, outlier.percentile = 99.5, annotate.coefficients = TRUE)$plot
 ```
 
 ### Catch curves to estimate instantaneous total mortality (Z)

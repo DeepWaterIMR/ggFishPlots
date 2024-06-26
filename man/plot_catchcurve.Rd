@@ -28,9 +28,7 @@ plot_catchcurve(
 
 \item{age.range}{Defines the age range to be used for Z estimation. If \code{NULL}, all ages are used. If a numeric vector of length 2, the first number defines the minimum age to include and the last number the maximum age. It is also possible to use differing ranges by sex when \code{split.by.sex = TRUE}: use a named list  of length two with names referring to \code{female.sex} and \code{male.sex}. Provide a numeric vector of length 2 to each element (first number defining the minimum age to include and the last number the maximum age). See Examples.}
 
-\item{female.sex}{A character denoting female sex in the \code{sex} column of \code{dt}}
-
-\item{male.sex}{A character denoting male sex in the \code{sex} column of \code{dt}}
+\item{female.sex, male.sex}{A character or integer denoting female and male sex in the \code{sex} column of \code{dt}, respectively.}
 
 \item{split.by.sex}{Logical indicating whether the result should be split by sex.}
 

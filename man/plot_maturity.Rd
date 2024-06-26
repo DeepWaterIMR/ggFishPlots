@@ -36,9 +36,7 @@ plot_maturity(
 
 \item{split.by.sex}{Logical indicating whether the result should be split by sex.}
 
-\item{female.sex}{A character denoting female sex in the \code{sex} column of \code{dt}}
-
-\item{male.sex}{A character denoting male sex in the \code{sex} column of \code{dt}}
+\item{female.sex, male.sex}{A character or integer denoting female and male sex in the \code{sex} column of \code{dt}, respectively.}
 
 \item{length.unit}{A character argument giving the unit of \code{length}. Will be used in the labels of the figure.}
 

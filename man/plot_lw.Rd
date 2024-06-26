@@ -20,9 +20,12 @@ plot_lw(
   init.a = NULL,
   init.b = NULL,
   log.axes = FALSE,
+  outlier.percentile = NULL,
+  annotate.coefficients = FALSE,
+  correct.units = FALSE,
   base_size = 8,
   legend.position = "bottom",
-  correct.units = FALSE,
+  point.size = 0.5,
   verbose = TRUE
 )
 }
@@ -35,13 +38,11 @@ plot_lw(
 
 \item{sex}{Character argument giving the name of the sex column in \code{dt}. Ignored if \code{split.by.sex == FALSE}.}
 
-\item{female.sex}{A character denoting female sex in the \code{sex} column of \code{dt}}
+\item{female.sex, male.sex}{A character or integer denoting female and male sex in the \code{sex} column of \code{dt}, respectively.}
 
-\item{male.sex}{A character denoting male sex in the \code{sex} column of \code{dt}}
+\item{length.unit}{Character argument giving the unit of \code{length}. Will be used in the labels of the figure and for conversion of the a coefficient. Allowed values for the conversion: "mm" (millimeters), "cm" (centimeters), and "m" (meters).}
 
-\item{length.unit}{Character argument giving the unit of \code{length}. Will be used in the labels of the figure and for conversion of the a parameter. Allowed values for the conversion: "mm" (millimmeters), "cm" (centimeters), and "m" (meters).}
-
-\item{weight.unit}{Character argument giving the unit of \code{weight}. Will be used in the labels of the figure and for conversion of the a parameter. Allowed values: "g" (grams), "kg" (kilograms), and "t" (metric tons).}
+\item{weight.unit}{Character argument giving the unit of \code{weight}. Will be used in the labels of the figure and for conversion of the a coefficient. Allowed values: "g" (grams), "kg" (kilograms), and "t" (metric tons).}
 
 \item{split.by.sex}{Logical indicating whether the result should be split by sex.}
 
@@ -49,28 +50,38 @@ plot_lw(
 
 \item{ylab}{Character giving the x-axis label without unit.}
 
-\item{use.nls}{Logical indicating whether the parameters should be calculated using the nonlinear least squares (\code{nls; TRUE}) method over the log-log transformed linear model (\code{lm; FALSE}) method.}
+\item{use.nls}{Logical indicating whether the parameters should be estimated using the nonlinear least squares (\code{nls; TRUE}) method over the log-log transformed linear model (\code{lm; FALSE}) method. See details.}
 
-\item{init.a, init.b}{Numeric values giving the starting value for a and b parameters respecitively for non-linear least-squares estimation (i.e. when \code{use.nls = TRUE}). If \code{NULL}, default values are guessed.}
+\item{init.a, init.b}{Numeric values giving the starting value for a and b coefficients respectively for non-linear least-squares estimation (i.e. when \code{use.nls = TRUE}). If \code{NULL} (default) starting values are guessed.}
 
-\item{log.axes}{Logical indicating whether logarithmic axes should be used instead of cartesian ones.}
+\item{log.axes}{Logical indicating whether logarithmic axes should be used instead of Cartesian ones.}
+
+\item{outlier.percentile}{Numeric argument giving the probability as a percent value which should be used to calculate residual quantiles for outlier removal. See details. Values > 99 are recommended. If \code{NULL} (default), no outlier removal is conducted.}
+
+\item{annotate.coefficients}{Logical indicating whether the a and b coefficients should be annotated into the plot.}
+
+\item{correct.units}{Logical indicating whether the a and b coefficients should be converted for centimeters and grams as in FishBase.}
 
 \item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
 
 \item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.}
 
-\item{correct.units}{Logical indicating whether a and b parameters should be converted for centimeters and grams as in FishBase.}
+\item{point.size}{Numeric defining the size for data points in the plot. See the \code{size} argument in \link[ggplot2]{geom_point}.}
 
 \item{verbose}{Logical indicating whether to return warnings and messages.}
 }
 \value{
-A ggplot together with the a and b parameters.
+A list with three elements: a ggplot object containing the plot, text giving the central statistics that can be pasted to Markdown, and the model parameters (params).
 }
 \description{
-Plot length-weight relationships
+Plots length-weight relationship for a species and calculates the a and b coefficients used in length-weight conversions.
 }
 \details{
-It is crucial to get the units right when calculating length-weight relationships. In models, the length and weight units should often match those of the data going into the model, while in comparisons with FishBase, the units of length and weight should be centimetres and grams, respectively. If the units are wrong, the intercept, a, will be off the FishBase scale by orders of magnitude (see \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{FishBase}). If \code{correct.units = TRUE}, \code{plot_lw()} attempts to correct for the units to the FishBase standard (cm and g). The function also returns a warning when the returned parameters are not within expected bounds for cm and g estimation. You can ignore this warning if you want to estimate values. Comparing your a and b with those in FishBase for the species is a good idea. This function may contain bugs.
+The function estimates the a and b coefficients of the length weight relationship, \eqn{weight = a \times length^b}{weight = a*length^b}, and plots the data. The model can be fitted either using the standard log(weight) ~ log(length) regression (\link[stats]{lm}; default) or nonlinear least squares (\link[stats]{nls}) method. The nls method often manages to fit steeper slopes making the b parameter higher and the a parameter lower than the linear \link[stats]{lm} method. This tends to lead to visually more pleasing fits at high lengths and weights.
+
+The a and b coefficients are dependent on the units of length and weight. In models, the length and weight units should often match those of the data going into the model, while in comparisons with FishBase, the units of length and weight should be centimeters and grams, respectively. If the units are wrong, the intercept, a, will be off the FishBase scale by orders of magnitude (see \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{FishBase}). The \code{correct.units} can be used to correct the data units to the FishBase standard (cm and g). The function also returns a warning when the returned parameters are not within expected bounds for cm and g estimation. It is recommended to compare the a and b coefficients with those in FishBase for the species as a quality assurance.
+
+The \code{outlier.percentile} argument enables quick removal of troublesome outliers from the model estimation. The argument is defined as percentile probabilities and used to calculate quantile for absolute residual values from logarithmic regression to identify outliers (\eqn{outlier = |r| > Pr[|r| > outlier.percentile/100]}). These outliers are then removed from model dataset but plotted using crosses in the ggplot output. See Examples.
 }
 \examples{
 data(survey_ghl)
@@ -78,8 +89,14 @@ data(survey_ghl)
 # Simple plot
 plot_lw(survey_ghl, length = "length", weight = "weight")
 \donttest{
-# Split by sex
-plot_lw(survey_ghl, split.by.sex = TRUE)$plot
+# nls
+plot_lw(survey_ghl, use.nls = TRUE)
+
+# Split by sex, annotate coefficients
+plot_lw(survey_ghl, split.by.sex = TRUE, annotate.coefficients = TRUE)$plot
+
+# Outlier removal
+plot_lw(survey_ghl, outlier.percentile = 99)
 }
 }
 \author{

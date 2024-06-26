@@ -7,8 +7,7 @@
 #' @param length.unit A character argument giving the unit of \code{length}. Will be used in the labels of the figure.
 #' @param length.bin.width Numeric specifying the increment (delta length) by which length data should be binned to calculate maturity proportions. Use \code{NULL} to remove from the plot.
 #' @param split.by.sex Logical indicating whether the result should be split by sex.
-#' @param female.sex A character denoting female sex in the \code{sex} column of \code{dt}
-#' @param male.sex A character denoting male sex in the \code{sex} column of \code{dt}
+#' @param female.sex,male.sex A character or integer denoting female and male sex in the \code{sex} column of \code{dt}, respectively.
 #' @param bootstrap.n Integer defining the number of bootstrap replicates to be used to calculate 95\% confidence intervals for the mean 50\% mature estimate. If \code{NA} (default), the confidence intervals are calculated from the glm object without boostrapping. See Details.
 #' @param force.zero.group.length Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.
 #' @param force.zero.group.cv Numeric indicating the coefficient of variation for the forced 0-group (all immature) length. Resulting lengths will be randomly generated from a normal distribution.

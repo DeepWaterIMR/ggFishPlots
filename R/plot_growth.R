@@ -7,6 +7,8 @@
 #' @param force.zero.group.strength Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}.
 #' @inheritParams plot_maturity
 #' @param boxplot Logical indicating whether boxplots (\code{TRUE}) should be used to show data over points (\code{FALSE})
+#' @param return_model Logical indicating whether the growth models should be returned together with other output.
+#' @param return_data Logical indicating whether the data used to make the growth models should be returned together with other output.
 #' @param show.Linf Logical indicating whether Linf values should be shown as dashed vertical lines.
 #' @param base_size Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.
 #' @details Uses the \code{fishmethods::growth} function to calculate the growth curves. Zero group length can be forced to the growth functions using the \code{force.zero.group.*} parameters.
@@ -14,7 +16,7 @@
 #' @author Mikko Vihtakari // Institute of Marine Research.
 #' @import dplyr ggplot2
 #' @importFrom fishmethods growth
-#' @importFrom stats rnorm
+#' @importFrom stats rnorm setNames
 #' @examples
 #' # Simple plot. Note that a list is returned.
 #' data(survey_ghl)
@@ -30,7 +32,7 @@
 # Debug parameters:
 # dt = survey_ghl; length = "length"; age = "age"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; split.by.sex = FALSE; growth.model = 1; force.zero.group.length = NA; force.zero.group.strength = 10; force.zero.group.cv = 0; show.Linf = TRUE; boxplot = FALSE; base_size = 8; legend.position = "bottom"
 # dt = x; length = "Length"; age = "Age"; sex = "Sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; filter.exp = NULL; split.by.sex = FALSE; growth.model = 1; force.zero.group.length = NA; force.zero.group.strength = 10
-plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", split.by.sex = FALSE, growth.model = 1, force.zero.group.length = NA, force.zero.group.strength = 10, force.zero.group.cv = 0, show.Linf = TRUE, boxplot = TRUE, base_size = 8, legend.position = "bottom") {
+plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", split.by.sex = FALSE, growth.model = 1, force.zero.group.length = NA, force.zero.group.strength = 10, force.zero.group.cv = 0, show.Linf = TRUE, boxplot = TRUE, return_model = FALSE, return_data = FALSE, base_size = 8, legend.position = "bottom") {
 
   # Growth model
 
@@ -153,11 +155,20 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
     if(FfitFailed & MfitFailed) {
 
       Plot <- ggplot() +
-        {if(boxplot) geom_boxplot(data = dt, aes(x = age, y = length, color = sex, group = interaction(age, sex)), alpha = 0.5, outlier.size = 0.5)} +
-        {if(!boxplot) geom_point(data = dt, aes(x = age, y = length, color = sex, text = paste0("row number: ", id)), alpha = 0.5, shape = 21)} +
+        {if(boxplot) geom_boxplot(
+          data = dt,
+          aes(x = age, y = length, color = sex,
+              group = interaction(age, sex)), alpha = 0.5, outlier.size = 0.5)
+        } +
+        {if(!boxplot) geom_point(
+          data = dt,
+          aes(x = age, y = length, color = sex, text = paste0("row number: ", id)),
+          alpha = 0.5, shape = 21)
+        } +
         annotation_custom(
-          grid::textGrob("Failed to fit growth models\nConsider adding force.zero.group.length\nand/or not splitting by sex.",
-                         gp = grid::gpar(fontsize = base_size, fontface = "bold")),
+          grid::textGrob(
+            "Failed to fit growth models\nConsider adding force.zero.group.length\nand/or not splitting by sex.",
+            gp = grid::gpar(fontsize = base_size, fontface = "bold")),
           xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
         scale_color_manual("Sex", values = c("#FF5F68", "#449BCF")) +
         ylab(paste0("Total length (", length.unit, ")")) +
@@ -172,14 +183,22 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         "\n Number of included specimens = ", sum(dt$sex == female.sex), " females and ", sum(dt$sex == male.sex), " males"
       )
 
+      Models <- NA
+
     } else {
 
       # Females
       if(FfitFailed) {
         laModFpred <- data.frame(age = 0:max(dt$age), length = NA)
-        laModparsF <- data.frame(sex = female.sex, term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA, conf.low = NA, conf.high = NA)
+        laModparsF <- data.frame(
+          sex = female.sex, term = NA, estimate = NA, std.error = NA, statistic = NA,
+          p.value = NA, conf.low = NA, conf.high = NA)
+
+        Fmodels <- NA
+
       } else {
-        tmpF <- predict(eval(parse(text = paste0("laModF$", growth.model))), newdata = data.frame(age = 0:max(dt$age)))
+        tmpF <- predict(eval(parse(text = paste0("laModF$", growth.model))),
+                        newdata = data.frame(age = 0:max(dt$age)))
         laModFpred <- data.frame(age = 0:max(dt$age), length = tmpF)
 
         tryshit <- try({
@@ -187,16 +206,24 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
           silent = TRUE)
 
         if(any(class(tryshit) == "try-error")) {
-          laModparsF <- dplyr::bind_cols(sex = female.sex, broom::tidy(eval(parse(text = paste0("laModF$", growth.model))), conf.int = FALSE))
+          laModparsF <- dplyr::bind_cols(
+            sex = female.sex,
+            broom::tidy(eval(parse(text = paste0("laModF$", growth.model))),
+                        conf.int = FALSE))
+          Fmodels <- laModF
         } else {
           laModparsF <- dplyr::bind_cols(sex = female.sex, tryshit)
+          Fmodels <- laModF
         }
       }
 
       # Males
       if(MfitFailed) {
         laModMpred <- data.frame(age = 0:max(dt$age), length = NA)
-        laModparsM <- data.frame(sex = male.sex, term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA, conf.low = NA, conf.high = NA)
+        laModparsM <- data.frame(
+          sex = male.sex, term = NA, estimate = NA, std.error = NA,
+          statistic = NA, p.value = NA, conf.low = NA, conf.high = NA)
+        Mmodels <- NA
       } else {
         tmpM <- predict(eval(parse(text = paste0("laModM$", growth.model))), newdata = data.frame(age = 0:max(dt$age)))
         laModMpred <- data.frame(age = 0:max(dt$age), length = tmpM)
@@ -206,13 +233,19 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
           silent = TRUE)
 
         if(any(class(tryshit) == "try-error")) {
-          laModparsM <- dplyr::bind_cols(sex = male.sex, broom::tidy(eval(parse(text = paste0("laModM$", growth.model))), conf.int = FALSE))
+          laModparsM <- dplyr::bind_cols(
+            sex = male.sex,
+            broom::tidy(eval(parse(text = paste0("laModM$", growth.model))),
+                        conf.int = FALSE))
+
         } else {
           laModparsM <- dplyr::bind_cols(sex = male.sex, tryshit)
+          Mmodels <- laModM
         }
       }
 
       laModpars <- dplyr::bind_rows(laModparsF, laModparsM)
+      Models <- setNames(list(Fmodels, Mmodels), c(female.sex, male.sex))
 
       ## Plot
 
@@ -287,6 +320,8 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         "  \n Number of included specimens = ", nrow(dt)
       )
 
+      Models <- laMod
+
     } else {
 
       laModpred <- data.frame(age = 0:max(dt$age), length = predict(eval(parse(text = paste0("laMod$", growth.model))), newdata = data.frame(age = 0:max(dt$age))))
@@ -332,11 +367,20 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
         "  \n Excluded (length or age missing):  \n Length = ", length.missing, "; age = ", age.missing
       )
 
+      Models <- laMod
+
     }
 
   }
 
   ## Return
 
-  return(list(plot = Plot, text = Text, params = if(exists("laModpars")) {laModpars} else {NULL}))
+  return({
+    list(plot = Plot,
+         text = Text,
+         params = if(exists("laModpars")) {laModpars} else {NULL},
+         model = if(return_model) {Models} else {NULL},
+         data = if(return_data) {dt} else {NULL}
+    )
+  })
 }

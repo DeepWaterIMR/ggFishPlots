@@ -19,6 +19,8 @@ plot_growth(
   force.zero.group.cv = 0,
   show.Linf = TRUE,
   boxplot = TRUE,
+  return_model = FALSE,
+  return_data = FALSE,
   base_size = 8,
   legend.position = "bottom"
 )
@@ -49,6 +51,10 @@ plot_growth(
 \item{show.Linf}{Logical indicating whether Linf values should be shown as dashed vertical lines.}
 
 \item{boxplot}{Logical indicating whether boxplots (\code{TRUE}) should be used to show data over points (\code{FALSE})}
+
+\item{return_model}{Logical indicating whether the growth models should be returned together with other output.}
+
+\item{return_data}{Logical indicating whether the data used to make the growth models should be returned together with other output.}
 
 \item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
 

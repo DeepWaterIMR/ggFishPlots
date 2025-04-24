@@ -237,7 +237,7 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
             sex = male.sex,
             broom::tidy(eval(parse(text = paste0("laModM$", growth.model))),
                         conf.int = FALSE))
-
+          Mmodels <- laModM
         } else {
           laModparsM <- dplyr::bind_cols(sex = male.sex, tryshit)
           Mmodels <- laModM

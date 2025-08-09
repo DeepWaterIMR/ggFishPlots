@@ -43,7 +43,7 @@
 
 # Debug parameters:
 # dt = survey_ghl;
-# length = "length"; weight = "weight"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; weight.unit = "kg"; split.by.sex = FALSE; xlab = "Total length"; ylab = "Weight"; use.nls = FALSE; init.a = NULL; init.b = NULL; log.axes = FALSE; outlier.percentile = 99.5; annotate.coefficients = TRUE; base_size = 8; legend.position = "bottom"; correct.units = FALSE; verbose = TRUE
+# length = "length"; weight = "weight"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; weight.unit = "kg"; split.by.sex = FALSE; xlab = "Total length"; ylab = "Weight"; use.nls = FALSE; init.a = NULL; init.b = NULL; log.axes = FALSE; outlier.percentile = 99.5; annotate.coefficients = TRUE; base_size = 8; legend.position = "bottom"; correct.units = FALSE; point.size = 0.5; verbose = TRUE
 
 plot_lw <- function(
     dt, length = "length", weight = "weight", sex = "sex", female.sex = "F",
@@ -51,7 +51,7 @@ plot_lw <- function(
     xlab = "Total length", ylab = "Weight", use.nls = FALSE, init.a = NULL,
     init.b = NULL, log.axes = FALSE, outlier.percentile = NULL,
     annotate.coefficients = FALSE, correct.units = FALSE, base_size = 8,
-    legend.position = "bottom", point.size = 0.5, verbose = TRUE) {
+    legend.position = "bottom", point.size = 0.8, verbose = TRUE) {
 
   # Add row number ####
 
@@ -136,6 +136,9 @@ plot_lw <- function(
   } else {
     if(length.unit == "cm" & weight.unit == "kg") {
       if(is.null(init.a)) init.a <- 1e-6
+      if(is.null(init.b)) init.b <- 3
+    } else if(length.unit == "m" & weight.unit == "kg") {
+      if(is.null(init.a)) init.a <- 1
       if(is.null(init.b)) init.b <- 3
     } else {
       if(is.null(init.a)) init.a <- 1e-3
@@ -348,7 +351,7 @@ plot_lw <- function(
 
     tmp <- bind_rows(
       tibble(
-        length = 0:max(dt[dt$sex == female.sex, "length"]),
+        length = seq(0, max(dt[dt$sex == female.sex, "length"]), length.out = 100),
         weight = (lwModPars %>% filter(sex == female.sex, term == "a") %>%
                     pull(estimate)) *
           length^(lwModPars %>% filter(sex == female.sex, term == "b") %>%
@@ -362,7 +365,7 @@ plot_lw <- function(
           length^(lwModPars %>% filter(sex == female.sex, term == "b") %>%
                     pull(conf.high)),
         sex = female.sex),
-      tibble(length = 0:max(dt[dt$sex == male.sex, "length"]),
+      tibble(length = seq(0, max(dt[dt$sex == male.sex, "length"]), length.out = 100),
              weight = (lwModPars %>% filter(sex == male.sex, term == "a") %>% pull(estimate))*length^
                (lwModPars %>% filter(sex == male.sex, term == "b") %>% pull(estimate)),
              weight.low = (lwModPars %>% filter(sex == male.sex, term == "a") %>% pull(conf.low))*length^
@@ -445,7 +448,7 @@ plot_lw <- function(
   } else {
 
     tmp <- tibble(
-      length = 0:max(dt$length),
+      length = seq(0, max(dt$length), length.out = 100),
       weight = (lwModPars %>% filter(term == "a") %>% pull(estimate)) *
         length^(lwModPars %>% filter(term == "b") %>% pull(estimate)),
       weight.low = (lwModPars %>% filter(term == "a") %>% pull(conf.low)) *

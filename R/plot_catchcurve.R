@@ -384,6 +384,6 @@ plot_catchcurve <- function(dt, age = "age", sex = "sex", time = NULL, age.range
 
   # Return ####
 
-  return(list(plot = suppressWarnings(p), text = Text, params = mod))
+  return(list(plot = suppressWarnings(p), text = Text, params = mod, definitions = list(age.range = age.range)))
 
 }

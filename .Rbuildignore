@@ -1,17 +1,2 @@
-[.]DS_Store$
-\\.DS_Store$
-^.*\.DS_Store$
-^\.DS_Store$
-"(^|/)\\.DS_Store$"
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^README\.md$
-^README\.Rmd$
-^README\.html$
-^README_files$
-^_pkgdown\.yml$
-^docs$
-^pkgdown$
-^\.github$
-^LICENSE$
-^NEWS\.md$

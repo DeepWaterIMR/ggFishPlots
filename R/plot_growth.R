@@ -30,8 +30,7 @@
 #' @export
 
 # Debug parameters:
-# dt = survey_ghl; length = "length"; age = "age"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; split.by.sex = FALSE; growth.model = 1; force.zero.group.length = NA; force.zero.group.strength = 10; force.zero.group.cv = 0; show.Linf = TRUE; boxplot = FALSE; base_size = 8; legend.position = "bottom"
-# dt = x; length = "Length"; age = "Age"; sex = "Sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; filter.exp = NULL; split.by.sex = FALSE; growth.model = 1; force.zero.group.length = NA; force.zero.group.strength = 10
+# length = "length"; age = "age"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; split.by.sex = FALSE; growth.model = 1; force.zero.group.length = NA; force.zero.group.strength = 10; force.zero.group.cv = 0; show.Linf = TRUE; boxplot = TRUE; return_model = FALSE; return_data = FALSE; base_size = 8; legend.position = "bottom"
 plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.sex = "F", male.sex = "M", length.unit = "cm", split.by.sex = FALSE, growth.model = 1, force.zero.group.length = NA, force.zero.group.strength = 10, force.zero.group.cv = 0, show.Linf = TRUE, boxplot = TRUE, return_model = FALSE, return_data = FALSE, base_size = 8, legend.position = "bottom") {
 
   # Growth model
@@ -154,15 +153,11 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
 
     if(FfitFailed & MfitFailed) {
 
-      Plot <- ggplot() +
-        {if(boxplot) geom_boxplot(
-          data = dt,
-          aes(x = age, y = length, color = sex,
-              group = interaction(age, sex)), alpha = 0.5, outlier.size = 0.5)
+      Plot <- ggplot(data = dt, aes(x = age, y = length, color = sex)) +
+        {if(boxplot) geom_boxplot(aes(group = interaction(age, sex)), 
+                                  alpha = 0.5, outlier.size = 0.5)
         } +
-        {if(!boxplot) geom_point(
-          data = dt,
-          aes(x = age, y = length, color = sex, text = paste0("row number: ", id)),
+        {if(!boxplot) geom_point(aes(text = paste0("row number: ", id)),
           alpha = 0.5, shape = 21)
         } +
         annotation_custom(
@@ -251,9 +246,9 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
 
       Plot <-
         suppressWarnings({
-          ggplot() +
-            {if(boxplot) geom_boxplot(data = dt, aes(x = age, y = length, color = sex, group = interaction(age, sex)), alpha = 0.5, outlier.size = 0.5)} +
-            {if(!boxplot) geom_point(data = dt, aes(x = age, y = length, color = sex, text = paste0("row number: ", id)), alpha = 0.5, shape = 21)} +
+          ggplot(data = dt, aes(x = age, y = length, color = sex)) +
+            {if(boxplot) geom_boxplot(aes(group = interaction(age, sex)), alpha = 0.5, outlier.size = 0.5)} +
+            {if(!boxplot) geom_point(aes(text = paste0("row number: ", id)), alpha = 0.5, shape = 21)} +
             {if(show.Linf & !FfitFailed) geom_hline(yintercept = laModparsF$estimate[1], linetype = 2, color = "#FF5F68", alpha = 0.5)} +
             {if(show.Linf & !MfitFailed) geom_hline(yintercept = laModparsM$estimate[1], linetype = 2, color = "#449BCF", alpha = 0.5)} +
             {if(!FfitFailed) geom_path(data = laModFpred, aes(x = age, y = length), color = "#FF5F68", size = 2/2.13)} +
@@ -338,9 +333,9 @@ plot_growth <- function(dt, length = "length", age = "age", sex = "sex", female.
 
       Plot <-
         suppressWarnings({
-          ggplot() +
-            {if(boxplot) geom_boxplot(data = dt, aes(x = age, y = length, group = age), outlier.size = 0.5, alpha = 0.5)} +
-            {if(!boxplot) geom_point(data = dt, aes(x = age, y = length, text = paste0("row number: ", id)), shape = 21, alpha = 0.5)} +
+          ggplot(data = dt, aes(x = age, y = length)) +
+            {if(boxplot) geom_boxplot(aes(group = age), outlier.size = 0.5, alpha = 0.5)} +
+            {if(!boxplot) geom_point(aes(text = paste0("row number: ", id)), shape = 21, alpha = 0.5)} +
             # expand_limits(x = c(0, round_any(max(dt$age), 2, ceiling)), y = c(0, round_any(max(dt$length), 5, ceiling))) + # c(0, max(pretty(c(0, max(dt$length)))))
             {if(show.Linf) geom_hline(yintercept = laModpars$estimate[1], linetype = 2, color = "blue", alpha = 0.5)} +
             geom_path(data = laModpred, aes(x = age, y = length), color = "blue") +

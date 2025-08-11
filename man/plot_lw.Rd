@@ -25,7 +25,7 @@ plot_lw(
   correct.units = FALSE,
   base_size = 8,
   legend.position = "bottom",
-  point.size = 0.5,
+  point.size = 0.8,
   verbose = TRUE
 )
 }

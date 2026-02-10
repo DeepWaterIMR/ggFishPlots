@@ -211,8 +211,7 @@ plot_catchcurve <- function(
       dt %>%
         dplyr::filter(.data$include, .data$sex == k) %>%
         dplyr::group_by(.data$time) %>%
-        dplyr::do(broom::tidy(lm(log(n) ~ age, data = .), conf.int = TRUE)) %>%
-        tidyr::unnest(cols = c()) %>%
+        dplyr::reframe(broom::tidy(lm(log(n) ~ age, data = dplyr::cur_data()), conf.int = TRUE)) %>%
         dplyr::mutate(sex = k, .before = 1)
     }
   }) %>%

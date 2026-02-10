@@ -15,7 +15,7 @@ Description: Contains functions to create life history parameter plots from raw 
 	collection of packages. The package contains references to FishBase 
 	(Froese R., Pauly D., 2023) <https://www.fishbase.se/>.
 Depends: R (>= 3.5.0), ggplot2 (>= 3.4.0)
-Imports: dplyr, tibble, tidyr, ggridges (>= 0.5.0), fishmethods, broom, tidyselect,
+Imports: dplyr, tibble, tidyr, ggridges (>= 0.5.0), fishmethods, broom,
   magrittr, ggrepel, scales, purrr
 Suggests: knitr, rmarkdown
 License: GPL-3

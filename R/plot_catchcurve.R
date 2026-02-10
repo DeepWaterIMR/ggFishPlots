@@ -122,7 +122,7 @@ plot_catchcurve <- function(
   ## Select and rename columns ####
 
   dt <- dt %>%
-    dplyr::rename("age" = tidyselect::all_of(age)) %>%
+    dplyr::rename("age" = !!age) %>%
     dplyr::filter(!is.na(age)) %>%
     dplyr::mutate(age = as.numeric(age))
 
@@ -137,13 +137,13 @@ plot_catchcurve <- function(
 
     if (is.null(time)) {
       dt <- dt %>%
-        dplyr::rename("sex" = tidyselect::all_of(sex)) %>%
+        dplyr::rename("sex" = !!sex) %>%
         dplyr::filter(!is.na(sex)) %>%
         dplyr::group_by(sex, age) %>%
         dplyr::count()
     } else {
       dt <- dt %>%
-        dplyr::rename("sex" = tidyselect::all_of(sex)) %>%
+        dplyr::rename("sex" = !!sex) %>%
         dplyr::filter(!is.na(sex)) %>%
         dplyr::group_by(time = get(time), sex, age) %>%
         dplyr::count()

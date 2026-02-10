@@ -137,8 +137,8 @@ plot_maturity <- function(
 
   dt <- dt %>%
     dplyr::rename(
-      "maturity" = tidyselect::all_of(maturity),
-      "length" = tidyselect::all_of(length)
+      "maturity" = !!maturity,
+      "length" = !!length
     ) %>%
     dplyr::filter(
       !is.na(maturity) &
@@ -156,7 +156,7 @@ plot_maturity <- function(
     }
 
     dt <- dt %>%
-      dplyr::rename("sex" = tidyselect::all_of(sex)) %>%
+      dplyr::rename("sex" = !!sex) %>%
       dplyr::filter(!is.na(sex)) %>%
       dplyr::select(length, sex, maturity)
 

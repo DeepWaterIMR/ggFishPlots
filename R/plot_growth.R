@@ -92,7 +92,7 @@ plot_growth <- function(
     orig.nrow <- nrow(dt)
 
     dt <- dt %>%
-      dplyr::rename("sex" = tidyselect::all_of(sex)) %>%
+      dplyr::rename("sex" = !!sex) %>%
       dplyr::filter(!is.na(sex))
 
     sex.missing <- orig.nrow - nrow(dt)
@@ -106,8 +106,8 @@ plot_growth <- function(
 
   dt <- dt %>%
     dplyr::rename(
-      "age" = tidyselect::all_of(age),
-      "length" = tidyselect::all_of(length)
+      "age" = !!age,
+      "length" = !!length
     )
 
   length.missing <- sum(is.na(dt$length))

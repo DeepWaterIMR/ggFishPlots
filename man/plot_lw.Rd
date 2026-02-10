@@ -34,7 +34,7 @@ plot_lw(
 
 \item{length}{Character argument giving the name of the length column in \code{dt}}
 
-\item{weight}{Character argument giving the name of the age column in \code{dt}}
+\item{weight}{Character argument giving the name of the weight column in \code{dt}}
 
 \item{sex}{Character argument giving the name of the sex column in \code{dt}. Ignored if \code{split.by.sex == FALSE}.}
 

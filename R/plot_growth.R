@@ -286,7 +286,7 @@ plot_growth <- function(
         )
         laModFpred <- data.frame(age = 0:max(dt$age), length = tmpF)
 
-        tryshit <- try(
+        model_tidy <- try(
           {
             broom::tidy(
               eval(parse(text = paste0("laModF$", growth.model))),
@@ -296,7 +296,7 @@ plot_growth <- function(
           silent = TRUE
         )
 
-        if (any(class(tryshit) == "try-error")) {
+        if (any(class(model_tidy) == "try-error")) {
           laModparsF <- dplyr::bind_cols(
             sex = female.sex,
             broom::tidy(
@@ -306,7 +306,7 @@ plot_growth <- function(
           )
           Fmodels <- laModF
         } else {
-          laModparsF <- dplyr::bind_cols(sex = female.sex, tryshit)
+          laModparsF <- dplyr::bind_cols(sex = female.sex, model_tidy)
           Fmodels <- laModF
         }
       }
@@ -332,7 +332,7 @@ plot_growth <- function(
         )
         laModMpred <- data.frame(age = 0:max(dt$age), length = tmpM)
 
-        tryshit <- try(
+        model_tidy <- try(
           {
             broom::tidy(
               eval(parse(text = paste0("laModM$", growth.model))),
@@ -342,7 +342,7 @@ plot_growth <- function(
           silent = TRUE
         )
 
-        if (any(class(tryshit) == "try-error")) {
+        if (any(class(model_tidy) == "try-error")) {
           laModparsM <- dplyr::bind_cols(
             sex = male.sex,
             broom::tidy(
@@ -352,7 +352,7 @@ plot_growth <- function(
           )
           Mmodels <- laModM
         } else {
-          laModparsM <- dplyr::bind_cols(sex = male.sex, tryshit)
+          laModparsM <- dplyr::bind_cols(sex = male.sex, model_tidy)
           Mmodels <- laModM
         }
       }
@@ -655,7 +655,7 @@ plot_growth <- function(
         )
       )
 
-      tryshit <- try(
+      model_tidy <- try(
         {
           broom::tidy(
             eval(parse(text = paste0("laMod$", growth.model))),
@@ -665,13 +665,13 @@ plot_growth <- function(
         silent = TRUE
       )
 
-      if (any(class(tryshit) == "try-error")) {
+      if (any(class(model_tidy) == "try-error")) {
         laModpars <- dplyr::bind_cols(broom::tidy(
           eval(parse(text = paste0("laMod$", growth.model))),
           conf.int = FALSE
         ))
       } else {
-        laModpars <- dplyr::bind_cols(tryshit)
+        laModpars <- dplyr::bind_cols(model_tidy)
       }
 
       Plot <-

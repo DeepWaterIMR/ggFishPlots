@@ -2,7 +2,7 @@
 #' @description
 #' Plots length-weight relationship for a species and calculates the a and b coefficients used in length-weight conversions.
 #' @param length Character argument giving the name of the length column in \code{dt}
-#' @param weight Character argument giving the name of the age column in \code{dt}
+#' @param weight Character argument giving the name of the weight column in \code{dt}
 #' @param ylab Character giving the x-axis label without unit.
 #' @param length.unit Character argument giving the unit of \code{length}. Will be used in the labels of the figure and for conversion of the a coefficient. Allowed values for the conversion: "mm" (millimeters), "cm" (centimeters), and "m" (meters).
 #' @param weight.unit Character argument giving the unit of \code{weight}. Will be used in the labels of the figure and for conversion of the a coefficient. Allowed values: "g" (grams), "kg" (kilograms), and "t" (metric tons).

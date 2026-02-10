@@ -211,8 +211,7 @@ plot_catchcurve <- function(
       dt %>%
         dplyr::filter(.data$include, .data$sex == k) %>%
         dplyr::group_by(.data$time) %>%
-        dplyr::do(broom::tidy(lm(log(n) ~ age, data = .), conf.int = TRUE)) %>%
-        tidyr::unnest(cols = c()) %>%
+        dplyr::reframe(broom::tidy(lm(log(n) ~ age, data = dplyr::cur_data()), conf.int = TRUE)) %>%
         dplyr::mutate(sex = k, .before = 1)
     }
   }) %>%
@@ -385,7 +384,7 @@ plot_catchcurve <- function(
       } else {
         "L"
       },
-      "ongevity = ",
+      "longevity = ",
       round(-modf$estimate_a / modf$estimate_b, 1),
       " years (",
       round(-modf$conf.low_a / modf$conf.low_b, 1),
@@ -418,7 +417,7 @@ plot_catchcurve <- function(
       } else {
         "L"
       },
-      "ongevity = ",
+      "longevity = ",
       round(-modm$estimate_a / modm$estimate_b, 1),
       " years (",
       round(-modm$conf.low_a / modm$conf.low_b, 1),
@@ -531,7 +530,7 @@ plot_catchcurve <- function(
       } else {
         "L"
       },
-      "ongevity = ",
+      "longevity = ",
       round(-modb$estimate_a / modb$estimate_b, 1),
       " years (",
       round(-modb$conf.low_a / modb$conf.low_b, 1),

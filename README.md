@@ -2,7 +2,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.3.1**
+using ggplot2. R package version 0.4.0**
 
 <!-- badges: start -->
 
@@ -200,11 +200,11 @@ plot_maturity(survey_ghl, bootstrap.n = 10)
 
     #> 
     #> $text
-    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.764 cm. 95% confidence intervals: 54.685 - 54.875\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
+    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.763 cm. 95% confidence intervals: 54.661 - 54.886\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
     #> 
     #> $params
-    #>       mean   ci.min   ci.max  sex intercept     slope     n
-    #> 1 54.76383 54.68501 54.87475 both -5.755492 0.1050587 64265
+    #>       mean  ci.min  ci.max  sex intercept     slope     n
+    #> 1 54.76276 54.6609 54.8858 both -5.755492 0.1050587 64265
 
 #### Split by sex
 
@@ -400,6 +400,10 @@ plot_catchcurve(survey_ghl)
     #>   <chr> <chr>          <dbl>     <dbl>     <dbl>    <dbl>    <dbl>     <dbl>
     #> 1 both  (Intercept)    7.28     0.573      12.7  2.25e-13    6.11      8.45 
     #> 2 both  age           -0.190    0.0328     -5.79 2.85e- 6   -0.257    -0.123
+    #> 
+    #> $definitions
+    #> $definitions$age.range
+    #> NULL
 
 The ages to be included to the Z estimation can be adjusted using the
 `age.range` argument.
@@ -466,17 +470,17 @@ articles. For up-to-date citation information, please use:
 citation("ggFishPlots")
 #> To cite package 'ggFishPlots' in publications use:
 #> 
-#>   Vihtakari M (2025). _ggFishPlots: Visualise and Calculate Life
+#>   Vihtakari M (2026). _ggFishPlots: Visualise and Calculate Life
 #>   History Parameters for Fisheries Science using 'ggplot2'_. R package
-#>   version 0.3.1, <https://deepwaterimr.github.io/ggFishPlots/>.
+#>   version 0.4.0, <https://deepwaterimr.github.io/ggFishPlots/>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'},
 #>     author = {Mikko Vihtakari},
-#>     year = {2025},
-#>     note = {R package version 0.3.1},
+#>     year = {2026},
+#>     note = {R package version 0.4.0},
 #>     url = {https://deepwaterimr.github.io/ggFishPlots/},
 #>   }
 ```

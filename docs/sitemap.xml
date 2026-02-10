@@ -1,45 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_catchcurve.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_growth.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_lw.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_maturity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/round_any.html</loc>
-  </url>
-  <url>
-    <loc>/reference/survey_ghl.html</loc>
-  </url>
-  <url>
-    <loc>/reference/theme_fishplots.html</loc>
-  </url>
-  <url>
-    <loc>/reference/unlogit.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/pipe.html</loc></url>
+<url><loc>/reference/plot_catchcurve.html</loc></url>
+<url><loc>/reference/plot_growth.html</loc></url>
+<url><loc>/reference/plot_lw.html</loc></url>
+<url><loc>/reference/plot_maturity.html</loc></url>
+<url><loc>/reference/round_any.html</loc></url>
+<url><loc>/reference/survey_ghl.html</loc></url>
+<url><loc>/reference/theme_fishplots.html</loc></url>
+<url><loc>/reference/unlogit.html</loc></url>
 </urlset>
+

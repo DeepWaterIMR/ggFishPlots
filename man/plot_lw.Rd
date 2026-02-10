@@ -56,7 +56,7 @@ plot_lw(
 
 \item{log.axes}{Logical indicating whether logarithmic axes should be used instead of Cartesian ones.}
 
-\item{outlier.percentile}{Numeric argument giving the probability as a percent value which should be used to calculate residual quantiles for outlier removal. See details. Values > 99 are recommended. If \code{NULL} (default), no outlier removal is conducted.}
+\item{outlier.percentile}{Numeric argument giving the probability as a percent value which should be used to calculate residual quantiles for outlier removal. See details. Values >= 99.5 are recommended. If \code{NULL} (default), no outlier removal is conducted.}
 
 \item{annotate.coefficients}{Logical indicating whether the a and b coefficients should be annotated into the plot.}
 

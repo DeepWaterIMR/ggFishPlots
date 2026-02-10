@@ -105,7 +105,7 @@ plot_lw <- function(
     orig.nrow <- nrow(dt)
 
     dt <- dt %>%
-      dplyr::rename("sex" = tidyselect::all_of(sex)) %>%
+      dplyr::rename("sex" = !!sex) %>%
       dplyr::filter(!is.na(sex))
 
     sex.missing <- orig.nrow - nrow(dt)
@@ -119,8 +119,8 @@ plot_lw <- function(
 
   dt <- dt %>%
     dplyr::rename(
-      "weight" = tidyselect::all_of(weight),
-      "length" = tidyselect::all_of(length)
+      "weight" = !!weight,
+      "length" = !!length
     )
 
   length.missing <- sum(is.na(dt$length))

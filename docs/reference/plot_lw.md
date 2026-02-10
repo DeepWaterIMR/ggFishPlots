@@ -44,7 +44,7 @@ plot_lw(
 
 - weight:
 
-  Character argument giving the name of the age column in `dt`
+  Character argument giving the name of the weight column in `dt`
 
 - sex:
 

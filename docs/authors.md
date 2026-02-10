@@ -13,12 +13,12 @@ Source:
 
 Vihtakari M (2026). *ggFishPlots: Visualise and Calculate Life History
 Parameters for Fisheries Science using 'ggplot2'*. R package version
-0.4.0, <https://deepwaterimr.github.io/ggFishPlots/>.
+0.4.1, <https://deepwaterimr.github.io/ggFishPlots/>.
 
     @Manual{,
       title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'},
       author = {Mikko Vihtakari},
       year = {2026},
-      note = {R package version 0.4.0},
+      note = {R package version 0.4.1},
       url = {https://deepwaterimr.github.io/ggFishPlots/},
     }

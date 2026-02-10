@@ -24,9 +24,8 @@
 #' }
 #' @export
 
-# dt = survey_ghl; age = "age"; sex = "sex"; age.range = list(female = c(13,26), male = c(10,24)); female.sex = "F"; male.sex = "M"; split.by.sex = TRUE; base_size = 8; legend.position = "bottom"
-# x = age_dat %>% filter(sampling_type == "ENS") %>% uncount(n); age = "age"; sex = "sex"; age.range = c(13,41); female.sex = "F"; male.sex = "M"; split.by.sex = F; base_size = 8; legend.position = "bottom"; time = "year"
-
+## Debugging parameters
+# dt = survey_ghl; age = "age"; sex = "sex"; time = NULL; age.range = list("F" = c(13,26), "M" = c(10,24)); female.sex = "F"; male.sex = "M"; split.by.sex = TRUE; base_size = 8; legend.position = "bottom"
 plot_catchcurve <- function(
   dt,
   age = "age",

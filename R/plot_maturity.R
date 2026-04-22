@@ -372,7 +372,7 @@ plot_maturity <- function(
 
   modDat <- dplyr::left_join(
     modDat,
-    dt %>% dplyr::group_by(sex) %>% count,
+    dt %>% dplyr::group_by(sex) %>% dplyr::count(),
     by = "sex"
   )
 

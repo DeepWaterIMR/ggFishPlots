@@ -107,11 +107,13 @@ plot_maturity(
 
 - base_size:
 
-  Base size parameter for ggplot. See ggtheme.
+  Base size parameter for ggplot. See
+  [theme](https://ggplot2.tidyverse.org/reference/theme.html).
 
 - legend.position:
 
-  Position of the ggplot legend as a character. See ggtheme.
+  Position of the ggplot legend as a character. See
+  [theme](https://ggplot2.tidyverse.org/reference/theme.html).
 
 - ...:
 
@@ -167,11 +169,11 @@ plot_maturity(survey_ghl, bootstrap.n = 10)
 
 #> 
 #> $text
-#> [1] "50% maturity at length (L50) based on logit regressions:\n54.794 cm. 95% confidence intervals: 54.706 - 54.884\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
+#> [1] "50% maturity at length (L50) based on logit regressions:\n54.793 cm. 95% confidence intervals: 54.706 - 54.884\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
 #> 
 #> $params
-#>       mean   ci.min   ci.max  sex intercept     slope     n
-#> 1 54.79376 54.70595 54.88367 both -5.755492 0.1050587 64265
+#>       mean   ci.min  ci.max  sex intercept     slope     n
+#> 1 54.79348 54.70635 54.8836 both -5.755492 0.1050587 64265
 #> 
 
 # A50 plot, split by sex

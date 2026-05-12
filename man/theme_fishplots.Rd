@@ -7,7 +7,7 @@
 theme_fishplots(...)
 }
 \arguments{
-\item{...}{additional arguments passed to \code{\link[ggplot2]{ggtheme}}.}
+\item{...}{additional arguments passed to \code{\link[ggplot2]{theme_classic}}.}
 }
 \value{
 A ggplot2 theme layer.
@@ -15,4 +15,4 @@ A ggplot2 theme layer.
 \description{
 A ggplot2 theme for the ggFishPlots package
 }
-\concept{customize shapefiles}
+\concept{themes}

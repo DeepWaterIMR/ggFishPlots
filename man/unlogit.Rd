@@ -17,4 +17,3 @@ A data frame
 \description{
 Back-transform predictor variables from a logit model
 }
-\keyword{internal}

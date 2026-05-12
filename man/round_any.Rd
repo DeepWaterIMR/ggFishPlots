@@ -22,4 +22,3 @@ Round to multiple of any number
 \author{
 Hadley Wickham
 }
-\keyword{internal}

@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ggFishPlots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="ggfishplots">ggFishPlots<a class="anchor" aria-label="anchor" href="#ggfishplots"></a>
 </h1></div>
-<p><strong>Visualise and calculate life history parameters for fisheries science using ggplot2. R package version 0.4.1</strong></p>
+<p><strong>Visualise and calculate life history parameters for fisheries science using ggplot2. R package version 0.4.3</strong></p>
 <!-- badges: start -->
 
 <div class="section level2">
@@ -94,21 +94,22 @@
 <p><img src="reference/figures/README-unnamed-chunk-3-1.png"><!-- --></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n L0 (length at age 0) = 16 cm +/- 15.2 - 16.8 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"</span></span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 7</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 7</span></span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt;   term  estimate std.error statistic   p.value conf.low conf.high</span></span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;</span></span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; 1 Sinf   91.2      1.51         60.3 0          88.3      94.6   </span></span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; 2 K       0.0633   0.00231      27.4 4.90e-160   0.0586    0.0680</span></span>
 <span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; 3 t0     -3.04     0.139       -21.8 1.71e-103  -3.34     -2.77  </span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; $model</span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; NULL</span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; $data</span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; NULL</span></span></code></pre></div>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; 4 L0     16.0      0.408        39.2 1.98e-313  15.2      16.8   </span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; $model</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; NULL</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; $data</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; NULL</span></span></code></pre></div>
 <p>The <code>text</code> object can be rendered to R markdown documents using the <code>results = 'asis'</code> setting in the code chunk header (i.e. <code>{r, results = 'asis'}</code>) and the <code><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat()</a></code> function after replacing <code>"\n"</code> by <code>"\  n"</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">htmlcat</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">text</span><span class="op">)</span><span class="op">{</span></span>
@@ -120,6 +121,7 @@
 Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)<br>
 K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)<br>
 t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)<br>
+L0 (length at age 0) = 16 cm +/- 15.2 - 16.8 (95% CIs)<br>
 tmax (life span; t0 + 3/K) = 44.4 years<br>
 Number of included specimens = 10401<br>
 Total number of measured = 618779<br>
@@ -164,11 +166,11 @@ Length = 0; age = 608378</p>
 <p><img src="reference/figures/README-unnamed-chunk-8-1.png"><!-- --></p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; [1] "50% maturity at length (L50) based on logit regressions:\n54.808 cm. 95% confidence intervals: 54.645 - 54.974\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; [1] "50% maturity at length (L50) based on logit regressions:\n54.753 cm. 95% confidence intervals: 54.673 - 54.846\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."</span></span>
 <span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt;       mean   ci.min   ci.max  sex intercept     slope     n</span></span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; 1 54.80834 54.64512 54.97355 both -5.755492 0.1050587 64265</span></span></code></pre></div>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; 1 54.75325 54.67264 54.84615 both -5.755492 0.1050587 64265</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="split-by-sex-1">Split by sex<a class="anchor" aria-label="anchor" href="#split-by-sex-1"></a>
@@ -313,7 +315,7 @@ Length = 0; age = 608378</p>
 <p><img src="reference/figures/README-unnamed-chunk-19-1.png"><!-- --></p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="co">#&gt; $text</span></span>
-<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a><span class="co">#&gt; [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"</span></span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a><span class="co">#&gt; [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"</span></span>
 <span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
 <span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 8</span></span>
@@ -347,8 +349,8 @@ Length = 0; age = 608378</p>
 <p>Parameter estimates for the catch curve above:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">htmlcat</span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">text</span><span class="op">)</span></span></code></pre></div>
-<p>Instantenous total mortality (Z) estimated using a catch curve and<br>
-age range for females and for males.</p>
+<p>Instantaneous total mortality (Z) estimated using a catch curve and<br>
+age range 13-26 for females and 10-26 for males.</p>
 <p>Females:<br>
 Z = 0.37 (0.31-0.431 95% CIs)<br>
 N at age 0 = 86119 (25990-285354 95% CIs)<br>
@@ -370,7 +372,7 @@ Longevity = 23.3 years (21.8 - 24.8 95% CIs)</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Vihtakari M (2026). _ggFishPlots: Visualise and Calculate Life</span></span>
 <span><span class="co">#&gt;   History Parameters for Fisheries Science using 'ggplot2'_. R package</span></span>
-<span><span class="co">#&gt;   version 0.4.1, &lt;https://deepwaterimr.github.io/ggFishPlots/&gt;.</span></span>
+<span><span class="co">#&gt;   version 0.4.3, &lt;https://deepwaterimr.github.io/ggFishPlots/&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -378,7 +380,7 @@ Longevity = 23.3 years (21.8 - 24.8 95% CIs)</p>
 <span><span class="co">#&gt;     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'},</span></span>
 <span><span class="co">#&gt;     author = {Mikko Vihtakari},</span></span>
 <span><span class="co">#&gt;     year = {2026},</span></span>
-<span><span class="co">#&gt;     note = {R package version 0.4.1},</span></span>
+<span><span class="co">#&gt;     note = {R package version 0.4.3},</span></span>
 <span><span class="co">#&gt;     url = {https://deepwaterimr.github.io/ggFishPlots/},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>

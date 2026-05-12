@@ -62,9 +62,9 @@ plot_lw(
 
 \item{correct.units}{Logical indicating whether the a and b coefficients should be converted for centimeters and grams as in FishBase.}
 
-\item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
+\item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{theme}.}
 
-\item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.}
+\item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{theme}.}
 
 \item{point.size}{Numeric defining the size for data points in the plot. See the \code{size} argument in \link[ggplot2]{geom_point}.}
 

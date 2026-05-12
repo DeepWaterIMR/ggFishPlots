@@ -32,15 +32,15 @@ plot_catchcurve(
 
 \item{split.by.sex}{Logical indicating whether the result should be split by sex.}
 
-\item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
+\item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{theme}.}
 
-\item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.}
+\item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{theme}.}
 }
 \description{
 Plot a catch curve to estimate instantaneous total mortality (Z) using age data
 }
 \details{
-Calculates and plots the basic log-linearized catch curve to estimate instantaneous mortality. See e.g. \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{Ogle (2013)}.
+Calculates and plots the basic log-linearized catch curve to estimate instantaneous mortality. See e.g. Ogle (2016) \emph{Introductory Fisheries Analyses with R}, Chapter 11.
 }
 \examples{
 # Catch curve including all ages

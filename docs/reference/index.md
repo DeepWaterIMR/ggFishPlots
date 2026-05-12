@@ -7,7 +7,10 @@
   growth curves
 - [`plot_lw()`](plot_lw.md) : Plot length-weight relationships
 - [`plot_maturity()`](plot_maturity.md) : Plot maturity ogive
+- [`round_any()`](round_any.md) : Round to multiple of any number
 - [`survey_ghl`](survey_ghl.md) : Greenland halibut measurements from
   IMR surveys
 - [`theme_fishplots()`](theme_fishplots.md) : A ggplot2 theme for the
   ggFishPlots package
+- [`unlogit()`](unlogit.md) : Back-transform predictor variables from a
+  logit model

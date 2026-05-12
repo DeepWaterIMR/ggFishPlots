@@ -54,9 +54,9 @@ plot_maturity(
 
 \item{xlab}{Character giving the x-axis label without unit}
 
-\item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
+\item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{theme}.}
 
-\item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.}
+\item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{theme}.}
 
 \item{...}{Additional arguments passed to \link[ggridges]{geom_density_ridges}.}
 }

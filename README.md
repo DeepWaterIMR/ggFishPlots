@@ -2,7 +2,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.4.1**
+using ggplot2. R package version 0.4.3**
 
 <!-- badges: start -->
 
@@ -92,15 +92,16 @@ plot_growth(survey_ghl, length = "length", age = "age")
 
     #> 
     #> $text
-    #> [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"
+    #> [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n L0 (length at age 0) = 16 cm +/- 15.2 - 16.8 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"
     #> 
     #> $params
-    #> # A tibble: 3 × 7
+    #> # A tibble: 4 × 7
     #>   term  estimate std.error statistic   p.value conf.low conf.high
     #>   <chr>    <dbl>     <dbl>     <dbl>     <dbl>    <dbl>     <dbl>
     #> 1 Sinf   91.2      1.51         60.3 0          88.3      94.6   
     #> 2 K       0.0633   0.00231      27.4 4.90e-160   0.0586    0.0680
     #> 3 t0     -3.04     0.139       -21.8 1.71e-103  -3.34     -2.77  
+    #> 4 L0     16.0      0.408        39.2 1.98e-313  15.2      16.8   
     #> 
     #> $model
     #> NULL
@@ -125,6 +126,7 @@ von Bertalanffy growth function coefficients:
 Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  
 K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  
 t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  
+L0 (length at age 0) = 16 cm +/- 15.2 - 16.8 (95% CIs)  
 tmax (life span; t0 + 3/K) = 44.4 years  
 Number of included specimens = 10401  
 Total number of measured = 618779  
@@ -200,11 +202,11 @@ plot_maturity(survey_ghl, bootstrap.n = 10)
 
     #> 
     #> $text
-    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.808 cm. 95% confidence intervals: 54.645 - 54.974\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
+    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.753 cm. 95% confidence intervals: 54.673 - 54.846\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
     #> 
     #> $params
     #>       mean   ci.min   ci.max  sex intercept     slope     n
-    #> 1 54.80834 54.64512 54.97355 both -5.755492 0.1050587 64265
+    #> 1 54.75325 54.67264 54.84615 both -5.755492 0.1050587 64265
 
 #### Split by sex
 
@@ -392,7 +394,7 @@ plot_catchcurve(survey_ghl)
 
     #> 
     #> $text
-    #> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"
+    #> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"
     #> 
     #> $params
     #> # A tibble: 2 × 8
@@ -443,8 +445,8 @@ Parameter estimates for the catch curve above:
 htmlcat(tmp$text)
 ```
 
-Instantenous total mortality (Z) estimated using a catch curve and  
-age range for females and for males.
+Instantaneous total mortality (Z) estimated using a catch curve and  
+age range 13-26 for females and 10-26 for males.
 
 Females:  
 Z = 0.37 (0.31-0.431 95% CIs)  
@@ -472,7 +474,7 @@ citation("ggFishPlots")
 #> 
 #>   Vihtakari M (2026). _ggFishPlots: Visualise and Calculate Life
 #>   History Parameters for Fisheries Science using 'ggplot2'_. R package
-#>   version 0.4.1, <https://deepwaterimr.github.io/ggFishPlots/>.
+#>   version 0.4.3, <https://deepwaterimr.github.io/ggFishPlots/>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -480,7 +482,7 @@ citation("ggFishPlots")
 #>     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'},
 #>     author = {Mikko Vihtakari},
 #>     year = {2026},
-#>     note = {R package version 0.4.1},
+#>     note = {R package version 0.4.3},
 #>     url = {https://deepwaterimr.github.io/ggFishPlots/},
 #>   }
 ```

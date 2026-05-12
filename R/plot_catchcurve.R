@@ -4,7 +4,7 @@
 #' @inheritParams plot_growth
 #' @param time Split analysis by time? If \code{NULL}, all data are assumed to stem from one time point. Using a character argument giving the name of a time column splits the analysis by unique values in that column and produces a faceted plot.
 #' @param age.range Defines the age range to be used for Z estimation. If \code{NULL}, all ages are used. If a numeric vector of length 2, the first number defines the minimum age to include and the last number the maximum age. It is also possible to use differing ranges by sex when \code{split.by.sex = TRUE}: use a named list  of length two with names referring to \code{female.sex} and \code{male.sex}. Provide a numeric vector of length 2 to each element (first number defining the minimum age to include and the last number the maximum age). See Examples.
-#' @details Calculates and plots the basic log-linearized catch curve to estimate instantaneous mortality. See e.g. \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{Ogle (2013)}.
+#' @details Calculates and plots the basic log-linearized catch curve to estimate instantaneous mortality. See e.g. Ogle (2016) \emph{Introductory Fisheries Analyses with R}, Chapter 11.
 #' @author Mikko Vihtakari // Institute of Marine Research.
 #' @import dplyr ggplot2
 #' @importFrom scales log_breaks
@@ -210,7 +210,7 @@ plot_catchcurve <- function(
       dt %>%
         dplyr::filter(.data$include, .data$sex == k) %>%
         dplyr::group_by(.data$time) %>%
-        dplyr::reframe(broom::tidy(lm(log(n) ~ age, data = dplyr::cur_data()), conf.int = TRUE)) %>%
+        dplyr::reframe(broom::tidy(lm(log(n) ~ age, data = dplyr::pick(everything())), conf.int = TRUE)) %>%
         dplyr::mutate(sex = k, .before = 1)
     }
   }) %>%
@@ -346,13 +346,13 @@ plot_catchcurve <- function(
     }
 
     Text <- paste0(
-      "Instantenous total mortality (Z) estimated using a catch curve and\nage range ",
+      "Instantaneous total mortality (Z) estimated using a catch curve and\nage range ",
       ifelse(
         inherits(age.range, "list"),
         paste0(
-          paste(age.range[["female"]], collapse = "-"),
+          paste(age.range[[female.sex]], collapse = "-"),
           " for females and ",
-          paste(age.range[["male"]], collapse = "-"),
+          paste(age.range[[male.sex]], collapse = "-"),
           " for males.\n\n"
         ),
         paste0(paste(age.range, collapse = "-"), " for both sexes.\n\n")
@@ -501,7 +501,7 @@ plot_catchcurve <- function(
     }
 
     Text <- paste0(
-      "Instantenous total mortality (Z) estimated using a catch curve and\nage range ",
+      "Instantaneous total mortality (Z) estimated using a catch curve and\nage range ",
       paste(age.range, collapse = "-"),
       ".\n\n",
       if (!is.null(time)) {

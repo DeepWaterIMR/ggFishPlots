@@ -1,6 +1,8 @@
 # Plot age-length relationships and growth curves
 
-Plot age-length relationships and growth curves
+Fits and plots a von Bertalanffy, Gompertz, or Logistic growth curve to
+age-length data. Returns the plot, a text summary, and estimated
+parameters.
 
 ## Usage
 
@@ -103,16 +105,20 @@ plot_growth(
 
 - base_size:
 
-  Base size parameter for ggplot. See ggtheme.
+  Base size parameter for ggplot. See
+  [theme](https://ggplot2.tidyverse.org/reference/theme.html).
 
 - legend.position:
 
-  Position of the ggplot legend as a character. See ggtheme.
+  Position of the ggplot legend as a character. See
+  [theme](https://ggplot2.tidyverse.org/reference/theme.html).
 
 ## Value
 
 A list containing the `plot`, `text` for Rmarkdown and Shiny
-applications, and estimated parameters (`params`).
+applications, estimated parameters (`params`), the raw `model` object
+(if `return_model = TRUE`), and the prepared `data` (if
+`return_data = TRUE`).
 
 ## Details
 
@@ -135,15 +141,16 @@ plot_growth(survey_ghl, length = "length", age = "age")
 
 #> 
 #> $text
-#> [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"
+#> [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n L0 (length at age 0) = 16 cm +/- 15.2 - 16.8 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"
 #> 
 #> $params
-#> # A tibble: 3 × 7
+#> # A tibble: 4 × 7
 #>   term  estimate std.error statistic   p.value conf.low conf.high
 #>   <chr>    <dbl>     <dbl>     <dbl>     <dbl>    <dbl>     <dbl>
 #> 1 Sinf   91.2      1.51         60.3 0          88.3      94.6   
 #> 2 K       0.0633   0.00231      27.4 4.90e-160   0.0586    0.0680
 #> 3 t0     -3.04     0.139       -21.8 1.71e-103  -3.34     -2.77  
+#> 4 L0     16.0      0.408        39.2 1.98e-313  15.2      16.8   
 #> 
 #> $model
 #> NULL

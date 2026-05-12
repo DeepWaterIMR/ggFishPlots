@@ -72,6 +72,7 @@ plot_lw <- function(
   # Add row number ####
 
   dt$id <- rownames(dt)
+  orig.nrow <- nrow(dt)
 
   # Fix sex column
 
@@ -102,8 +103,6 @@ plot_lw <- function(
       stop("Either invalid sex column or not enough sex data")
     }
 
-    orig.nrow <- nrow(dt)
-
     dt <- dt %>%
       dplyr::rename("sex" = !!sex) %>%
       dplyr::filter(!is.na(sex))
@@ -112,10 +111,6 @@ plot_lw <- function(
   }
 
   # Filter
-
-  if (!exists("orig.nrow")) {
-    orig.nrow <- nrow(dt)
-  }
 
   dt <- dt %>%
     dplyr::rename(
@@ -202,7 +197,7 @@ plot_lw <- function(
 
     if (split.by.sex) {
       dt <- lapply(unique(dt$sex), function(k) {
-        tmp <- dt %>% filter(sex == k)
+        tmp <- dt %>% dplyr::filter(sex == k)
         mod <- lm(log(weight) ~ log(length), data = tmp)
         res <- abs(stats::residuals(mod))
         tmp$outlier <- res > stats::quantile(res, outlier.percentile / 100)
@@ -220,6 +215,8 @@ plot_lw <- function(
   }
 
   # Calculate a and b ####
+
+  lwModPars <- NULL
 
   if (use.nls) {
     if (split.by.sex) {
@@ -262,7 +259,7 @@ plot_lw <- function(
           lapply(unique(lwModPars$sex), function(k) {
             tmp <- dt %>% dplyr::filter(.data$sex == k)
 
-            tibble(
+            tibble::tibble(
               sex = k,
               length = paste(
                 round(min(tmp$length, na.rm = TRUE), 3),
@@ -361,7 +358,7 @@ plot_lw <- function(
           lapply(unique(lwModPars$sex), function(k) {
             tmp <- dt %>% dplyr::filter(.data$sex == k)
 
-            tibble(
+            tibble::tibble(
               sex = k,
               length = paste(
                 round(min(tmp$length, na.rm = TRUE), 3),
@@ -472,57 +469,57 @@ plot_lw <- function(
   # Plot
 
   if (split.by.sex) {
-    tmp <- bind_rows(
-      tibble(
+    tmp <- dplyr::bind_rows(
+      tibble::tibble(
         length = seq(
           0,
           max(dt[dt$sex == female.sex, "length"]),
           length.out = 100
         ),
         weight = (lwModPars %>%
-          filter(sex == female.sex, term == "a") %>%
-          pull(estimate)) *
+          dplyr::filter(sex == female.sex, term == "a") %>%
+          dplyr::pull(estimate)) *
           length^(lwModPars %>%
-            filter(sex == female.sex, term == "b") %>%
-            pull(estimate)),
+            dplyr::filter(sex == female.sex, term == "b") %>%
+            dplyr::pull(estimate)),
         weight.low = (lwModPars %>%
-          filter(sex == female.sex, term == "a") %>%
-          pull(conf.low)) *
+          dplyr::filter(sex == female.sex, term == "a") %>%
+          dplyr::pull(conf.low)) *
           length^(lwModPars %>%
-            filter(sex == female.sex, term == "b") %>%
-            pull(conf.low)),
+            dplyr::filter(sex == female.sex, term == "b") %>%
+            dplyr::pull(conf.low)),
         weight.high = (lwModPars %>%
-          filter(sex == female.sex, term == "a") %>%
-          pull(conf.high)) *
+          dplyr::filter(sex == female.sex, term == "a") %>%
+          dplyr::pull(conf.high)) *
           length^(lwModPars %>%
-            filter(sex == female.sex, term == "b") %>%
-            pull(conf.high)),
+            dplyr::filter(sex == female.sex, term == "b") %>%
+            dplyr::pull(conf.high)),
         sex = female.sex
       ),
-      tibble(
+      tibble::tibble(
         length = seq(
           0,
           max(dt[dt$sex == male.sex, "length"]),
           length.out = 100
         ),
         weight = (lwModPars %>%
-          filter(sex == male.sex, term == "a") %>%
-          pull(estimate)) *
+          dplyr::filter(sex == male.sex, term == "a") %>%
+          dplyr::pull(estimate)) *
           length^(lwModPars %>%
-            filter(sex == male.sex, term == "b") %>%
-            pull(estimate)),
+            dplyr::filter(sex == male.sex, term == "b") %>%
+            dplyr::pull(estimate)),
         weight.low = (lwModPars %>%
-          filter(sex == male.sex, term == "a") %>%
-          pull(conf.low)) *
+          dplyr::filter(sex == male.sex, term == "a") %>%
+          dplyr::pull(conf.low)) *
           length^(lwModPars %>%
-            filter(sex == male.sex, term == "b") %>%
-            pull(conf.low)),
+            dplyr::filter(sex == male.sex, term == "b") %>%
+            dplyr::pull(conf.low)),
         weight.high = (lwModPars %>%
-          filter(sex == male.sex, term == "a") %>%
-          pull(conf.high)) *
+          dplyr::filter(sex == male.sex, term == "a") %>%
+          dplyr::pull(conf.high)) *
           length^(lwModPars %>%
-            filter(sex == male.sex, term == "b") %>%
-            pull(conf.high)),
+            dplyr::filter(sex == male.sex, term == "b") %>%
+            dplyr::pull(conf.high)),
         sex = male.sex
       )
     )
@@ -696,14 +693,14 @@ plot_lw <- function(
       sum(dt$outlier)
     )
   } else {
-    tmp <- tibble(
+    tmp <- tibble::tibble(
       length = seq(0, max(dt$length), length.out = 100),
-      weight = (lwModPars %>% filter(term == "a") %>% pull(estimate)) *
-        length^(lwModPars %>% filter(term == "b") %>% pull(estimate)),
-      weight.low = (lwModPars %>% filter(term == "a") %>% pull(conf.low)) *
-        length^(lwModPars %>% filter(term == "b") %>% pull(conf.low)),
-      weight.high = (lwModPars %>% filter(term == "a") %>% pull(conf.high)) *
-        length^(lwModPars %>% filter(term == "b") %>% pull(conf.high))
+      weight = (lwModPars %>% dplyr::filter(term == "a") %>% dplyr::pull(estimate)) *
+        length^(lwModPars %>% dplyr::filter(term == "b") %>% dplyr::pull(estimate)),
+      weight.low = (lwModPars %>% dplyr::filter(term == "a") %>% dplyr::pull(conf.low)) *
+        length^(lwModPars %>% dplyr::filter(term == "b") %>% dplyr::pull(conf.low)),
+      weight.high = (lwModPars %>% dplyr::filter(term == "a") %>% dplyr::pull(conf.high)) *
+        length^(lwModPars %>% dplyr::filter(term == "b") %>% dplyr::pull(conf.high))
     )
 
     Plot <- suppressWarnings({
@@ -838,10 +835,6 @@ plot_lw <- function(
   return(list(
     plot = Plot,
     text = Text,
-    params = if (exists("lwModPars")) {
-      lwModPars
-    } else {
-      NULL
-    }
+    params = lwModPars
   ))
 }

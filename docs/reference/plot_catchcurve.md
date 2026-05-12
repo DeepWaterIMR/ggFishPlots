@@ -64,17 +64,19 @@ plot_catchcurve(
 
 - base_size:
 
-  Base size parameter for ggplot. See ggtheme.
+  Base size parameter for ggplot. See
+  [theme](https://ggplot2.tidyverse.org/reference/theme.html).
 
 - legend.position:
 
-  Position of the ggplot legend as a character. See ggtheme.
+  Position of the ggplot legend as a character. See
+  [theme](https://ggplot2.tidyverse.org/reference/theme.html).
 
 ## Details
 
 Calculates and plots the basic log-linearized catch curve to estimate
-instantaneous mortality. See e.g. [Ogle
-(2013)](https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm).
+instantaneous mortality. See e.g. Ogle (2016) *Introductory Fisheries
+Analyses with R*, Chapter 11.
 
 ## Author
 
@@ -90,7 +92,7 @@ plot_catchcurve(survey_ghl)
 
 #> 
 #> $text
-#> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"
+#> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"
 #> 
 #> $params
 #> # A tibble: 2 × 8
@@ -111,7 +113,7 @@ plot_catchcurve(survey_ghl, age.range = c(10,26))
 
 #> 
 #> $text
-#> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range 10-26.\n\nZ = 0.356 (0.312-0.401 95% CIs)\nN at age 0 = 68394 (29985-156005 95% CIs)\nLongevity = 31.2 years (25.7 - 38.3 95% CIs)\n\n"
+#> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range 10-26.\n\nZ = 0.356 (0.312-0.401 95% CIs)\nN at age 0 = 68394 (29985-156005 95% CIs)\nLongevity = 31.2 years (25.7 - 38.3 95% CIs)\n\n"
 #> 
 #> $params
 #> # A tibble: 2 × 8
@@ -131,7 +133,7 @@ plot_catchcurve(survey_ghl, age.range = c(10,26), split.by.sex = TRUE)
 
 #> 
 #> $text
-#> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range 10-26 for both sexes.\n\nFemales:\nZ = 0.31 (0.256-0.365 95% CIs)\nN at age 0 = 23925 (8625-66368 95% CIs)\nLongevity = 32.5 years (24.8 - 43.4 95% CIs)\n\nMales:\nZ = 0.511 (0.492-0.53 95% CIs)\nN at age 0 = 145002 (105241-199785 95% CIs)\nLongevity = 23.3 years (21.8 - 24.8 95% CIs)"
+#> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range 10-26 for both sexes.\n\nFemales:\nZ = 0.31 (0.256-0.365 95% CIs)\nN at age 0 = 23925 (8625-66368 95% CIs)\nLongevity = 32.5 years (24.8 - 43.4 95% CIs)\n\nMales:\nZ = 0.511 (0.492-0.53 95% CIs)\nN at age 0 = 145002 (105241-199785 95% CIs)\nLongevity = 23.3 years (21.8 - 24.8 95% CIs)"
 #> 
 #> $params
 #> # A tibble: 4 × 8
@@ -155,7 +157,7 @@ split.by.sex = TRUE)
 
 #> 
 #> $text
-#> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range  for females and  for males.\n\nFemales:\nZ = 0.37 (0.31-0.431 95% CIs)\nN at age 0 = 86119 (25990-285354 95% CIs)\nLongevity = 30.7 years (23.6 - 40.5 95% CIs)\n\nMales:\nZ = 0.511 (0.492-0.53 95% CIs)\nN at age 0 = 145002 (105241-199785 95% CIs)\nLongevity = 23.3 years (21.8 - 24.8 95% CIs)"
+#> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range 13-26 for females and 10-26 for males.\n\nFemales:\nZ = 0.37 (0.31-0.431 95% CIs)\nN at age 0 = 86119 (25990-285354 95% CIs)\nLongevity = 30.7 years (23.6 - 40.5 95% CIs)\n\nMales:\nZ = 0.511 (0.492-0.53 95% CIs)\nN at age 0 = 145002 (105241-199785 95% CIs)\nLongevity = 23.3 years (21.8 - 24.8 95% CIs)"
 #> 
 #> $params
 #> # A tibble: 4 × 8

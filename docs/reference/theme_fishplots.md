@@ -12,7 +12,8 @@ theme_fishplots(...)
 
 - ...:
 
-  additional arguments passed to `ggtheme`.
+  additional arguments passed to
+  [`theme_classic`](https://ggplot2.tidyverse.org/reference/ggtheme.html).
 
 ## Value
 

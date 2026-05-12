@@ -1,7 +1,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.4.1**
+using ggplot2. R package version 0.4.3**
 
 ## Overview
 
@@ -38,6 +38,7 @@ or [remotes](https://cran.r-project.org/web/packages/remotes/index.html)
 packages.
 
 ``` r
+
 remotes::install_github("DeepWaterIMR/ggFishPlots")
 ```
 
@@ -61,6 +62,7 @@ Note how the `text` and `params` are returned as a list together with
 `plot`.
 
 ``` r
+
 library(ggFishPlots)
 
 data(survey_ghl) # example data
@@ -85,15 +87,16 @@ plot_growth(survey_ghl, length = "length", age = "age")
 ``` R
 #> 
 #> $text
-#> [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"
+#> [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n L0 (length at age 0) = 16 cm +/- 15.2 - 16.8 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"
 #> 
 #> $params
-#> # A tibble: 3 × 7
+#> # A tibble: 4 × 7
 #>   term  estimate std.error statistic   p.value conf.low conf.high
 #>   <chr>    <dbl>     <dbl>     <dbl>     <dbl>    <dbl>     <dbl>
 #> 1 Sinf   91.2      1.51         60.3 0          88.3      94.6   
 #> 2 K       0.0633   0.00231      27.4 4.90e-160   0.0586    0.0680
 #> 3 t0     -3.04     0.139       -21.8 1.71e-103  -3.34     -2.77  
+#> 4 L0     16.0      0.408        39.2 1.98e-313  15.2      16.8   
 #> 
 #> $model
 #> NULL
@@ -109,6 +112,7 @@ The `text` object can be rendered to R markdown documents using the
 `"\n"` by `"\ n"`:
 
 ``` r
+
 htmlcat <- function(text){
   cat(gsub(pattern = "\n", replacement = "  \n", x = text))
 }
@@ -120,6 +124,7 @@ von Bertalanffy growth function coefficients:
 Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  
 K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  
 t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  
+L0 (length at age 0) = 16 cm +/- 15.2 - 16.8 (95% CIs)  
 tmax (life span; t0 + 3/K) = 44.4 years  
 Number of included specimens = 10401  
 Total number of measured = 618779  
@@ -133,6 +138,7 @@ they are the argument names by default and the same than in the example
 data. Only the `plot` element is returned this time.
 
 ``` r
+
 plot_growth(survey_ghl, split.by.sex = TRUE)$plot
 ```
 
@@ -146,6 +152,7 @@ forcing strength is 10 % of number of observations by default and can be
 adjusted using the `force.zero.group.strength` argument.
 
 ``` r
+
 plot_growth(survey_ghl, force.zero.group.length = 14, boxplot = FALSE)$plot
 ```
 
@@ -160,6 +167,7 @@ Maturity ogives are estimated using a logistic
 [`glm()`](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/glm)
 
 ``` r
+
 plot_maturity(survey_ghl, length = "length", maturity = "maturity")
 #> $plot
 ```
@@ -189,6 +197,7 @@ only 10 replicates here to save processing time. In real application use
 at least 1000.
 
 ``` r
+
 plot_maturity(survey_ghl, bootstrap.n = 10)
 #> $plot
 ```
@@ -198,16 +207,17 @@ plot_maturity(survey_ghl, bootstrap.n = 10)
 ``` R
 #> 
 #> $text
-#> [1] "50% maturity at length (L50) based on logit regressions:\n54.808 cm. 95% confidence intervals: 54.645 - 54.974\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
+#> [1] "50% maturity at length (L50) based on logit regressions:\n54.753 cm. 95% confidence intervals: 54.673 - 54.846\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
 #> 
 #> $params
 #>       mean   ci.min   ci.max  sex intercept     slope     n
-#> 1 54.80834 54.64512 54.97355 both -5.755492 0.1050587 64265
+#> 1 54.75325 54.67264 54.84615 both -5.755492 0.1050587 64265
 ```
 
 #### Split by sex
 
 ``` r
+
 plot_maturity(survey_ghl, split.by.sex = TRUE)$plot
 ```
 
@@ -219,6 +229,7 @@ The same principle can be used to produce A50 (50% maturity at age)
 plots:
 
 ``` r
+
 plot_maturity(survey_ghl, length = "age", length.unit = "years",
               xlab = "Age", length.bin.width = 1, split.by.sex = TRUE)$plot
 ```
@@ -234,6 +245,7 @@ can be necessary for to make the
 immature fish are scarce in the dataset.
 
 ``` r
+
 plot_maturity(survey_ghl, length = "age", length.unit = "years",
               xlab = "Age", length.bin.width = 1, 
               force.zero.group.length = 0,
@@ -252,6 +264,7 @@ One option can be to estimate the number of added juveniles using the
 [`plot_catchcurve()`](#catchcurvesep) function:
 
 ``` r
+
 plot_maturity(survey_ghl, length = "age", length.unit = "years",
               xlab = "Age", length.bin.width = 1, 
               force.zero.group.length = 0,
@@ -268,6 +281,7 @@ plot_maturity(survey_ghl, length = "age", length.unit = "years",
 Simple plot using log-transformation and linear models by default.
 
 ``` r
+
 plot_lw(survey_ghl, length = "length", weight = "weight")
 #> $plot
 ```
@@ -296,6 +310,7 @@ The dashed lines represent 95% confidence intervals.
 Use non-linear least squares instead:
 
 ``` r
+
 plot_lw(survey_ghl, use.nls = TRUE)
 #> $plot
 ```
@@ -327,6 +342,7 @@ asked (but `length.unit` and `weight.unit` parameters have to be defined
 correctly).
 
 ``` r
+
 plot_lw(survey_ghl, split.by.sex = TRUE, correct.units = TRUE)
 #> $plot
 ```
@@ -355,6 +371,7 @@ You can also transform the parameters according to the formulas given in
 the FishBase.
 
 ``` r
+
 plot_lw(survey_ghl %>% dplyr::mutate(weight = weight*1000), weight.unit = "g")$params
 #> # A tibble: 2 × 14
 #>   term  estimate std.error statistic p.value conf.low conf.high r.squared
@@ -368,6 +385,7 @@ plot_lw(survey_ghl %>% dplyr::mutate(weight = weight*1000), weight.unit = "g")$p
 #### Log-log axes to see differences
 
 ``` r
+
 plot_lw(survey_ghl, split.by.sex = TRUE, log.axes = TRUE)$plot
 ```
 
@@ -376,6 +394,7 @@ plot_lw(survey_ghl, split.by.sex = TRUE, log.axes = TRUE)$plot
 #### Outlier removal
 
 ``` r
+
 plot_lw(survey_ghl, outlier.percentile = 99.5, annotate.coefficients = TRUE)$plot
 ```
 
@@ -390,6 +409,7 @@ contains a nice explanation of catch curves. At the time of writing
 ggFishPlots calculates only the simple log-linearised regression.
 
 ``` r
+
 plot_catchcurve(survey_ghl)
 #> $plot
 ```
@@ -399,7 +419,7 @@ plot_catchcurve(survey_ghl)
 ``` R
 #> 
 #> $text
-#> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"
+#> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"
 #> 
 #> $params
 #> # A tibble: 2 × 8
@@ -417,6 +437,7 @@ The ages to be included to the Z estimation can be adjusted using the
 `age.range` argument.
 
 ``` r
+
 plot_catchcurve(survey_ghl, age.range = c(10,26))$plot
 ```
 
@@ -428,6 +449,7 @@ the number of 0 age fish assuming constant mortality.
 #### Split by sex
 
 ``` r
+
 plot_catchcurve(survey_ghl, age.range = c(10,26), split.by.sex = TRUE)$plot
 ```
 
@@ -436,6 +458,7 @@ plot_catchcurve(survey_ghl, age.range = c(10,26), split.by.sex = TRUE)$plot
 Use a named list to use separate age ranges for females and males.
 
 ``` r
+
 tmp <- plot_catchcurve(survey_ghl,
 age.range = list("F" = c(13,26), "M" = c(10,26)),
 split.by.sex = TRUE)
@@ -448,11 +471,12 @@ tmp$plot
 Parameter estimates for the catch curve above:
 
 ``` r
+
 htmlcat(tmp$text)
 ```
 
-Instantenous total mortality (Z) estimated using a catch curve and  
-age range for females and for males.
+Instantaneous total mortality (Z) estimated using a catch curve and  
+age range 13-26 for females and 10-26 for males.
 
 Females:  
 Z = 0.37 (0.31-0.431 95% CIs)  
@@ -475,12 +499,13 @@ the package if plots or estimates are used in reports or scientific
 articles. For up-to-date citation information, please use:
 
 ``` r
+
 citation("ggFishPlots")
 #> To cite package 'ggFishPlots' in publications use:
 #> 
 #>   Vihtakari M (2026). _ggFishPlots: Visualise and Calculate Life
 #>   History Parameters for Fisheries Science using 'ggplot2'_. R package
-#>   version 0.4.1, <https://deepwaterimr.github.io/ggFishPlots/>.
+#>   version 0.4.3, <https://deepwaterimr.github.io/ggFishPlots/>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -488,7 +513,7 @@ citation("ggFishPlots")
 #>     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'},
 #>     author = {Mikko Vihtakari},
 #>     year = {2026},
-#>     note = {R package version 0.4.1},
+#>     note = {R package version 0.4.3},
 #>     url = {https://deepwaterimr.github.io/ggFishPlots/},
 #>   }
 ```
@@ -514,8 +539,11 @@ with an authorship.
   growth curves
 - [`plot_lw()`](plot_lw.md) : Plot length-weight relationships
 - [`plot_maturity()`](plot_maturity.md) : Plot maturity ogive
+- [`round_any()`](round_any.md) : Round to multiple of any number
 - [`survey_ghl`](survey_ghl.md) : Greenland halibut measurements from
   IMR surveys
 - [`theme_fishplots()`](theme_fishplots.md) : A ggplot2 theme for the
   ggFishPlots package
+- [`unlogit()`](unlogit.md) : Back-transform predictor variables from a
+  logit model
 

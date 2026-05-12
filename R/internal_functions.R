@@ -3,7 +3,6 @@
 #' @param accuracy number to round to; for POSIXct objects, a number of seconds
 #' @param f rounding function: \code{\link{floor}}, \code{\link{ceiling}} or \code{\link{round}}
 #' @return Rounded numeric vector
-#' @keywords internal
 #' @author Hadley Wickham
 #' @export
 #'
@@ -15,7 +14,6 @@ round_any <- function(x, accuracy, f = round) {
 #' @param p probability threshold to unlog from \code{model}
 #' @param model a \code{glm} model object
 #' @return A data frame
-#' @keywords internal
 #' @importFrom stats confint
 #' @export
 

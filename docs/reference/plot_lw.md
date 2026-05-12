@@ -117,11 +117,13 @@ plot_lw(
 
 - base_size:
 
-  Base size parameter for ggplot. See ggtheme.
+  Base size parameter for ggplot. See
+  [theme](https://ggplot2.tidyverse.org/reference/theme.html).
 
 - legend.position:
 
-  Position of the ggplot legend as a character. See ggtheme.
+  Position of the ggplot legend as a character. See
+  [theme](https://ggplot2.tidyverse.org/reference/theme.html).
 
 - point.size:
 

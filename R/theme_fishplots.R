@@ -1,8 +1,8 @@
 #' @title A ggplot2 theme for the ggFishPlots package
-#' @param ... additional arguments passed to \code{\link[ggplot2]{ggtheme}}.
+#' @param ... additional arguments passed to \code{\link[ggplot2]{theme_classic}}.
 #' @import ggplot2
 #' @return A ggplot2 theme layer.
-#' @family customize shapefiles
+#' @family themes
 #' @export
 
 theme_fishplots <- function(...) {

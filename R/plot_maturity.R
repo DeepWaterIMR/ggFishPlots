@@ -14,8 +14,8 @@
 #' @param force.zero.group.strength Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}. Cannot be used simultaneously with \code{force.zero.group.n}
 #' @param force.zero.group.n Numeric indicating how many observations should be added to the specified \code{force.zero.group.length}. If \code{split.by.sex = TRUE}, use a named vector of length two with names referring to \code{female.sex} and \code{male.sex}. Cannot be used simultaneously with \code{force.zero.group.strength}
 #' @param xlab Character giving the x-axis label without unit
-#' @param base_size Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.
-#' @param legend.position Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.
+#' @param base_size Base size parameter for ggplot. See \link[ggplot2]{theme}.
+#' @param legend.position Position of the ggplot legend as a character. See \link[ggplot2]{theme}.
 #' @param ... Additional arguments passed to \link[ggridges]{geom_density_ridges}.
 #' @return Returns a ggplot2 or tibble depending on the \code{plot} argument showing the maturity ogives.
 #' @details The 95\% confidence intervals for the mean 50\% mature estimate are calculated using the \link[stats]{glm} function by default. This routine might not be optimal when zero group fish are added. Hence, the function contains an option to bootstrap confidence intervals using \emph{the same number of data than observations} (i.e. excluding the added data from the number of randomly resampled rows). Adding an integer to the \code{bootstrap.n} argument turns on this feature. Note that the confidence intervals calculated this way tend to be narrower than the \code{glm()} confidence intervals.
@@ -606,10 +606,6 @@ plot_maturity <- function(
   return(list(
     plot = suppressWarnings(p),
     text = Text,
-    params = if (exists("modDat")) {
-      modDat
-    } else {
-      NULL
-    }
+    params = modDat
   ))
 }

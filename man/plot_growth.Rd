@@ -56,15 +56,15 @@ plot_growth(
 
 \item{return_data}{Logical indicating whether the data used to make the growth models should be returned together with other output.}
 
-\item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.}
+\item{base_size}{Base size parameter for ggplot. See \link[ggplot2]{theme}.}
 
-\item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{ggtheme}.}
+\item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{theme}.}
 }
 \value{
-A list containing the \code{plot}, \code{text} for Rmarkdown and Shiny applications, and estimated parameters (\code{params}).
+A list containing the \code{plot}, \code{text} for Rmarkdown and Shiny applications, estimated parameters (\code{params}), the raw \code{model} object (if \code{return_model = TRUE}), and the prepared \code{data} (if \code{return_data = TRUE}).
 }
 \description{
-Plot age-length relationships and growth curves
+Fits and plots a von Bertalanffy, Gompertz, or Logistic growth curve to age-length data. Returns the plot, a text summary, and estimated parameters.
 }
 \details{
 Uses the \code{fishmethods::growth} function to calculate the growth curves. Zero group length can be forced to the growth functions using the \code{force.zero.group.*} parameters.

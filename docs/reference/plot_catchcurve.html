@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ggFishPlots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,16 +85,16 @@
 
 
 <dt id="arg-base-size">base_size<a class="anchor" aria-label="anchor" href="#arg-base-size"></a></dt>
-<dd><p>Base size parameter for ggplot. See ggtheme.</p></dd>
+<dd><p>Base size parameter for ggplot. See <a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a>.</p></dd>
 
 
 <dt id="arg-legend-position">legend.position<a class="anchor" aria-label="anchor" href="#arg-legend-position"></a></dt>
-<dd><p>Position of the ggplot legend as a character. See ggtheme.</p></dd>
+<dd><p>Position of the ggplot legend as a character. See <a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Calculates and plots the basic log-linearized catch curve to estimate instantaneous mortality. See e.g. <a href="https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm" class="external-link">Ogle (2013)</a>.</p>
+    <p>Calculates and plots the basic log-linearized catch curve to estimate instantaneous mortality. See e.g. Ogle (2016) <em>Introductory Fisheries Analyses with R</em>, Chapter 11.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -110,7 +110,7 @@
 <span class="r-plt img"><img src="plot_catchcurve-1.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $text</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 8</span></span>
@@ -131,7 +131,7 @@
 <span class="r-plt img"><img src="plot_catchcurve-2.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $text</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range 10-26.\n\nZ = 0.356 (0.312-0.401 95% CIs)\nN at age 0 = 68394 (29985-156005 95% CIs)\nLongevity = 31.2 years (25.7 - 38.3 95% CIs)\n\n"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range 10-26.\n\nZ = 0.356 (0.312-0.401 95% CIs)\nN at age 0 = 68394 (29985-156005 95% CIs)\nLongevity = 31.2 years (25.7 - 38.3 95% CIs)\n\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 8</span></span>
@@ -151,7 +151,7 @@
 <span class="r-plt img"><img src="plot_catchcurve-3.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $text</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range 10-26 for both sexes.\n\nFemales:\nZ = 0.31 (0.256-0.365 95% CIs)\nN at age 0 = 23925 (8625-66368 95% CIs)\nLongevity = 32.5 years (24.8 - 43.4 95% CIs)\n\nMales:\nZ = 0.511 (0.492-0.53 95% CIs)\nN at age 0 = 145002 (105241-199785 95% CIs)\nLongevity = 23.3 years (21.8 - 24.8 95% CIs)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range 10-26 for both sexes.\n\nFemales:\nZ = 0.31 (0.256-0.365 95% CIs)\nN at age 0 = 23925 (8625-66368 95% CIs)\nLongevity = 32.5 years (24.8 - 43.4 95% CIs)\n\nMales:\nZ = 0.511 (0.492-0.53 95% CIs)\nN at age 0 = 145002 (105241-199785 95% CIs)\nLongevity = 23.3 years (21.8 - 24.8 95% CIs)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 8</span></span>
@@ -175,7 +175,7 @@
 <span class="r-plt img"><img src="plot_catchcurve-4.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $text</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Instantenous total mortality (Z) estimated using a catch curve and\nage range  for females and  for males.\n\nFemales:\nZ = 0.37 (0.31-0.431 95% CIs)\nN at age 0 = 86119 (25990-285354 95% CIs)\nLongevity = 30.7 years (23.6 - 40.5 95% CIs)\n\nMales:\nZ = 0.511 (0.492-0.53 95% CIs)\nN at age 0 = 145002 (105241-199785 95% CIs)\nLongevity = 23.3 years (21.8 - 24.8 95% CIs)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range 13-26 for females and 10-26 for males.\n\nFemales:\nZ = 0.37 (0.31-0.431 95% CIs)\nN at age 0 = 86119 (25990-285354 95% CIs)\nLongevity = 30.7 years (23.6 - 40.5 95% CIs)\n\nMales:\nZ = 0.511 (0.492-0.53 95% CIs)\nN at age 0 = 145002 (105241-199785 95% CIs)\nLongevity = 23.3 years (21.8 - 24.8 95% CIs)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 8</span></span>

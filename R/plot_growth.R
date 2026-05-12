@@ -1,4 +1,54 @@
+# Debug parameters:
+# length = "length"; age = "age"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; split.by.sex = FALSE; growth.model = 1; force.zero.group.length = NA; force.zero.group.strength = 10; force.zero.group.cv = 0; show.Linf = TRUE; boxplot = TRUE; return_model = FALSE; return_data = FALSE; base_size = 8; legend.position = "bottom"
+
+# Internal helper: delta-method SE/CI for L0 from fitted growth model
+compute_L0_row <- function(fit_model, growth_model_internal, n_obs) {
+  L0 <- try(as.numeric(predict(fit_model, newdata = data.frame(age = 0))), silent = TRUE)
+  if (inherits(L0, "try-error") || length(L0) == 0 || !is.finite(L0)) {
+    return(tibble::tibble(
+      term = "L0", estimate = NA_real_, std.error = NA_real_,
+      statistic = NA_real_, p.value = NA_real_, conf.low = NA_real_, conf.high = NA_real_
+    ))
+  }
+
+  se_L0 <- NA_real_; stat_L0 <- NA_real_; pval_L0 <- NA_real_
+  ci_low <- NA_real_; ci_high <- NA_real_
+
+  vcov_mat <- try(vcov(fit_model), silent = TRUE)
+  if (!inherits(vcov_mat, "try-error") && all(is.finite(vcov_mat))) {
+    pars <- coef(fit_model)
+    Sinf <- pars[["Sinf"]]; K <- pars[["K"]]; t0 <- pars[["t0"]]
+    eKt0 <- exp(K * t0)
+
+    grad <- if (growth_model_internal == "vout") {
+      c(1 - eKt0, -Sinf * t0 * eKt0, -Sinf * K * eKt0)
+    } else if (growth_model_internal == "gout") {
+      en <- exp(-eKt0)
+      c(en, -Sinf * t0 * eKt0 * en, -Sinf * K * eKt0 * en)
+    } else {
+      d <- 1 + eKt0
+      c(1 / d, -Sinf * t0 * eKt0 / d^2, -Sinf * K * eKt0 / d^2)
+    }
+
+    var_L0 <- as.numeric(t(grad) %*% vcov_mat %*% grad)
+    if (is.finite(var_L0) && var_L0 > 0) {
+      se_L0   <- sqrt(var_L0)
+      df      <- n_obs - length(pars)
+      stat_L0 <- L0 / se_L0
+      pval_L0 <- 2 * pt(-abs(stat_L0), df)
+      ci_low  <- L0 - qt(0.975, df) * se_L0
+      ci_high <- L0 + qt(0.975, df) * se_L0
+    }
+  }
+
+  tibble::tibble(
+    term = "L0", estimate = L0, std.error = se_L0,
+    statistic = stat_L0, p.value = pval_L0, conf.low = ci_low, conf.high = ci_high
+  )
+}
+
 #' @title Plot age-length relationships and growth curves
+#' @description Fits and plots a von Bertalanffy, Gompertz, or Logistic growth curve to age-length data. Returns the plot, a text summary, and estimated parameters.
 #' @param length Character argument giving the name of the length column in \code{dt}
 #' @param age Character argument giving the name of the age column in \code{dt}
 #' @param growth.model Integer defining the growth model. 1 = von Bertalanffy, 2 = Gompertz, 3 = Logistic.
@@ -10,13 +60,13 @@
 #' @param return_model Logical indicating whether the growth models should be returned together with other output.
 #' @param return_data Logical indicating whether the data used to make the growth models should be returned together with other output.
 #' @param show.Linf Logical indicating whether Linf values should be shown as dashed vertical lines.
-#' @param base_size Base size parameter for ggplot. See \link[ggplot2]{ggtheme}.
+#' @param base_size Base size parameter for ggplot. See \link[ggplot2]{theme}.
 #' @details Uses the \code{fishmethods::growth} function to calculate the growth curves. Zero group length can be forced to the growth functions using the \code{force.zero.group.*} parameters.
-#' @return A list containing the \code{plot}, \code{text} for Rmarkdown and Shiny applications, and estimated parameters (\code{params}).
+#' @return A list containing the \code{plot}, \code{text} for Rmarkdown and Shiny applications, estimated parameters (\code{params}), the raw \code{model} object (if \code{return_model = TRUE}), and the prepared \code{data} (if \code{return_data = TRUE}).
 #' @author Mikko Vihtakari // Institute of Marine Research.
 #' @import dplyr ggplot2
 #' @importFrom fishmethods growth
-#' @importFrom stats rnorm setNames
+#' @importFrom stats pt qt rnorm setNames vcov
 #' @examples
 #' # Simple plot. Note that a list is returned.
 #' data(survey_ghl)
@@ -28,9 +78,6 @@
 #' plot_growth(survey_ghl, force.zero.group.length = 10, boxplot = FALSE)$plot
 #' }
 #' @export
-
-# Debug parameters:
-# length = "length"; age = "age"; sex = "sex"; female.sex = "F"; male.sex = "M"; length.unit = "cm"; split.by.sex = FALSE; growth.model = 1; force.zero.group.length = NA; force.zero.group.strength = 10; force.zero.group.cv = 0; show.Linf = TRUE; boxplot = TRUE; return_model = FALSE; return_data = FALSE; base_size = 8; legend.position = "bottom"
 plot_growth <- function(
   dt,
   length = "length",
@@ -68,6 +115,7 @@ plot_growth <- function(
   # Add row number
 
   dt$id <- rownames(dt)
+  orig.nrow <- nrow(dt)
 
   # Fix sex column
 
@@ -89,8 +137,6 @@ plot_growth <- function(
       stop("Either invalid sex column or not enough sex data")
     }
 
-    orig.nrow <- nrow(dt)
-
     dt <- dt %>%
       dplyr::rename("sex" = !!sex) %>%
       dplyr::filter(!is.na(sex))
@@ -99,10 +145,6 @@ plot_growth <- function(
   }
 
   # Filter
-
-  if (!exists("orig.nrow")) {
-    orig.nrow <- nrow(dt)
-  }
 
   dt <- dt %>%
     dplyr::rename(
@@ -171,6 +213,8 @@ plot_growth <- function(
 
   ################
   ## The Plot ####
+
+  laModpars <- NULL
 
   # Plot sexed data
 
@@ -296,7 +340,7 @@ plot_growth <- function(
           silent = TRUE
         )
 
-        if (any(class(model_tidy) == "try-error")) {
+        if (inherits(model_tidy, "try-error")) {
           laModparsF <- dplyr::bind_cols(
             sex = female.sex,
             broom::tidy(
@@ -309,6 +353,19 @@ plot_growth <- function(
           laModparsF <- dplyr::bind_cols(sex = female.sex, model_tidy)
           Fmodels <- laModF
         }
+
+        L0_row_F <- compute_L0_row(
+          eval(parse(text = paste0("laModF$", growth.model))),
+          growth.model,
+          sum(dt$sex == female.sex)
+        )
+        if (!"conf.low" %in% names(laModparsF)) {
+          L0_row_F <- dplyr::select(L0_row_F, -conf.low, -conf.high)
+        }
+        laModparsF <- dplyr::bind_rows(
+          laModparsF,
+          dplyr::mutate(L0_row_F, sex = female.sex, .before = 1)
+        )
       }
 
       # Males
@@ -342,7 +399,7 @@ plot_growth <- function(
           silent = TRUE
         )
 
-        if (any(class(model_tidy) == "try-error")) {
+        if (inherits(model_tidy, "try-error")) {
           laModparsM <- dplyr::bind_cols(
             sex = male.sex,
             broom::tidy(
@@ -355,6 +412,19 @@ plot_growth <- function(
           laModparsM <- dplyr::bind_cols(sex = male.sex, model_tidy)
           Mmodels <- laModM
         }
+
+        L0_row_M <- compute_L0_row(
+          eval(parse(text = paste0("laModM$", growth.model))),
+          growth.model,
+          sum(dt$sex == male.sex)
+        )
+        if (!"conf.low" %in% names(laModparsM)) {
+          L0_row_M <- dplyr::select(L0_row_M, -conf.low, -conf.high)
+        }
+        laModparsM <- dplyr::bind_rows(
+          laModparsM,
+          dplyr::mutate(L0_row_M, sex = male.sex, .before = 1)
+        )
       }
 
       laModpars <- dplyr::bind_rows(laModparsF, laModparsM)
@@ -554,6 +624,35 @@ plot_growth <- function(
         } else {
           paste0("no CIs")
         },
+        "  \n L0 (length at age 0) = ",
+        round(laModparsF$estimate[4], 1),
+        " ",
+        length.unit,
+        " +/- ",
+        if ("conf.low" %in% names(laModparsF) && !is.na(laModparsF$conf.low[4])) {
+          paste0(
+            round(laModparsF$conf.low[4], 1),
+            " - ",
+            round(laModparsF$conf.high[4], 1),
+            " (95% CIs) and "
+          )
+        } else {
+          paste0("no CIs and ")
+        },
+        round(laModparsM$estimate[4], 1),
+        " ",
+        length.unit,
+        " +/- ",
+        if ("conf.low" %in% names(laModparsM) && !is.na(laModparsM$conf.low[4])) {
+          paste0(
+            round(laModparsM$conf.low[4], 1),
+            " - ",
+            round(laModparsM$conf.high[4], 1),
+            " (95% CIs)"
+          )
+        } else {
+          paste0("no CIs")
+        },
         "  \n tmax (life span; t0 + 3/K) = ",
         round(laModparsF$estimate[3] + 3 / laModparsF$estimate[2], 1),
         " and ",
@@ -674,6 +773,16 @@ plot_growth <- function(
         laModpars <- dplyr::bind_cols(model_tidy)
       }
 
+      L0_row <- compute_L0_row(
+        eval(parse(text = paste0("laMod$", growth.model))),
+        growth.model,
+        nrow(dt)
+      )
+      if (!"conf.low" %in% names(laModpars)) {
+        L0_row <- dplyr::select(L0_row, -conf.low, -conf.high)
+      }
+      laModpars <- dplyr::bind_rows(laModpars, L0_row)
+
       Plot <-
         suppressWarnings({
           ggplot(data = dt, aes(x = age, y = length)) +
@@ -767,6 +876,21 @@ plot_growth <- function(
         } else {
           paste0("no CIs")
         },
+        "  \n L0 (length at age 0) = ",
+        round(laModpars$estimate[4], 1),
+        " ",
+        length.unit,
+        " +/- ",
+        if ("conf.low" %in% names(laModpars) && !is.na(laModpars$conf.low[4])) {
+          paste0(
+            round(laModpars$conf.low[4], 1),
+            " - ",
+            round(laModpars$conf.high[4], 1),
+            " (95% CIs)"
+          )
+        } else {
+          paste0("no CIs")
+        },
         "  \n tmax (life span; t0 + 3/K) = ",
         round(laModpars$estimate[3] + 3 / laModpars$estimate[2], 1),
         " years",
@@ -790,11 +914,7 @@ plot_growth <- function(
     list(
       plot = Plot,
       text = Text,
-      params = if (exists("laModpars")) {
-        laModpars
-      } else {
-        NULL
-      },
+      params = laModpars,
       model = if (return_model) {
         Models
       } else {

@@ -16,3 +16,7 @@
 ^LICENSE$
 ^NEWS\.md$
 ^vignettes$
+^\.positai$
+^\.claude$
+^CLAUDE\.md$
+^memory$

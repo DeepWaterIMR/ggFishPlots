@@ -280,6 +280,17 @@ plot_maturity <- function(
       dplyr::group_by(maturity) %>%
       dplyr::summarise(mean = mean(length), .groups = "keep")
 
+    if (!all(c(0L, 1L) %in% tmp$maturity)) {
+      warning(
+        "Sex group '", k, "' has only one maturity class in the data. ",
+        "Unable to calculate L50 reliably."
+      )
+      return(
+        tibble::tibble(mean = NA, ci.min = NA, ci.max = NA, sex = k) %>%
+          dplyr::mutate(dplyr::across(c("mean", "ci.min", "ci.max"), as.numeric))
+      )
+    }
+
     if (tmp[tmp$maturity == 0, ]$mean > tmp[tmp$maturity == 1, ]$mean) {
       warning(
         "Mean size of ",

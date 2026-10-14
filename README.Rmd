@@ -92,12 +92,20 @@ Maturity ogives are estimated using a logistic (`family = binomial(link = "logit
 plot_maturity(survey_ghl, length = "length", maturity = "maturity")
 ```
 
-The error bars represent 95% confidence intervals calculated from the model object using the [`confint()`](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/confint.html) function and back-transformed to the original scale. The grey stepped line is a binned average defined using the `length.bin.width` argument. 
+The error bars represent 95% confidence intervals (CIs) for L50 calculated with the delta method from the variance-covariance matrix of the intercept and slope (equivalent to [`MASS::dose.p()`](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/dose.p.html)). The grey stepped line is a binned average defined using the `length.bin.width` argument. 
 
-The function also contains an option to bootstrap the confidence intervals (CIs) which will produce narrower CIs. Bootstrapping is probably a more correct way of estimating CIs in this application. Using only 10 replicates here to save processing time. In real application use at least 1000.
+The function also contains an option to bootstrap the CIs. Using only 10 replicates here to save processing time. In real application use at least 1000.
 
 ```{r}
 plot_maturity(survey_ghl, bootstrap.n = 10)
+```
+
+Both the delta-method and the default bootstrap CIs treat each fish as an independent observation. Fish caught in the same haul tend to be similar in size and maturity, so these CIs are too narrow for clustered survey or fishery data. If the data contain a haul (or other sampling unit) identifier, give its column name to the `bootstrap.cluster` argument to resample whole hauls instead of individual fish. The example dataset does not contain haul identifiers, so a made-up one is used here for illustration only:
+
+```{r}
+ghl <- survey_ghl
+ghl$haul <- sample(1:50, nrow(ghl), replace = TRUE)
+plot_maturity(ghl, bootstrap.n = 10, bootstrap.cluster = "haul")$text
 ```
 
 #### Split by sex

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ggFishPlots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,6 +16,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/DeepWaterIMR/ggFishPlots/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -176,12 +177,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Logarithm transformed linear length-weight model. Not splitted by sex:  \n a = 3.8236e-06 +/- 3.7869e-06 - 3.8606e-06 (95% CIs).  \n b = 3.221 +/- 3.22 - 3.22 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 0"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 14</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 x 14</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   term    estimate std.error statistic p.value   conf.low  conf.high r.squared</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> a     0.000<span style="text-decoration: underline;">003</span>82   0.004<span style="text-decoration: underline;">91</span>    -<span style="color: #BB0000; text-decoration: underline;">2</span><span style="color: #BB0000;">540.</span>       0 0.000<span style="text-decoration: underline;">003</span>79 0.000<span style="text-decoration: underline;">003</span>86     0.989</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> b     3.22         0.001<span style="text-decoration: underline;">28</span>     <span style="text-decoration: underline;">2</span>519.       0 3.22       3.22           0.989</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more variables: AIC &lt;dbl&gt;, nobs &lt;int&gt;, length &lt;chr&gt;, length.unit &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 6 more variables: AIC &lt;dbl&gt;, nobs &lt;int&gt;, length &lt;chr&gt;, length.unit &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   weight &lt;chr&gt;, weight.unit &lt;chr&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
@@ -194,12 +195,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Nonlinear least squares length-weight model. Not splitted by sex:  \n a = 1.7268e-06 +/- 1.6962e-06 - 1.758e-06 (95% CIs).  \n b = 3.419 +/- 3.42 - 3.42 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 0"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 13</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 x 13</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   term    estimate  std.error statistic p.value conf.low conf.high     AIC  nobs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> a     0.000<span style="text-decoration: underline;">001</span>73    1.56<span style="color: #949494;">e</span><span style="color: #BB0000;">-8</span>      110.       0  1.70<span style="color: #949494;">e</span><span style="color: #BB0000;">-6</span>   1.76<span style="color: #949494;">e</span><span style="color: #BB0000;">-6</span> -<span style="color: #BB0000; text-decoration: underline;">27</span><span style="color: #BB0000;">925.</span> <span style="text-decoration: underline;">67</span>457</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> b     3.42          2.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span>     <span style="text-decoration: underline;">1</span>590.       0  3.42<span style="color: #949494;">e</span>+0   3.42<span style="color: #949494;">e</span>+0 -<span style="color: #BB0000; text-decoration: underline;">27</span><span style="color: #BB0000;">925.</span> <span style="text-decoration: underline;">67</span>457</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: length &lt;chr&gt;, length.unit &lt;chr&gt;, weight &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 4 more variables: length &lt;chr&gt;, length.unit &lt;chr&gt;, weight &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   weight.unit &lt;chr&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
@@ -216,12 +217,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Logarithm transformed linear length-weight model. Not splitted by sex:  \n a = 3.74e-06 +/- 3.7064e-06 - 3.7738e-06 (95% CIs).  \n b = 3.227 +/- 3.22 - 3.23 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 675"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 14</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 x 14</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   term    estimate std.error statistic p.value   conf.low  conf.high r.squared</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> a     0.000<span style="text-decoration: underline;">003</span>74   0.004<span style="text-decoration: underline;">60</span>    -<span style="color: #BB0000; text-decoration: underline;">2</span><span style="color: #BB0000;">717.</span>       0 0.000<span style="text-decoration: underline;">003</span>71 0.000<span style="text-decoration: underline;">003</span>77     0.991</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> b     3.23         0.001<span style="text-decoration: underline;">20</span>     <span style="text-decoration: underline;">2</span>697.       0 3.22       3.23           0.991</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more variables: AIC &lt;dbl&gt;, nobs &lt;int&gt;, length &lt;chr&gt;, length.unit &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 6 more variables: AIC &lt;dbl&gt;, nobs &lt;int&gt;, length &lt;chr&gt;, length.unit &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   weight &lt;chr&gt;, weight.unit &lt;chr&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>

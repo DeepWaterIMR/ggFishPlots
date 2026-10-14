@@ -388,9 +388,9 @@ plot_maturity <- function(
         }) %>%
           dplyr::bind_rows() %>%
           dplyr::summarise(
-            Mean = mean(mean),
-            ci.min = quantile(mean, 0.025),
-            ci.max = quantile(mean, 0.975)
+            Mean = mean(mean, na.rm = TRUE),
+            ci.min = quantile(mean, 0.025, na.rm = TRUE),
+            ci.max = quantile(mean, 0.975, na.rm = TRUE)
           ) %>%
           dplyr::rename("mean" = "Mean")
 

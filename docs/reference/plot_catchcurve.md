@@ -95,7 +95,7 @@ plot_catchcurve(survey_ghl)
 #> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"
 #> 
 #> $params
-#> # A tibble: 2 × 8
+#> # A tibble: 2 x 8
 #>   sex   term        estimate std.error statistic  p.value conf.low conf.high
 #>   <chr> <chr>          <dbl>     <dbl>     <dbl>    <dbl>    <dbl>     <dbl>
 #> 1 both  (Intercept)    7.28     0.573      12.7  2.25e-13    6.11      8.45 
@@ -116,7 +116,7 @@ plot_catchcurve(survey_ghl, age.range = c(10,26))
 #> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range 10-26.\n\nZ = 0.356 (0.312-0.401 95% CIs)\nN at age 0 = 68394 (29985-156005 95% CIs)\nLongevity = 31.2 years (25.7 - 38.3 95% CIs)\n\n"
 #> 
 #> $params
-#> # A tibble: 2 × 8
+#> # A tibble: 2 x 8
 #>   sex   term        estimate std.error statistic  p.value conf.low conf.high
 #>   <chr> <chr>          <dbl>     <dbl>     <dbl>    <dbl>    <dbl>     <dbl>
 #> 1 both  (Intercept)   11.1      0.387       28.8 1.54e-14   10.3      12.0  
@@ -136,7 +136,7 @@ plot_catchcurve(survey_ghl, age.range = c(10,26), split.by.sex = TRUE)
 #> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range 10-26 for both sexes.\n\nFemales:\nZ = 0.31 (0.256-0.365 95% CIs)\nN at age 0 = 23925 (8625-66368 95% CIs)\nLongevity = 32.5 years (24.8 - 43.4 95% CIs)\n\nMales:\nZ = 0.511 (0.492-0.53 95% CIs)\nN at age 0 = 145002 (105241-199785 95% CIs)\nLongevity = 23.3 years (21.8 - 24.8 95% CIs)"
 #> 
 #> $params
-#> # A tibble: 4 × 8
+#> # A tibble: 4 x 8
 #>   sex   term        estimate std.error statistic  p.value conf.low conf.high
 #>   <chr> <chr>          <dbl>     <dbl>     <dbl>    <dbl>    <dbl>     <dbl>
 #> 1 F     (Intercept)   10.1     0.479        21.1 1.49e-12    9.06     11.1  
@@ -160,7 +160,7 @@ split.by.sex = TRUE)
 #> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range 13-26 for females and 10-26 for males.\n\nFemales:\nZ = 0.37 (0.31-0.431 95% CIs)\nN at age 0 = 86119 (25990-285354 95% CIs)\nLongevity = 30.7 years (23.6 - 40.5 95% CIs)\n\nMales:\nZ = 0.511 (0.492-0.53 95% CIs)\nN at age 0 = 145002 (105241-199785 95% CIs)\nLongevity = 23.3 years (21.8 - 24.8 95% CIs)"
 #> 
 #> $params
-#> # A tibble: 4 × 8
+#> # A tibble: 4 x 8
 #>   sex   term        estimate std.error statistic  p.value conf.low conf.high
 #>   <chr> <chr>          <dbl>     <dbl>     <dbl>    <dbl>    <dbl>     <dbl>
 #> 1 F     (Intercept)   11.4     0.550        20.7 9.51e-11   10.2      12.6  

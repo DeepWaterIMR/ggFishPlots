@@ -3,3 +3,4 @@ template:
 
 exclude:
   - CLAUDE.md
+  - AGENTS.md

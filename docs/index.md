@@ -1,7 +1,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.4.3**
+using ggplot2. R package version 0.4.5**
 
 ## Overview
 
@@ -68,7 +68,7 @@ library(ggFishPlots)
 data(survey_ghl) # example data
 
 head(survey_ghl)
-#> # A tibble: 6 × 5
+#> # A tibble: 6 x 5
 #>     age sex   length weight maturity
 #>   <dbl> <chr>  <dbl>  <dbl>    <int>
 #> 1    NA <NA>      35     NA        0
@@ -90,7 +90,7 @@ plot_growth(survey_ghl, length = "length", age = "age")
 #> [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n L0 (length at age 0) = 16 cm +/- 15.2 - 16.8 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"
 #> 
 #> $params
-#> # A tibble: 4 × 7
+#> # A tibble: 4 x 7
 #>   term  estimate std.error statistic   p.value conf.low conf.high
 #>   <chr>    <dbl>     <dbl>     <dbl>     <dbl>    <dbl>     <dbl>
 #> 1 Sinf   91.2      1.51         60.3 0          88.3      94.6   
@@ -177,24 +177,23 @@ plot_maturity(survey_ghl, length = "length", maturity = "maturity")
 ``` R
 #> 
 #> $text
-#> [1] "50% maturity at length (L50) based on logit regressions:\n54.784 cm. 95% confidence intervals: 52.852 - 56.787\n  Number of specimens: 64265.\n Confidence intervals estimated from the glm object."
+#> [1] "50% maturity at length (L50) based on logit regressions:\n54.784 cm. 95% confidence intervals: 54.597 - 54.97\n  Number of specimens: 64265.\n Confidence intervals estimated from the glm object using the delta method."
 #> 
 #> $params
-#>       mean   ci.min ci.max  sex intercept     slope     n
-#> 1 54.78361 52.85249 56.787 both -5.755492 0.1050587 64265
+#>       mean  ci.min   ci.max  sex intercept     slope     n
+#> 1 54.78361 54.5971 54.97013 both -5.755492 0.1050587 64265
 ```
 
-The error bars represent 95% confidence intervals calculated from the
-model object using the
-[`confint()`](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/confint.html)
-function and back-transformed to the original scale. The grey stepped
-line is a binned average defined using the `length.bin.width` argument.
+The error bars represent 95% confidence intervals (CIs) for L50
+calculated with the delta method from the variance-covariance matrix of
+the intercept and slope (equivalent to
+[`MASS::dose.p()`](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/dose.p.html)).
+The grey stepped line is a binned average defined using the
+`length.bin.width` argument.
 
-The function also contains an option to bootstrap the confidence
-intervals (CIs) which will produce narrower CIs. Bootstrapping is
-probably a more correct way of estimating CIs in this application. Using
-only 10 replicates here to save processing time. In real application use
-at least 1000.
+The function also contains an option to bootstrap the CIs. Using only 10
+replicates here to save processing time. In real application use at
+least 1000.
 
 ``` r
 
@@ -207,11 +206,28 @@ plot_maturity(survey_ghl, bootstrap.n = 10)
 ``` R
 #> 
 #> $text
-#> [1] "50% maturity at length (L50) based on logit regressions:\n54.753 cm. 95% confidence intervals: 54.673 - 54.846\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
+#> [1] "50% maturity at length (L50) based on logit regressions:\n54.816 cm. 95% confidence intervals: 54.628 - 55.085\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
 #> 
 #> $params
 #>       mean   ci.min   ci.max  sex intercept     slope     n
-#> 1 54.75325 54.67264 54.84615 both -5.755492 0.1050587 64265
+#> 1 54.81566 54.62792 55.08531 both -5.755492 0.1050587 64265
+```
+
+Both the delta-method and the default bootstrap CIs treat each fish as
+an independent observation. Fish caught in the same haul tend to be
+similar in size and maturity, so these CIs are too narrow for clustered
+survey or fishery data. If the data contain a haul (or other sampling
+unit) identifier, give its column name to the `bootstrap.cluster`
+argument to resample whole hauls instead of individual fish. The example
+dataset does not contain haul identifiers, so a made-up one is used here
+for illustration only:
+
+``` r
+
+ghl <- survey_ghl
+ghl$haul <- sample(1:50, nrow(ghl), replace = TRUE)
+plot_maturity(ghl, bootstrap.n = 10, bootstrap.cluster = "haul")$text
+#> [1] "50% maturity at length (L50) based on logit regressions:\n54.76 cm. 95% confidence intervals: 54.654 - 54.888\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates resampling haul clusters."
 ```
 
 #### Split by sex
@@ -221,7 +237,7 @@ plot_maturity(survey_ghl, bootstrap.n = 10)
 plot_maturity(survey_ghl, split.by.sex = TRUE)$plot
 ```
 
-![](reference/figures/README-unnamed-chunk-9-1.png)
+![](reference/figures/README-unnamed-chunk-10-1.png)
 
 #### A50 plots
 
@@ -234,7 +250,7 @@ plot_maturity(survey_ghl, length = "age", length.unit = "years",
               xlab = "Age", length.bin.width = 1, split.by.sex = TRUE)$plot
 ```
 
-![](reference/figures/README-unnamed-chunk-10-1.png)
+![](reference/figures/README-unnamed-chunk-11-1.png)
 
 #### Addition of juveniles
 
@@ -253,7 +269,7 @@ plot_maturity(survey_ghl, length = "age", length.unit = "years",
               split.by.sex = TRUE)$plot
 ```
 
-![](reference/figures/README-unnamed-chunk-11-1.png)
+![](reference/figures/README-unnamed-chunk-12-1.png)
 
 Note how the addition increases the estimate for males because the
 dataset did not contain a sufficient number of young males which the
@@ -272,7 +288,7 @@ plot_maturity(survey_ghl, length = "age", length.unit = "years",
               split.by.sex = TRUE)$plot
 ```
 
-![](reference/figures/README-unnamed-chunk-12-1.png)
+![](reference/figures/README-unnamed-chunk-13-1.png)
 
 ### Length-weight relationships
 
@@ -286,7 +302,7 @@ plot_lw(survey_ghl, length = "length", weight = "weight")
 #> $plot
 ```
 
-![](reference/figures/README-unnamed-chunk-13-1.png)
+![](reference/figures/README-unnamed-chunk-14-1.png)
 
 ``` R
 #> 
@@ -294,12 +310,12 @@ plot_lw(survey_ghl, length = "length", weight = "weight")
 #> [1] "Logarithm transformed linear length-weight model. Not splitted by sex:  \n a = 3.8236e-06 +/- 3.7869e-06 - 3.8606e-06 (95% CIs).  \n b = 3.221 +/- 3.22 - 3.22 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 0"
 #> 
 #> $params
-#> # A tibble: 2 × 14
+#> # A tibble: 2 x 14
 #>   term    estimate std.error statistic p.value   conf.low  conf.high r.squared
 #>   <chr>      <dbl>     <dbl>     <dbl>   <dbl>      <dbl>      <dbl>     <dbl>
 #> 1 a     0.00000382   0.00491    -2540.       0 0.00000379 0.00000386     0.989
 #> 2 b     3.22         0.00128     2519.       0 3.22       3.22           0.989
-#> # ℹ 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
+#> # i 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
 #> #   weight <chr>, weight.unit <chr>
 ```
 
@@ -315,7 +331,7 @@ plot_lw(survey_ghl, use.nls = TRUE)
 #> $plot
 ```
 
-![](reference/figures/README-unnamed-chunk-14-1.png)
+![](reference/figures/README-unnamed-chunk-15-1.png)
 
 ``` R
 #> 
@@ -323,12 +339,12 @@ plot_lw(survey_ghl, use.nls = TRUE)
 #> [1] "Nonlinear least squares length-weight model. Not splitted by sex:  \n a = 1.7268e-06 +/- 1.6962e-06 - 1.758e-06 (95% CIs).  \n b = 3.419 +/- 3.42 - 3.42 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 0"
 #> 
 #> $params
-#> # A tibble: 2 × 13
+#> # A tibble: 2 x 13
 #>   term    estimate  std.error statistic p.value conf.low conf.high     AIC  nobs
 #>   <chr>      <dbl>      <dbl>     <dbl>   <dbl>    <dbl>     <dbl>   <dbl> <int>
 #> 1 a     0.00000173    1.56e-8      110.       0  1.70e-6   1.76e-6 -27925. 67457
 #> 2 b     3.42          2.15e-3     1590.       0  3.42e+0   3.42e+0 -27925. 67457
-#> # ℹ 4 more variables: length <chr>, length.unit <chr>, weight <chr>,
+#> # i 4 more variables: length <chr>, length.unit <chr>, weight <chr>,
 #> #   weight.unit <chr>
 ```
 
@@ -347,7 +363,7 @@ plot_lw(survey_ghl, split.by.sex = TRUE, correct.units = TRUE)
 #> $plot
 ```
 
-![](reference/figures/README-unnamed-chunk-15-1.png)
+![](reference/figures/README-unnamed-chunk-16-1.png)
 
 ``` R
 #> 
@@ -355,7 +371,7 @@ plot_lw(survey_ghl, split.by.sex = TRUE, correct.units = TRUE)
 #> [1] "Logarithm transformed linear length-weight model for females and males, respectively:  \n a = 0.0035 +/- 0.00344 - 0.00355 (95% CIs) and 0.00507 +/- 0.00497 - 0.00517 (95% CIs).  \n b = 3.247 +/- 3.24 - 3.25 (95% CIs) and 3.143 +/- 3.14 - 3.15 (95% CIs).  \n Length in cm and weight in g  \n Number of included specimens = 34889 and 30354  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 456891; sex = 96645; outlier = 0"
 #> 
 #> $params
-#> # A tibble: 4 × 15
+#> # A tibble: 4 x 15
 #> # Groups:   sex [2]
 #>   sex   term  estimate std.error statistic p.value conf.low conf.high r.squared
 #>   <chr> <chr>    <dbl>     <dbl>     <dbl>   <dbl>    <dbl>     <dbl>     <dbl>
@@ -363,7 +379,7 @@ plot_lw(survey_ghl, split.by.sex = TRUE, correct.units = TRUE)
 #> 2 F     b      3.25      0.00195     1666.       0  3.24      3.25        0.988
 #> 3 M     a      0.00507   0.0101      -525.       0  0.00497   0.00517     0.979
 #> 4 M     b      3.14      0.00265     1188.       0  3.14      3.15        0.979
-#> # ℹ 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
+#> # i 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
 #> #   weight <chr>, weight.unit <chr>
 ```
 
@@ -373,12 +389,12 @@ the FishBase.
 ``` r
 
 plot_lw(survey_ghl %>% dplyr::mutate(weight = weight*1000), weight.unit = "g")$params
-#> # A tibble: 2 × 14
+#> # A tibble: 2 x 14
 #>   term  estimate std.error statistic p.value conf.low conf.high r.squared
 #>   <chr>    <dbl>     <dbl>     <dbl>   <dbl>    <dbl>     <dbl>     <dbl>
 #> 1 a      0.00382   0.00491    -1133.       0  0.00379   0.00386     0.989
 #> 2 b      3.22      0.00128     2519.       0  3.22      3.22        0.989
-#> # ℹ 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
+#> # i 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
 #> #   weight <chr>, weight.unit <chr>
 ```
 
@@ -389,7 +405,7 @@ plot_lw(survey_ghl %>% dplyr::mutate(weight = weight*1000), weight.unit = "g")$p
 plot_lw(survey_ghl, split.by.sex = TRUE, log.axes = TRUE)$plot
 ```
 
-![](reference/figures/README-unnamed-chunk-17-1.png)
+![](reference/figures/README-unnamed-chunk-18-1.png)
 
 #### Outlier removal
 
@@ -398,7 +414,7 @@ plot_lw(survey_ghl, split.by.sex = TRUE, log.axes = TRUE)$plot
 plot_lw(survey_ghl, outlier.percentile = 99.5, annotate.coefficients = TRUE)$plot
 ```
 
-![](reference/figures/README-unnamed-chunk-18-1.png)
+![](reference/figures/README-unnamed-chunk-19-1.png)
 
 ### Catch curves to estimate instantaneous total mortality (Z)
 
@@ -414,7 +430,7 @@ plot_catchcurve(survey_ghl)
 #> $plot
 ```
 
-![](reference/figures/README-unnamed-chunk-19-1.png)
+![](reference/figures/README-unnamed-chunk-20-1.png)
 
 ``` R
 #> 
@@ -422,7 +438,7 @@ plot_catchcurve(survey_ghl)
 #> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"
 #> 
 #> $params
-#> # A tibble: 2 × 8
+#> # A tibble: 2 x 8
 #>   sex   term        estimate std.error statistic  p.value conf.low conf.high
 #>   <chr> <chr>          <dbl>     <dbl>     <dbl>    <dbl>    <dbl>     <dbl>
 #> 1 both  (Intercept)    7.28     0.573      12.7  2.25e-13    6.11      8.45 
@@ -441,7 +457,7 @@ The ages to be included to the Z estimation can be adjusted using the
 plot_catchcurve(survey_ghl, age.range = c(10,26))$plot
 ```
 
-![](reference/figures/README-unnamed-chunk-20-1.png)
+![](reference/figures/README-unnamed-chunk-21-1.png)
 
 In the plot above, -b is Z (i.e. Z = 0.356) and exp(a) (i.e. 68391) is
 the number of 0 age fish assuming constant mortality.
@@ -453,7 +469,7 @@ the number of 0 age fish assuming constant mortality.
 plot_catchcurve(survey_ghl, age.range = c(10,26), split.by.sex = TRUE)$plot
 ```
 
-![](reference/figures/README-unnamed-chunk-21-1.png)
+![](reference/figures/README-unnamed-chunk-22-1.png)
 
 Use a named list to use separate age ranges for females and males.
 
@@ -466,7 +482,7 @@ split.by.sex = TRUE)
 tmp$plot
 ```
 
-![](reference/figures/README-unnamed-chunk-22-1.png)
+![](reference/figures/README-unnamed-chunk-23-1.png)
 
 Parameter estimates for the catch curve above:
 
@@ -505,15 +521,16 @@ citation("ggFishPlots")
 #> 
 #>   Vihtakari M (2026). _ggFishPlots: Visualise and Calculate Life
 #>   History Parameters for Fisheries Science using 'ggplot2'_. R package
-#>   version 0.4.3, <https://deepwaterimr.github.io/ggFishPlots/>.
+#>   version 0.4.5, <https://deepwaterimr.github.io/ggFishPlots/>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
-#>     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'},
+#>     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries
+#> Science using 'ggplot2'},
 #>     author = {Mikko Vihtakari},
 #>     year = {2026},
-#>     note = {R package version 0.4.3},
+#>     note = {R package version 0.4.5},
 #>     url = {https://deepwaterimr.github.io/ggFishPlots/},
 #>   }
 ```

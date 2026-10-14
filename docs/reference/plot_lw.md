@@ -192,12 +192,12 @@ plot_lw(survey_ghl, length = "length", weight = "weight")
 #> [1] "Logarithm transformed linear length-weight model. Not splitted by sex:  \n a = 3.8236e-06 +/- 3.7869e-06 - 3.8606e-06 (95% CIs).  \n b = 3.221 +/- 3.22 - 3.22 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 0"
 #> 
 #> $params
-#> # A tibble: 2 × 14
+#> # A tibble: 2 x 14
 #>   term    estimate std.error statistic p.value   conf.low  conf.high r.squared
 #>   <chr>      <dbl>     <dbl>     <dbl>   <dbl>      <dbl>      <dbl>     <dbl>
 #> 1 a     0.00000382   0.00491    -2540.       0 0.00000379 0.00000386     0.989
 #> 2 b     3.22         0.00128     2519.       0 3.22       3.22           0.989
-#> # ℹ 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
+#> # i 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
 #> #   weight <chr>, weight.unit <chr>
 #> 
 # \donttest{
@@ -210,12 +210,12 @@ plot_lw(survey_ghl, use.nls = TRUE)
 #> [1] "Nonlinear least squares length-weight model. Not splitted by sex:  \n a = 1.7268e-06 +/- 1.6962e-06 - 1.758e-06 (95% CIs).  \n b = 3.419 +/- 3.42 - 3.42 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 0"
 #> 
 #> $params
-#> # A tibble: 2 × 13
+#> # A tibble: 2 x 13
 #>   term    estimate  std.error statistic p.value conf.low conf.high     AIC  nobs
 #>   <chr>      <dbl>      <dbl>     <dbl>   <dbl>    <dbl>     <dbl>   <dbl> <int>
 #> 1 a     0.00000173    1.56e-8      110.       0  1.70e-6   1.76e-6 -27925. 67457
 #> 2 b     3.42          2.15e-3     1590.       0  3.42e+0   3.42e+0 -27925. 67457
-#> # ℹ 4 more variables: length <chr>, length.unit <chr>, weight <chr>,
+#> # i 4 more variables: length <chr>, length.unit <chr>, weight <chr>,
 #> #   weight.unit <chr>
 #> 
 
@@ -232,12 +232,12 @@ plot_lw(survey_ghl, outlier.percentile = 99)
 #> [1] "Logarithm transformed linear length-weight model. Not splitted by sex:  \n a = 3.74e-06 +/- 3.7064e-06 - 3.7738e-06 (95% CIs).  \n b = 3.227 +/- 3.22 - 3.23 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 675"
 #> 
 #> $params
-#> # A tibble: 2 × 14
+#> # A tibble: 2 x 14
 #>   term    estimate std.error statistic p.value   conf.low  conf.high r.squared
 #>   <chr>      <dbl>     <dbl>     <dbl>   <dbl>      <dbl>      <dbl>     <dbl>
 #> 1 a     0.00000374   0.00460    -2717.       0 0.00000371 0.00000377     0.991
 #> 2 b     3.23         0.00120     2697.       0 3.22       3.23           0.991
-#> # ℹ 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
+#> # i 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
 #> #   weight <chr>, weight.unit <chr>
 #> 
 # }

@@ -144,7 +144,7 @@ plot_growth(survey_ghl, length = "length", age = "age")
 #> [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n L0 (length at age 0) = 16 cm +/- 15.2 - 16.8 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"
 #> 
 #> $params
-#> # A tibble: 4 × 7
+#> # A tibble: 4 x 7
 #>   term  estimate std.error statistic   p.value conf.low conf.high
 #>   <chr>    <dbl>     <dbl>     <dbl>     <dbl>    <dbl>     <dbl>
 #> 1 Sinf   91.2      1.51         60.3 0          88.3      94.6   

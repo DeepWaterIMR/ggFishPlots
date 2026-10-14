@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ggFishPlots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,6 +16,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/DeepWaterIMR/ggFishPlots/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -49,6 +50,7 @@
 <span>  length.unit <span class="op">=</span> <span class="st">"cm"</span>,</span>
 <span>  length.bin.width <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  bootstrap.n <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  bootstrap.cluster <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  force.zero.group.length <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  force.zero.group.strength <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  force.zero.group.n <span class="op">=</span> <span class="cn">NA</span>,</span>
@@ -97,7 +99,11 @@
 
 
 <dt id="arg-bootstrap-n">bootstrap.n<a class="anchor" aria-label="anchor" href="#arg-bootstrap-n"></a></dt>
-<dd><p>Integer defining the number of bootstrap replicates to be used to calculate 95% confidence intervals for the mean 50% mature estimate. If <code>NA</code> (default), the confidence intervals are calculated from the glm object without boostrapping. See Details.</p></dd>
+<dd><p>Integer defining the number of bootstrap replicates to be used to calculate 95% confidence intervals for the mean 50% mature estimate. If <code>NA</code> (default), the confidence intervals are calculated from the glm object using the delta method without bootstrapping. See Details.</p></dd>
+
+
+<dt id="arg-bootstrap-cluster">bootstrap.cluster<a class="anchor" aria-label="anchor" href="#arg-bootstrap-cluster"></a></dt>
+<dd><p>Character argument giving the name of a column in <code>dt</code> that identifies the sampling unit (e.g. haul, station or trip ID) for a cluster bootstrap. If <code>NULL</code> (default), individual fish are resampled. If given, whole clusters are resampled with replacement instead, which accounts for fish from the same haul being more alike than fish from different hauls. Requires <code>bootstrap.n</code>. See Details.</p></dd>
 
 
 <dt id="arg-force-zero-group-length">force.zero.group.length<a class="anchor" aria-label="anchor" href="#arg-force-zero-group-length"></a></dt>
@@ -138,7 +144,9 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The 95% confidence intervals for the mean 50% mature estimate are calculated using the <a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a> function by default. This routine might not be optimal when zero group fish are added. Hence, the function contains an option to bootstrap confidence intervals using <em>the same number of data than observations</em> (i.e. excluding the added data from the number of randomly resampled rows). Adding an integer to the <code>bootstrap.n</code> argument turns on this feature. Note that the confidence intervals calculated this way tend to be narrower than the <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> confidence intervals.</p>
+    <p>The 95% confidence intervals for the mean 50% mature estimate are calculated by default with the delta method from the fitted <a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a> (see <code><a href="unlogit.html">unlogit</a></code>): L50 = -intercept/slope, and its standard error is approximated from the variance-covariance matrix of the intercept and slope, so the strong negative correlation between the two is accounted for. The interval is L50 \(\pm\) 1.96 SE and is equivalent to <code><a href="https://rdrr.io/pkg/MASS/man/dose.p.html" class="external-link">MASS::dose.p()</a></code>. Versions of ggFishPlots before 0.4.5 combined the marginal profile-likelihood limits of the intercept and slope, which ignored this correlation and produced far too wide intervals.</p>
+<p>The delta-method interval might not be optimal when zero group fish are added, because the added data inflate the apparent sample size. Hence, the function contains an option to bootstrap confidence intervals using <em>the same number of data than observations</em> (i.e. excluding the added data from the number of randomly resampled rows). Adding an integer to the <code>bootstrap.n</code> argument turns on this feature; the interval is then given by the 2.5% and 97.5% quantiles of the bootstrapped L50 estimates. Without added zero group data, the bootstrapped and delta-method intervals are usually similar.</p>
+<p>Both the delta-method and the individual bootstrap intervals assume that fish are independent observations. Survey and fishery samples are usually clustered: fish caught in the same haul tend to be of similar size and maturity, so the effective sample size is smaller than the number of fish and these intervals are too narrow. Giving the haul (or other sampling unit) identifier in <code>bootstrap.cluster</code> turns on a cluster bootstrap: each replicate draws as many clusters as there are in the data, with replacement, and refits the model to all fish in the drawn clusters. Added zero group data are appended unchanged to each replicate. Fish with a missing cluster identifier are removed. The cluster bootstrap needs a reasonable number of clusters (preferably several tens) per sex to be reliable.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -152,38 +160,52 @@
 <span class="r-in"><span><span class="fu">plot_maturity</span><span class="op">(</span><span class="va">survey_ghl</span>, length <span class="op">=</span> <span class="st">"length"</span>, maturity <span class="op">=</span> <span class="st">"maturity"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $plot</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 1.21</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> `height` was translated to `width`.</span>
 <span class="r-plt img"><img src="plot_maturity-1.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $text</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "50% maturity at length (L50) based on logit regressions:\n54.784 cm. 95% confidence intervals: 52.852 - 56.787\n  Number of specimens: 64265.\n Confidence intervals estimated from the glm object."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "50% maturity at length (L50) based on logit regressions:\n54.784 cm. 95% confidence intervals: 54.597 - 54.97\n  Number of specimens: 64265.\n Confidence intervals estimated from the glm object using the delta method."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       mean   ci.min ci.max  sex intercept     slope     n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 54.78361 52.85249 56.787 both -5.755492 0.1050587 64265</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       mean  ci.min   ci.max  sex intercept     slope     n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 54.78361 54.5971 54.97013 both -5.755492 0.1050587 64265</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co"># Bootstrapped CIs are narrower than the glm ones</span></span></span>
+<span class="r-in"><span><span class="co"># Bootstrapped CIs</span></span></span>
 <span class="r-in"><span><span class="fu">plot_maturity</span><span class="op">(</span><span class="va">survey_ghl</span>, bootstrap.n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $plot</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 1.21</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> `height` was translated to `width`.</span>
 <span class="r-plt img"><img src="plot_maturity-2.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $text</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "50% maturity at length (L50) based on logit regressions:\n54.793 cm. 95% confidence intervals: 54.706 - 54.884\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "50% maturity at length (L50) based on logit regressions:\n54.831 cm. 95% confidence intervals: 54.748 - 54.895\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       mean   ci.min  ci.max  sex intercept     slope     n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 54.79348 54.70635 54.8836 both -5.755492 0.1050587 64265</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       mean   ci.min   ci.max  sex intercept     slope     n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 54.83089 54.74781 54.89468 both -5.755492 0.1050587 64265</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Cluster (haul-level) bootstrap. survey_ghl has no haul ID, so a</span></span></span>
+<span class="r-in"><span><span class="co"># made-up one is used here for illustration only</span></span></span>
+<span class="r-in"><span><span class="va">ghl</span> <span class="op">&lt;-</span> <span class="va">survey_ghl</span></span></span>
+<span class="r-in"><span><span class="va">ghl</span><span class="op">$</span><span class="va">haul</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ghl</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plot_maturity</span><span class="op">(</span><span class="va">ghl</span>, bootstrap.n <span class="op">=</span> <span class="fl">10</span>, bootstrap.cluster <span class="op">=</span> <span class="st">"haul"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $plot</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 1.21</span>
+<span class="r-plt img"><img src="plot_maturity-3.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $text</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "50% maturity at length (L50) based on logit regressions:\n54.805 cm. 95% confidence intervals: 54.69 - 54.998\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates resampling haul clusters."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       mean   ci.min   ci.max  sex intercept     slope     n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 54.80499 54.69015 54.99832 both -5.755492 0.1050587 64265</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># A50 plot, split by sex</span></span></span>
 <span class="r-in"><span><span class="fu">plot_maturity</span><span class="op">(</span><span class="va">survey_ghl</span>, length <span class="op">=</span> <span class="st">"age"</span>, length.unit <span class="op">=</span> <span class="st">"years"</span>,</span></span>
 <span class="r-in"><span>xlab <span class="op">=</span> <span class="st">"Age"</span>, length.bin.width <span class="op">=</span> <span class="fl">1</span>, split.by.sex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">plot</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.602</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> `height` was translated to `width`.</span>
-<span class="r-plt img"><img src="plot_maturity-3.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot_maturity-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add juveniles</span></span></span>
 <span class="r-in"><span><span class="fu">plot_maturity</span><span class="op">(</span><span class="va">survey_ghl</span>, length <span class="op">=</span> <span class="st">"age"</span>, length.unit <span class="op">=</span> <span class="st">"years"</span>,</span></span>
@@ -191,8 +213,7 @@
 <span class="r-in"><span>force.zero.group.length <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>force.zero.group.strength <span class="op">=</span> <span class="fl">100</span><span class="op">)</span><span class="op">$</span><span class="va">plot</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.638</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> `height` was translated to `width`.</span>
-<span class="r-plt img"><img src="plot_maturity-4.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot_maturity-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

@@ -15,6 +15,7 @@ plot_maturity(
   length.unit = "cm",
   length.bin.width = 2,
   bootstrap.n = NA,
+  bootstrap.cluster = NULL,
   force.zero.group.length = NA,
   force.zero.group.strength = NA,
   force.zero.group.n = NA,
@@ -44,6 +45,8 @@ plot_maturity(
 
 \item{bootstrap.n}{Integer defining the number of bootstrap replicates to be used to calculate 95\% confidence intervals for the mean 50\% mature estimate. If \code{NA} (default), the confidence intervals are calculated from the glm object using the delta method without bootstrapping. See Details.}
 
+\item{bootstrap.cluster}{Character argument giving the name of a column in \code{dt} that identifies the sampling unit (e.g. haul, station or trip ID) for a cluster bootstrap. If \code{NULL} (default), individual fish are resampled. If given, whole clusters are resampled with replacement instead, which accounts for fish from the same haul being more alike than fish from different hauls. Requires \code{bootstrap.n}. See Details.}
+
 \item{force.zero.group.length}{Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.}
 
 \item{force.zero.group.strength}{Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}. Cannot be used simultaneously with \code{force.zero.group.n}}
@@ -70,6 +73,8 @@ Plots an estimate of length or age at 50\% mature for a dataset
 The 95\% confidence intervals for the mean 50\% mature estimate are calculated by default with the delta method from the fitted \link[stats]{glm} (see \code{\link{unlogit}}): L50 = -intercept/slope, and its standard error is approximated from the variance-covariance matrix of the intercept and slope, so the strong negative correlation between the two is accounted for. The interval is L50 \eqn{\pm} 1.96 SE and is equivalent to \code{MASS::dose.p()}. Versions of ggFishPlots before 0.4.5 combined the marginal profile-likelihood limits of the intercept and slope, which ignored this correlation and produced far too wide intervals.
 
 The delta-method interval might not be optimal when zero group fish are added, because the added data inflate the apparent sample size. Hence, the function contains an option to bootstrap confidence intervals using \emph{the same number of data than observations} (i.e. excluding the added data from the number of randomly resampled rows). Adding an integer to the \code{bootstrap.n} argument turns on this feature; the interval is then given by the 2.5\% and 97.5\% quantiles of the bootstrapped L50 estimates. Without added zero group data, the bootstrapped and delta-method intervals are usually similar.
+
+Both the delta-method and the individual bootstrap intervals assume that fish are independent observations. Survey and fishery samples are usually clustered: fish caught in the same haul tend to be of similar size and maturity, so the effective sample size is smaller than the number of fish and these intervals are too narrow. Giving the haul (or other sampling unit) identifier in \code{bootstrap.cluster} turns on a cluster bootstrap: each replicate draws as many clusters as there are in the data, with replacement, and refits the model to all fish in the drawn clusters. Added zero group data are appended unchanged to each replicate. Fish with a missing cluster identifier are removed. The cluster bootstrap needs a reasonable number of clusters (preferably several tens) per sex to be reliable.
 }
 \examples{
 # Simple L50 plot
@@ -78,6 +83,12 @@ plot_maturity(survey_ghl, length = "length", maturity = "maturity")
 \donttest{
 # Bootstrapped CIs
 plot_maturity(survey_ghl, bootstrap.n = 10)
+
+# Cluster (haul-level) bootstrap. survey_ghl has no haul ID, so a
+# made-up one is used here for illustration only
+ghl <- survey_ghl
+ghl$haul <- sample(1:50, nrow(ghl), replace = TRUE)
+plot_maturity(ghl, bootstrap.n = 10, bootstrap.cluster = "haul")
 
 # A50 plot, split by sex
 plot_maturity(survey_ghl, length = "age", length.unit = "years",

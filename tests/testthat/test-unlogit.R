@@ -73,3 +73,62 @@ test_that("plot_maturity default interval equals unlogit and is close to bootstr
   boot.width <- res.boot$params$ci.max - res.boot$params$ci.min
   expect_lt(abs((delta$ci.max - delta$ci.min) / boot.width - 1), 0.3)
 })
+
+sim_clustered <- function(n.haul = 60, fish.per.haul = 15, L50 = 100,
+                          slope = 0.15, haul.sd = 1.5, seed = 3) {
+  set.seed(seed)
+  haul <- rep(seq_len(n.haul), each = fish.per.haul)
+  haul.mean <- rnorm(n.haul, 100, 25)[haul]
+  haul.eff <- rnorm(n.haul, 0, haul.sd)[haul]
+  length <- rnorm(length(haul), haul.mean, 8)
+  maturity <- rbinom(length(haul), 1, plogis(slope * (length - L50) + haul.eff))
+  data.frame(haul = haul, length = length, maturity = maturity)
+}
+
+test_that("cluster bootstrap widens the interval for clustered data", {
+  dt <- sim_clustered()
+
+  set.seed(11)
+  ind <- plot_maturity(dt, bootstrap.n = 300)$params
+  set.seed(11)
+  clu <- plot_maturity(dt, bootstrap.n = 300, bootstrap.cluster = "haul")$params
+
+  expect_equal(clu$mean, ind$mean, tolerance = 0.02)
+  expect_gt(clu$ci.max - clu$ci.min, 1.3 * (ind$ci.max - ind$ci.min))
+})
+
+test_that("cluster bootstrap with one fish per cluster equals individual bootstrap", {
+  dt <- sim_maturity()
+  dt$haul <- seq_len(nrow(dt))
+
+  set.seed(5)
+  ind <- plot_maturity(dt, bootstrap.n = 300)$params
+  set.seed(5)
+  clu <- plot_maturity(dt, bootstrap.n = 300, bootstrap.cluster = "haul")$params
+
+  expect_equal(clu$ci.max - clu$ci.min, ind$ci.max - ind$ci.min, tolerance = 0.2)
+})
+
+test_that("bootstrap.cluster argument checks", {
+  dt <- sim_clustered()
+  expect_error(plot_maturity(dt, bootstrap.cluster = "haul"), "bootstrap.n")
+  expect_error(plot_maturity(dt, bootstrap.n = 10, bootstrap.cluster = "nope"),
+               "column")
+  dt$haul[1:5] <- NA
+  expect_warning(plot_maturity(dt, bootstrap.n = 10, bootstrap.cluster = "haul"),
+                 "missing")
+})
+
+test_that("cluster bootstrap works with sex split and zero group forcing", {
+  dt <- sim_clustered()
+  set.seed(2)
+  dt$sex <- sample(c("F", "M"), nrow(dt), replace = TRUE)
+  res <- plot_maturity(dt, split.by.sex = TRUE, bootstrap.n = 50,
+                       bootstrap.cluster = "haul",
+                       force.zero.group.length = 5,
+                       force.zero.group.strength = 10)
+  expect_equal(nrow(res$params), 2)
+  expect_true(all(res$params$ci.min < res$params$mean &
+                  res$params$mean < res$params$ci.max))
+  expect_match(res$text, "haul clusters")
+})

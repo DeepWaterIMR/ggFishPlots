@@ -9,6 +9,7 @@
 #' @param split.by.sex Logical indicating whether the result should be split by sex.
 #' @param female.sex,male.sex A character or integer denoting female and male sex in the \code{sex} column of \code{dt}, respectively.
 #' @param bootstrap.n Integer defining the number of bootstrap replicates to be used to calculate 95\% confidence intervals for the mean 50\% mature estimate. If \code{NA} (default), the confidence intervals are calculated from the glm object using the delta method without bootstrapping. See Details.
+#' @param bootstrap.cluster Character argument giving the name of a column in \code{dt} that identifies the sampling unit (e.g. haul, station or trip ID) for a cluster bootstrap. If \code{NULL} (default), individual fish are resampled. If given, whole clusters are resampled with replacement instead, which accounts for fish from the same haul being more alike than fish from different hauls. Requires \code{bootstrap.n}. See Details.
 #' @param force.zero.group.length Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.
 #' @param force.zero.group.cv Numeric indicating the coefficient of variation for the forced 0-group (all immature) length. Resulting lengths will be randomly generated from a normal distribution.
 #' @param force.zero.group.strength Numeric indicating how many percent of total fish should be added to the specified \code{force.zero.group.length}. Cannot be used simultaneously with \code{force.zero.group.n}
@@ -21,6 +22,8 @@
 #' @details The 95\% confidence intervals for the mean 50\% mature estimate are calculated by default with the delta method from the fitted \link[stats]{glm} (see \code{\link{unlogit}}): L50 = -intercept/slope, and its standard error is approximated from the variance-covariance matrix of the intercept and slope, so the strong negative correlation between the two is accounted for. The interval is L50 \eqn{\pm} 1.96 SE and is equivalent to \code{MASS::dose.p()}. Versions of ggFishPlots before 0.4.5 combined the marginal profile-likelihood limits of the intercept and slope, which ignored this correlation and produced far too wide intervals.
 #'
 #' The delta-method interval might not be optimal when zero group fish are added, because the added data inflate the apparent sample size. Hence, the function contains an option to bootstrap confidence intervals using \emph{the same number of data than observations} (i.e. excluding the added data from the number of randomly resampled rows). Adding an integer to the \code{bootstrap.n} argument turns on this feature; the interval is then given by the 2.5\% and 97.5\% quantiles of the bootstrapped L50 estimates. Without added zero group data, the bootstrapped and delta-method intervals are usually similar.
+#'
+#' Both the delta-method and the individual bootstrap intervals assume that fish are independent observations. Survey and fishery samples are usually clustered: fish caught in the same haul tend to be of similar size and maturity, so the effective sample size is smaller than the number of fish and these intervals are too narrow. Giving the haul (or other sampling unit) identifier in \code{bootstrap.cluster} turns on a cluster bootstrap: each replicate draws as many clusters as there are in the data, with replacement, and refits the model to all fish in the drawn clusters. Added zero group data are appended unchanged to each replicate. Fish with a missing cluster identifier are removed. The cluster bootstrap needs a reasonable number of clusters (preferably several tens) per sex to be reliable.
 #' @author Mikko Vihtakari // Institute of Marine Research.
 #' @import dplyr ggplot2
 #' @importFrom ggridges geom_density_ridges
@@ -33,6 +36,12 @@
 #' \donttest{
 #' # Bootstrapped CIs
 #' plot_maturity(survey_ghl, bootstrap.n = 10)
+#'
+#' # Cluster (haul-level) bootstrap. survey_ghl has no haul ID, so a
+#' # made-up one is used here for illustration only
+#' ghl <- survey_ghl
+#' ghl$haul <- sample(1:50, nrow(ghl), replace = TRUE)
+#' plot_maturity(ghl, bootstrap.n = 10, bootstrap.cluster = "haul")
 #'
 #' # A50 plot, split by sex
 #' plot_maturity(survey_ghl, length = "age", length.unit = "years",
@@ -47,7 +56,7 @@
 #' @export
 
 # Debug parameters
-# length = "length"; maturity = "maturity"; sex = "sex"; split.by.sex = FALSE; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; bootstrap.n = NA; force.zero.group.length = NA; force.zero.group.strength = NA; force.zero.group.n = NA; force.zero.group.cv = 0; xlab = "Total length"; base_size = 8; legend.position = "bottom"
+# length = "length"; maturity = "maturity"; sex = "sex"; split.by.sex = FALSE; female.sex = "F"; male.sex = "M"; length.unit = "cm"; length.bin.width = 2; bootstrap.n = NA; bootstrap.cluster = NULL; force.zero.group.length = NA; force.zero.group.strength = NA; force.zero.group.n = NA; force.zero.group.cv = 0; xlab = "Total length"; base_size = 8; legend.position = "bottom"
 
 plot_maturity <- function(
   dt,
@@ -60,6 +69,7 @@ plot_maturity <- function(
   length.unit = "cm",
   length.bin.width = 2,
   bootstrap.n = NA,
+  bootstrap.cluster = NULL,
   force.zero.group.length = NA,
   force.zero.group.strength = NA,
   force.zero.group.n = NA,
@@ -90,6 +100,16 @@ plot_maturity <- function(
     }
     if (!inherits(female.sex, class(male.sex))) {
       stop("female.sex and male.sex are different class.")
+    }
+  }
+
+  if (!is.null(bootstrap.cluster)) {
+    if (!is.character(bootstrap.cluster) || length(bootstrap.cluster) != 1 ||
+        !bootstrap.cluster %in% colnames(dt)) {
+      stop("bootstrap.cluster has to be the name of a column in dt")
+    }
+    if (is.na(bootstrap.n)) {
+      stop("bootstrap.cluster requires bootstrap.n. Give the number of bootstrap replicates.")
     }
   }
 
@@ -135,6 +155,25 @@ plot_maturity <- function(
     dt <- dt %>% dplyr::select(-maturity)
   }
 
+  if (!is.null(bootstrap.cluster)) {
+    if ("cluster" %in% colnames(dt) && bootstrap.cluster != "cluster") {
+      dt <- dt %>% dplyr::select(-"cluster")
+    }
+    dt <- dt %>% dplyr::rename("cluster" = !!bootstrap.cluster)
+
+    if (any(is.na(dt$cluster))) {
+      warning(
+        sum(is.na(dt$cluster)),
+        " rows with missing ", bootstrap.cluster,
+        " removed before cluster bootstrapping."
+      )
+      dt <- dt %>% dplyr::filter(!is.na(.data$cluster))
+    }
+    dt$cluster <- as.character(dt$cluster)
+  } else {
+    dt$cluster <- NA_character_
+  }
+
   ## Select and rename columns ####
 
   dt <- dt %>%
@@ -160,7 +199,7 @@ plot_maturity <- function(
     dt <- dt %>%
       dplyr::rename("sex" = !!sex) %>%
       dplyr::filter(!is.na(sex)) %>%
-      dplyr::select(length, sex, maturity)
+      dplyr::select(length, sex, maturity, "cluster")
 
     if (inherits(dt$sex, "numeric")) {
       dt$sex <- as.character(dt$sex)
@@ -172,7 +211,7 @@ plot_maturity <- function(
     ### No sex split ####
     dt <- dt %>%
       dplyr::mutate(sex = "both") %>%
-      dplyr::select(length, sex, maturity)
+      dplyr::select(length, sex, maturity, "cluster")
   }
 
   ## Force zero group length ####
@@ -310,19 +349,38 @@ plot_maturity <- function(
       if (!is.na(bootstrap.n)) {
         ### Bootstrap option ####
 
+        dk <- dt %>% dplyr::filter(.data$sex == k)
+        n.data <- sum(dk$type == "data")
+
+        if (!is.null(bootstrap.cluster)) {
+          dk.data <- dk %>% dplyr::filter(.data$type == "data")
+          dk.made <- dk %>% dplyr::filter(.data$type != "data")
+          clusters <- split(seq_len(nrow(dk.data)), dk.data$cluster)
+
+          if (length(clusters) < 10) {
+            warning(
+              "Only ", length(clusters), " clusters (", bootstrap.cluster,
+              ") for ", k, ". The cluster bootstrap interval is unreliable."
+            )
+          }
+        }
+
         dat <- lapply(1:bootstrap.n, function(i) {
-          mod <- glm(
+          boot.dt <- if (is.null(bootstrap.cluster)) {
+            dplyr::sample_n(dk, size = n.data, replace = TRUE)
+          } else {
+            idx <- unlist(
+              sample(clusters, length(clusters), replace = TRUE),
+              use.names = FALSE
+            )
+            dplyr::bind_rows(dk.data[idx, ], dk.made)
+          }
+
+          mod <- suppressWarnings(glm(
             maturity ~ length,
-            data = dt %>%
-              dplyr::filter(.data$sex == k) %>%
-              dplyr::sample_n(
-                size = dt %>%
-                  dplyr::filter(.data$sex == k, .data$type == "data") %>%
-                  nrow(),
-                replace = TRUE
-              ),
+            data = boot.dt,
             family = binomial(link = "logit")
-          )
+          ))
 
           dat <- unlogit(0.5, mod)
           dat$sex <- k
@@ -425,10 +483,11 @@ plot_maturity <- function(
         linetype = 3,
         linewidth = 0.7 / 2.13
       ) +
-      geom_errorbarh(
+      geom_errorbar(
         data = modDat,
         aes(xmin = ci.min, xmax = ci.max, y = 0.5, color = sex),
-        height = 0.1
+        orientation = "y",
+        width = 0.1
       ) +
       ggrepel::geom_text_repel(
         data = modDat,
@@ -492,10 +551,11 @@ plot_maturity <- function(
         linetype = 3,
         linewidth = 0.7 / 2.13
       ) +
-      geom_errorbarh(
+      geom_errorbar(
         data = modDat,
         aes(xmin = ci.min, xmax = ci.max, y = 0.5),
-        height = 0.1
+        orientation = "y",
+        width = 0.1
       ) +
       geom_text(
         data = modDat,
@@ -530,6 +590,20 @@ plot_maturity <- function(
 
   ############
   ## Text ####
+
+  ci.text <- if (is.na(bootstrap.n)) {
+    ".\n Confidence intervals estimated from the glm object using the delta method."
+  } else {
+    paste0(
+      "\n\n Confidence intervals estimated using ",
+      bootstrap.n,
+      " bootstrap replicates",
+      if (!is.null(bootstrap.cluster)) {
+        paste0(" resampling ", bootstrap.cluster, " clusters")
+      },
+      "."
+    )
+  }
 
   if (split.by.sex) {
     Text <-
@@ -566,15 +640,7 @@ plot_maturity <- function(
         round(modDat[modDat$sex == male.sex, "ci.max"], 3),
         "\n Number of specimens: ",
         modDat[modDat$sex == male.sex, "n"],
-        ifelse(
-          is.na(bootstrap.n),
-          ".\n Confidence intervals estimated from the glm object.",
-          paste0(
-            "\n\n Confidence intervals estimated using ",
-            bootstrap.n,
-            " bootstrap replicates."
-          )
-        )
+        ci.text
       )
   } else {
     Text <-
@@ -601,15 +667,7 @@ plot_maturity <- function(
         round(modDat$ci.max, 3),
         "\n  Number of specimens: ",
         modDat$n,
-        ifelse(
-          is.na(bootstrap.n),
-          ".\n Confidence intervals estimated from the glm object.",
-          paste0(
-            "\n\n Confidence intervals estimated using ",
-            bootstrap.n,
-            " bootstrap replicates."
-          )
-        )
+        ci.text
       )
   }
 

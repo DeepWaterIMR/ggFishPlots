@@ -9,11 +9,14 @@ unlogit(p, model)
 \arguments{
 \item{p}{probability threshold to unlog from \code{model}}
 
-\item{model}{a \code{glm} model object}
+\item{model}{a \code{glm} model object with a single predictor}
 }
 \value{
-A data frame
+A data frame with columns \code{mean}, \code{ci.min} and \code{ci.max}
 }
 \description{
-Back-transform predictor variables from a logit model
+Returns the predictor value at which a binomial logit model reaches probability \code{p} (e.g. L50 for \code{p = 0.5}) with a 95\% delta-method confidence interval.
+}
+\details{
+The estimate is \eqn{x_p = (logit(p) - b_0) / b_1}. Its variance is approximated by the delta method, \eqn{Var(x_p) = g^T V g}, where \eqn{V} is the variance-covariance matrix of the intercept and slope (\code{vcov(model)}) and \eqn{g = (-1/b_1, -x_p/b_1)} is the gradient of \eqn{x_p}. The confidence interval is \eqn{x_p \pm z_{0.975} SE}. This accounts for the (typically strong negative) correlation between intercept and slope and is equivalent to \code{MASS::dose.p()}.
 }

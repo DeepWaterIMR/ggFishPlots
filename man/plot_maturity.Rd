@@ -42,7 +42,7 @@ plot_maturity(
 
 \item{length.bin.width}{Numeric specifying the increment (delta length) by which length data should be binned to calculate maturity proportions. Use \code{NULL} to remove from the plot.}
 
-\item{bootstrap.n}{Integer defining the number of bootstrap replicates to be used to calculate 95\% confidence intervals for the mean 50\% mature estimate. If \code{NA} (default), the confidence intervals are calculated from the glm object without boostrapping. See Details.}
+\item{bootstrap.n}{Integer defining the number of bootstrap replicates to be used to calculate 95\% confidence intervals for the mean 50\% mature estimate. If \code{NA} (default), the confidence intervals are calculated from the glm object using the delta method without bootstrapping. See Details.}
 
 \item{force.zero.group.length}{Numeric indicating the length to which 0-group (all immatures) should be forced. Use \code{NA} ignore the forcing.}
 
@@ -67,14 +67,16 @@ Returns a ggplot2 or tibble depending on the \code{plot} argument showing the ma
 Plots an estimate of length or age at 50\% mature for a dataset
 }
 \details{
-The 95\% confidence intervals for the mean 50\% mature estimate are calculated using the \link[stats]{glm} function by default. This routine might not be optimal when zero group fish are added. Hence, the function contains an option to bootstrap confidence intervals using \emph{the same number of data than observations} (i.e. excluding the added data from the number of randomly resampled rows). Adding an integer to the \code{bootstrap.n} argument turns on this feature. Note that the confidence intervals calculated this way tend to be narrower than the \code{glm()} confidence intervals.
+The 95\% confidence intervals for the mean 50\% mature estimate are calculated by default with the delta method from the fitted \link[stats]{glm} (see \code{\link{unlogit}}): L50 = -intercept/slope, and its standard error is approximated from the variance-covariance matrix of the intercept and slope, so the strong negative correlation between the two is accounted for. The interval is L50 \eqn{\pm} 1.96 SE and is equivalent to \code{MASS::dose.p()}. Versions of ggFishPlots before 0.4.5 combined the marginal profile-likelihood limits of the intercept and slope, which ignored this correlation and produced far too wide intervals.
+
+The delta-method interval might not be optimal when zero group fish are added, because the added data inflate the apparent sample size. Hence, the function contains an option to bootstrap confidence intervals using \emph{the same number of data than observations} (i.e. excluding the added data from the number of randomly resampled rows). Adding an integer to the \code{bootstrap.n} argument turns on this feature; the interval is then given by the 2.5\% and 97.5\% quantiles of the bootstrapped L50 estimates. Without added zero group data, the bootstrapped and delta-method intervals are usually similar.
 }
 \examples{
 # Simple L50 plot
 data(survey_ghl)
 plot_maturity(survey_ghl, length = "length", maturity = "maturity")
 \donttest{
-# Bootstrapped CIs are narrower than the glm ones
+# Bootstrapped CIs
 plot_maturity(survey_ghl, bootstrap.n = 10)
 
 # A50 plot, split by sex

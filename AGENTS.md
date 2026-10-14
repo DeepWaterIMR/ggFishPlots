@@ -29,7 +29,7 @@ plot_growth(survey_ghl, length = "length", age = "age")
 devtools::load_all()
 ```
 
-There is no testthat suite — `@examples` blocks in roxygen docs serve as the runnable tests (exercised by `devtools::check()`).
+Tests live in `tests/testthat/` (run with `devtools::test()`); `@examples` blocks are also exercised by `devtools::check()`.
 
 ## Architecture
 

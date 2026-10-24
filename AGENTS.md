@@ -81,3 +81,7 @@ Each function renames user-supplied column names to canonical internal names (`l
 - `devtools::check()` must produce 0 errors, 0 warnings, 0 notes before a CRAN submission.
 - The `@import dplyr ggplot2` directives (whole-namespace imports) are intentional style choices for this package; prefer `@importFrom pkg fun` for any new functions added.
 - Debugging parameter blocks (commented-out argument assignments) are intentionally left at the top of each function body to aid interactive development — do not remove them.
+
+## Fiskwise commit versions
+
+Every ordinary authored commit increments patch by **0.0.1** and stamps the update date in DESCRIPTION `Version` and `Date`. These fields are the authoritative R-package version; do not add a separate VERSION file. Use the shared `.githooks/pre-commit`. Minor (`+0.1`) and major (`+1`) increments happen **only on an explicit user request**; never choose them autonomously. Only then set `FISKWISE_VERSION_BUMP=minor|major` for that one commit. Preserve custom hooks and do not stage unrelated metadata edits. Merge/rebase replay keeps its existing stamps. No automatic tags, releases or CRAN submission. See the [shared policy](https://github.com/DeepWaterIMR/fiskwise/blob/main/docs/VERSIONING.md).

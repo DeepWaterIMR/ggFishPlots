@@ -20,7 +20,7 @@ The package uses [ggplot2](https://ggplot2.tidyverse.org/reference) for
 plotting and the [tidyverse](https://www.tidyverse.org/) packages for
 calculations.
 
-The ggOceanMaps package has been developed by the [Institute of Marine
+The ggFishPlots package has been developed by the [Institute of Marine
 Research](https://www.hi.no/en). Note that the package comes with
 absolutely no warranty. Any [bug reports and code
 fixes](https://github.com/DeepWaterIMR/ggFishPlots/issues) are warmly

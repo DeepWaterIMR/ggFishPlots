@@ -20,7 +20,8 @@
 #' The a and b coefficients are dependent on the units of length and weight. In models, the length and weight units should often match those of the data going into the model, while in comparisons with FishBase, the units of length and weight should be centimeters and grams, respectively. If the units are wrong, the intercept, a, will be off the FishBase scale by orders of magnitude (see \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{FishBase}). The \code{correct.units} can be used to correct the data units to the FishBase standard (cm and g). The function also returns a warning when the returned parameters are not within expected bounds for cm and g estimation. It is recommended to compare the a and b coefficients with those in FishBase for the species as a quality assurance.
 #'
 #' The \code{outlier.percentile} argument enables quick removal of troublesome outliers from the model estimation. The argument is defined as percentile probabilities and used to calculate quantile for absolute residual values from logarithmic regression to identify outliers (\eqn{outlier = |r| > Pr[|r| > outlier.percentile/100]}). These outliers are then removed from model dataset but plotted using crosses in the ggplot output. See Examples.
-#' @return A list with three elements: a ggplot object containing the plot, text giving the central statistics that can be pasted to Markdown, and the model parameters (params).
+#' @return A named list with \code{plot} (a ggplot2 object), \code{text} (a text summary),
+#'   and \code{params} (the estimated length-weight parameters).
 #' @author Mikko Vihtakari // Institute of Marine Research.
 #' @import dplyr ggplot2
 #' @importFrom stats lm nls quantile residuals

@@ -61,7 +61,10 @@ plot_growth(
 \item{legend.position}{Position of the ggplot legend as a character. See \link[ggplot2]{theme}.}
 }
 \value{
-A list containing the \code{plot}, \code{text} for Rmarkdown and Shiny applications, estimated parameters (\code{params}), the raw \code{model} object (if \code{return_model = TRUE}), and the prepared \code{data} (if \code{return_data = TRUE}).
+A named list with \code{plot} (a ggplot2 object), \code{text} (a text summary),
+  \code{params} (the estimated growth parameters), \code{model} (the fitted models
+  when \code{return_model = TRUE}, otherwise \code{NULL}), and \code{data} (the
+  prepared data when \code{return_data = TRUE}, otherwise \code{NULL}).
 }
 \description{
 Fits and plots a von Bertalanffy, Gompertz, or Logistic growth curve to age-length data. Returns the plot, a text summary, and estimated parameters.

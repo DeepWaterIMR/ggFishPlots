@@ -62,7 +62,10 @@ compute_L0_row <- function(fit_model, growth_model_internal, n_obs) {
 #' @param show.Linf Logical indicating whether Linf values should be shown as dashed vertical lines.
 #' @param base_size Base size parameter for ggplot. See \link[ggplot2]{theme}.
 #' @details Uses the \code{fishmethods::growth} function to calculate the growth curves. Zero group length can be forced to the growth functions using the \code{force.zero.group.*} parameters.
-#' @return A list containing the \code{plot}, \code{text} for Rmarkdown and Shiny applications, estimated parameters (\code{params}), the raw \code{model} object (if \code{return_model = TRUE}), and the prepared \code{data} (if \code{return_data = TRUE}).
+#' @return A named list with \code{plot} (a ggplot2 object), \code{text} (a text summary),
+#'   \code{params} (the estimated growth parameters), \code{model} (the fitted models
+#'   when \code{return_model = TRUE}, otherwise \code{NULL}), and \code{data} (the
+#'   prepared data when \code{return_data = TRUE}, otherwise \code{NULL}).
 #' @author Mikko Vihtakari // Institute of Marine Research.
 #' @import dplyr ggplot2
 #' @importFrom fishmethods growth

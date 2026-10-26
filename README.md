@@ -2,7 +2,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.4.9**
+using ggplot2. R package version 0.4.10**
 
 <!-- badges: start -->
 
@@ -201,11 +201,11 @@ plot_maturity(survey_ghl, bootstrap.n = 10)
 
     #> 
     #> $text
-    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.814 cm. 95% confidence intervals: 54.655 - 54.907\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
+    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.815 cm. 95% confidence intervals: 54.693 - 54.994\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
     #> 
     #> $params
     #>       mean   ci.min   ci.max  sex intercept     slope     n
-    #> 1 54.81352 54.65495 54.90719 both -5.755492 0.1050587 64265
+    #> 1 54.81469 54.69317 54.99437 both -5.755492 0.1050587 64265
 
 Both the delta-method and the default bootstrap CIs treat each fish as
 an independent observation. Fish caught in the same haul tend to be
@@ -220,7 +220,7 @@ for illustration only:
 ghl <- survey_ghl
 ghl$haul <- sample(1:50, nrow(ghl), replace = TRUE)
 plot_maturity(ghl, bootstrap.n = 10, bootstrap.cluster = "haul")$text
-#> [1] "50% maturity at length (L50) based on logit regressions:\n54.797 cm. 95% confidence intervals: 54.689 - 54.888\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates resampling haul clusters."
+#> [1] "50% maturity at length (L50) based on logit regressions:\n54.791 cm. 95% confidence intervals: 54.626 - 54.926\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates resampling haul clusters."
 ```
 
 #### Split by sex
@@ -484,18 +484,22 @@ the package if plots or estimates are used in reports or scientific
 articles. For up-to-date citation information, please use:
 
 ``` r
-description <- read.dcf("DESCRIPTION")
-utils::bibentry(
-  bibtype = "Manual",
-  title = paste(description[1, "Package"], description[1, "Title"], sep = ": "),
-  author = utils::as.person(eval(parse(text = description[1, "Authors@R"]))),
-  year = substr(description[1, "Date"], 1, 4),
-  note = paste("R package version", description[1, "Version"]),
-  url = description[1, "URL"]
-)
-#> Vihtakari M (2026). _ggFishPlots: Visualise and Calculate Life History
-#> Parameters for Fisheries Science using 'ggplot2'_. R package version
-#> 0.4.9, <https://deepwaterimr.github.io/ggFishPlots/>.
+utils::citation("ggFishPlots", auto = as.list(read.dcf("DESCRIPTION")[1, ]))
+#> To cite package 'ggFishPlots' in publications use:
+#> 
+#>   Vihtakari M (2026). _ggFishPlots: Visualise and Calculate Life
+#>   History Parameters for Fisheries Science using 'ggplot2'_. R package
+#>   version 0.4.10, <https://deepwaterimr.github.io/ggFishPlots/>.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Manual{,
+#>     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries Science using 'ggplot2'},
+#>     author = {Mikko Vihtakari},
+#>     year = {2026},
+#>     note = {R package version 0.4.10},
+#>     url = {https://deepwaterimr.github.io/ggFishPlots/},
+#>   }
 ```
 
 ## Contributions

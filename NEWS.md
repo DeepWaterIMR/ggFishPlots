@@ -1,3 +1,7 @@
+# ggFishPlots 0.4.10
+
+* Generate source-version citations with R’s standard citation metadata handling, preserving author roles.
+
 # ggFishPlots 0.4.9
 
 * Publish pkgdown directly through GitHub Pages artifacts, with source-version verification and no generated commits.

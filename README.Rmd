@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 
 The [ggFishPlots](https://deepwaterimr.github.io/ggFishPlots/) package for [R](https://www.r-project.org/) allows quickly plotting and calculating life history parameters required by stock assessment models. The package uses [ggplot2](https://ggplot2.tidyverse.org/reference) for plotting and the [tidyverse](https://www.tidyverse.org/) packages for calculations.
 
-The ggOceanMaps package has been developed by the [Institute of Marine Research](https://www.hi.no/en). Note that the package comes with absolutely no warranty. Any [bug reports and code fixes](https://github.com/DeepWaterIMR/ggFishPlots/issues) are warmly welcomed. See [*Contributions*](#contributions) for further details.
+The ggFishPlots package has been developed by the [Institute of Marine Research](https://www.hi.no/en). Note that the package comes with absolutely no warranty. Any [bug reports and code fixes](https://github.com/DeepWaterIMR/ggFishPlots/issues) are warmly welcomed. See [*Contributions*](#contributions) for further details.
 
 If you are looking for other similar packages, make sure to check out the [AquaticLifeHistory](https://jonathansmart.github.io/AquaticLifeHistory/articles/Maturity_analyses.html),  [FSA](https://CRAN.R-project.org/package=FSA), and [fishmethods](https://CRAN.R-project.org/package=fishmethods) packages, as well as the [FishR webpage](https://fishr-core-team.github.io/fishR/pages/packages.html).
 
@@ -42,7 +42,7 @@ remotes::install_github("DeepWaterIMR/ggFishPlots")
 
 ## Usage
 
-The package has a [website](https://deepwaterimr.github.io/ggFishPlots/). At the time of writing, the package produces four kinds of plots: [growth curves](#growth-curves), [maturity plots](#maturity-plots), [length-weight relationships](#length-weight-relationships), and [catch curves](#catch-curves-to-estimate-instantaneous-total-mortality-z). Each function returns a ggplot2 plot and the estimated parameters as a text string that can be used in Rmarkdown and Shiny applications as well as a data frame for further use of the parameters. The elements are returned as a list. The package contains example data to illustrate the functionality.
+The package has a [website](https://deepwaterimr.github.io/ggFishPlots/). At the time of writing, the package produces four kinds of plots: [growth curves](#growth-curves), [maturity plots](#maturity-plots), [length-weight relationships](#length-weight-relationships), and [catch curves](#catch-curves-to-estimate-instantaneous-total-mortality-z). Each plotting function returns a named list containing a ggplot2 object (`plot`), a text summary (`text`), and an estimate table (`params`). `plot_growth()` also includes `model` and `data` entries, populated when `return_model = TRUE` and `return_data = TRUE`, respectively. The package contains example data to illustrate the functionality.
 
 ### Growth curves
 

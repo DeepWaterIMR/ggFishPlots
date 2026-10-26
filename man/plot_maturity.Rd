@@ -64,7 +64,8 @@ plot_maturity(
 \item{...}{Additional arguments passed to \link[ggridges]{geom_density_ridges}.}
 }
 \value{
-Returns a ggplot2 or tibble depending on the \code{plot} argument showing the maturity ogives.
+A named list with \code{plot} (a ggplot2 object), \code{text} (a text summary),
+  and \code{params} (the estimated maturity-model parameters).
 }
 \description{
 Plots an estimate of length or age at 50\% mature for a dataset

@@ -71,7 +71,8 @@ plot_lw(
 \item{verbose}{Logical indicating whether to return warnings and messages.}
 }
 \value{
-A list with three elements: a ggplot object containing the plot, text giving the central statistics that can be pasted to Markdown, and the model parameters (params).
+A named list with \code{plot} (a ggplot2 object), \code{text} (a text summary),
+  and \code{params} (the estimated length-weight parameters).
 }
 \description{
 Plots length-weight relationship for a species and calculates the a and b coefficients used in length-weight conversions.

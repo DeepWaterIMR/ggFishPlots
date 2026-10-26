@@ -18,7 +18,8 @@
 #' @param base_size Base size parameter for ggplot. See \link[ggplot2]{theme}.
 #' @param legend.position Position of the ggplot legend as a character. See \link[ggplot2]{theme}.
 #' @param ... Additional arguments passed to \link[ggridges]{geom_density_ridges}.
-#' @return Returns a ggplot2 or tibble depending on the \code{plot} argument showing the maturity ogives.
+#' @return A named list with \code{plot} (a ggplot2 object), \code{text} (a text summary),
+#'   and \code{params} (the estimated maturity-model parameters).
 #' @details The 95\% confidence intervals for the mean 50\% mature estimate are calculated by default with the delta method from the fitted \link[stats]{glm} (see \code{\link{unlogit}}): L50 = -intercept/slope, and its standard error is approximated from the variance-covariance matrix of the intercept and slope, so the strong negative correlation between the two is accounted for. The interval is L50 \eqn{\pm} 1.96 SE and is equivalent to \code{MASS::dose.p()}. Versions of ggFishPlots before 0.4.5 combined the marginal profile-likelihood limits of the intercept and slope, which ignored this correlation and produced far too wide intervals.
 #'
 #' The delta-method interval might not be optimal when zero group fish are added, because the added data inflate the apparent sample size. Hence, the function contains an option to bootstrap confidence intervals using \emph{the same number of data than observations} (i.e. excluding the added data from the number of randomly resampled rows). Adding an integer to the \code{bootstrap.n} argument turns on this feature; the interval is then given by the 2.5\% and 97.5\% quantiles of the bootstrapped L50 estimates. Without added zero group data, the bootstrapped and delta-method intervals are usually similar.

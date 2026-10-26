@@ -5,6 +5,9 @@ editor_options:
 ---
 
 ```{r, echo = FALSE}
+# Load the checkout so citation() uses the source DESCRIPTION, not an older install.
+pkgload::load_all(".", quiet = TRUE)
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   message = FALSE, 
@@ -16,7 +19,7 @@ knitr::opts_chunk$set(
 
 
 # ggFishPlots
-**Visualise and calculate life history parameters for fisheries science using ggplot2. R package version `r packageVersion("ggFishPlots")`**
+**Visualise and calculate life history parameters for fisheries science using ggplot2. R package version `r read.dcf("DESCRIPTION")[1, "Version"]`**
 
 <!-- badges: start -->
 [![DOI](https://zenodo.org/badge/DOI/10.32614/CRAN.package.ggFishPlots.svg)](https://doi.org/10.32614/CRAN.package.ggFishPlots)
@@ -236,7 +239,15 @@ htmlcat(tmp$text)
 The data used in the package are a property of the Institute of Marine Research and the Norwegian Government. They are distributed under the Creative Commons ([CCBY](https://creativecommons.org/licenses/by/4.0/) or [NLOD](https://data.norge.no/nlod/no/1.0/)) licenses allowing free use as long as the source (IMR) is cited. We ask any user to refer to the package if plots or estimates are used in reports or scientific articles. For up-to-date citation information, please use:
 
 ```{r}
-citation("ggFishPlots")
+description <- read.dcf("DESCRIPTION")
+utils::bibentry(
+  bibtype = "Manual",
+  title = paste(description[1, "Package"], description[1, "Title"], sep = ": "),
+  author = utils::as.person(eval(parse(text = description[1, "Authors@R"]))),
+  year = substr(description[1, "Date"], 1, 4),
+  note = paste("R package version", description[1, "Version"]),
+  url = description[1, "URL"]
+)
 ```
 
 ## Contributions

@@ -2,7 +2,7 @@
 # ggFishPlots
 
 **Visualise and calculate life history parameters for fisheries science
-using ggplot2. R package version 0.4.5**
+using ggplot2. R package version 0.4.9**
 
 <!-- badges: start -->
 
@@ -57,11 +57,11 @@ writing, the package produces four kinds of plots: [growth
 curves](#growth-curves), [maturity plots](#maturity-plots),
 [length-weight relationships](#length-weight-relationships), and [catch
 curves](#catch-curves-to-estimate-instantaneous-total-mortality-z). Each
-function returns a ggplot2 plot and the estimated parameters as a text
-string that can be used in Rmarkdown and Shiny applications as well as a
-data frame for further use of the parameters. The elements are returned
-as a list. The package contains example data to illustrate the
-functionality.
+plotting function returns a named list containing a ggplot2 object
+(`plot`), a text summary (`text`), and an estimate table (`params`).
+`plot_growth()` also includes `model` and `data` entries, populated when
+`return_model = TRUE` and `return_data = TRUE`, respectively. The
+package contains example data to illustrate the functionality.
 
 ### Growth curves
 
@@ -74,7 +74,7 @@ library(ggFishPlots)
 data(survey_ghl) # example data
 
 head(survey_ghl)
-#> # A tibble: 6 x 5
+#> # A tibble: 6 × 5
 #>     age sex   length weight maturity
 #>   <dbl> <chr>  <dbl>  <dbl>    <int>
 #> 1    NA <NA>      35     NA        0
@@ -95,7 +95,7 @@ plot_growth(survey_ghl, length = "length", age = "age")
     #> [1] "von Bertalanffy growth function coefficients:  \n Linf (asymptotic average length) = 91.2 cm +/- 88.3 - 94.6 (95% CIs)  \n K (growth rate coefficient) = 0.0633 +/- 0.059 - 0.068 (95% CIs)  \n t0 (age at length 0) = -3.04 (years) +/- -3.337 - -2.769 (95% CIs)  \n L0 (length at age 0) = 16 cm +/- 15.2 - 16.8 (95% CIs)  \n tmax (life span; t0 + 3/K) = 44.4 years  \n Number of included specimens = 10401  \n Total number of measured = 618779  \n Excluded (length or age missing):  \n Length = 0; age = 608378"
     #> 
     #> $params
-    #> # A tibble: 4 x 7
+    #> # A tibble: 4 × 7
     #>   term  estimate std.error statistic   p.value conf.low conf.high
     #>   <chr>    <dbl>     <dbl>     <dbl>     <dbl>    <dbl>     <dbl>
     #> 1 Sinf   91.2      1.51         60.3 0          88.3      94.6   
@@ -201,11 +201,11 @@ plot_maturity(survey_ghl, bootstrap.n = 10)
 
     #> 
     #> $text
-    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.816 cm. 95% confidence intervals: 54.628 - 55.085\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
+    #> [1] "50% maturity at length (L50) based on logit regressions:\n54.814 cm. 95% confidence intervals: 54.655 - 54.907\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates."
     #> 
     #> $params
     #>       mean   ci.min   ci.max  sex intercept     slope     n
-    #> 1 54.81566 54.62792 55.08531 both -5.755492 0.1050587 64265
+    #> 1 54.81352 54.65495 54.90719 both -5.755492 0.1050587 64265
 
 Both the delta-method and the default bootstrap CIs treat each fish as
 an independent observation. Fish caught in the same haul tend to be
@@ -220,7 +220,7 @@ for illustration only:
 ghl <- survey_ghl
 ghl$haul <- sample(1:50, nrow(ghl), replace = TRUE)
 plot_maturity(ghl, bootstrap.n = 10, bootstrap.cluster = "haul")$text
-#> [1] "50% maturity at length (L50) based on logit regressions:\n54.76 cm. 95% confidence intervals: 54.654 - 54.888\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates resampling haul clusters."
+#> [1] "50% maturity at length (L50) based on logit regressions:\n54.797 cm. 95% confidence intervals: 54.689 - 54.888\n  Number of specimens: 64265\n\n Confidence intervals estimated using 10 bootstrap replicates resampling haul clusters."
 ```
 
 #### Split by sex
@@ -296,12 +296,12 @@ plot_lw(survey_ghl, length = "length", weight = "weight")
     #> [1] "Logarithm transformed linear length-weight model. Not splitted by sex:  \n a = 3.8236e-06 +/- 3.7869e-06 - 3.8606e-06 (95% CIs).  \n b = 3.221 +/- 3.22 - 3.22 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 0"
     #> 
     #> $params
-    #> # A tibble: 2 x 14
+    #> # A tibble: 2 × 14
     #>   term    estimate std.error statistic p.value   conf.low  conf.high r.squared
     #>   <chr>      <dbl>     <dbl>     <dbl>   <dbl>      <dbl>      <dbl>     <dbl>
     #> 1 a     0.00000382   0.00491    -2540.       0 0.00000379 0.00000386     0.989
     #> 2 b     3.22         0.00128     2519.       0 3.22       3.22           0.989
-    #> # i 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
+    #> # ℹ 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
     #> #   weight <chr>, weight.unit <chr>
 
 The dashed lines represent 95% confidence intervals.
@@ -322,12 +322,12 @@ plot_lw(survey_ghl, use.nls = TRUE)
     #> [1] "Nonlinear least squares length-weight model. Not splitted by sex:  \n a = 1.7268e-06 +/- 1.6962e-06 - 1.758e-06 (95% CIs).  \n b = 3.419 +/- 3.42 - 3.42 (95% CIs).  \n Length in cm and weight in kg  \n Number of included specimens = 67457  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 551322; outlier = 0"
     #> 
     #> $params
-    #> # A tibble: 2 x 13
+    #> # A tibble: 2 × 13
     #>   term    estimate  std.error statistic p.value conf.low conf.high     AIC  nobs
     #>   <chr>      <dbl>      <dbl>     <dbl>   <dbl>    <dbl>     <dbl>   <dbl> <int>
     #> 1 a     0.00000173    1.56e-8      110.       0  1.70e-6   1.76e-6 -27925. 67457
     #> 2 b     3.42          2.15e-3     1590.       0  3.42e+0   3.42e+0 -27925. 67457
-    #> # i 4 more variables: length <chr>, length.unit <chr>, weight <chr>,
+    #> # ℹ 4 more variables: length <chr>, length.unit <chr>, weight <chr>,
     #> #   weight.unit <chr>
 
 #### Split by sex
@@ -351,7 +351,7 @@ plot_lw(survey_ghl, split.by.sex = TRUE, correct.units = TRUE)
     #> [1] "Logarithm transformed linear length-weight model for females and males, respectively:  \n a = 0.0035 +/- 0.00344 - 0.00355 (95% CIs) and 0.00507 +/- 0.00497 - 0.00517 (95% CIs).  \n b = 3.247 +/- 3.24 - 3.25 (95% CIs) and 3.143 +/- 3.14 - 3.15 (95% CIs).  \n Length in cm and weight in g  \n Number of included specimens = 34889 and 30354  \n Total number of measured = 618779  \n Excluded (data missing): \n Length = 0; weight = 456891; sex = 96645; outlier = 0"
     #> 
     #> $params
-    #> # A tibble: 4 x 15
+    #> # A tibble: 4 × 15
     #> # Groups:   sex [2]
     #>   sex   term  estimate std.error statistic p.value conf.low conf.high r.squared
     #>   <chr> <chr>    <dbl>     <dbl>     <dbl>   <dbl>    <dbl>     <dbl>     <dbl>
@@ -359,7 +359,7 @@ plot_lw(survey_ghl, split.by.sex = TRUE, correct.units = TRUE)
     #> 2 F     b      3.25      0.00195     1666.       0  3.24      3.25        0.988
     #> 3 M     a      0.00507   0.0101      -525.       0  0.00497   0.00517     0.979
     #> 4 M     b      3.14      0.00265     1188.       0  3.14      3.15        0.979
-    #> # i 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
+    #> # ℹ 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
     #> #   weight <chr>, weight.unit <chr>
 
 You can also transform the parameters according to the formulas given in
@@ -367,12 +367,12 @@ the FishBase.
 
 ``` r
 plot_lw(survey_ghl %>% dplyr::mutate(weight = weight*1000), weight.unit = "g")$params
-#> # A tibble: 2 x 14
+#> # A tibble: 2 × 14
 #>   term  estimate std.error statistic p.value conf.low conf.high r.squared
 #>   <chr>    <dbl>     <dbl>     <dbl>   <dbl>    <dbl>     <dbl>     <dbl>
 #> 1 a      0.00382   0.00491    -1133.       0  0.00379   0.00386     0.989
 #> 2 b      3.22      0.00128     2519.       0  3.22      3.22        0.989
-#> # i 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
+#> # ℹ 6 more variables: AIC <dbl>, nobs <int>, length <chr>, length.unit <chr>,
 #> #   weight <chr>, weight.unit <chr>
 ```
 
@@ -412,7 +412,7 @@ plot_catchcurve(survey_ghl)
     #> [1] "Instantaneous total mortality (Z) estimated using a catch curve and\nage range .\n\nZ = 0.19 (0.123-0.257 95% CIs)\nN at age 0 = 1448 (449-4674 95% CIs)\nLongevity = 38.3 years (23.8 - 68.8 95% CIs)\n\n"
     #> 
     #> $params
-    #> # A tibble: 2 x 8
+    #> # A tibble: 2 × 8
     #>   sex   term        estimate std.error statistic  p.value conf.low conf.high
     #>   <chr> <chr>          <dbl>     <dbl>     <dbl>    <dbl>    <dbl>     <dbl>
     #> 1 both  (Intercept)    7.28     0.573      12.7  2.25e-13    6.11      8.45 
@@ -484,23 +484,18 @@ the package if plots or estimates are used in reports or scientific
 articles. For up-to-date citation information, please use:
 
 ``` r
-citation("ggFishPlots")
-#> To cite package 'ggFishPlots' in publications use:
-#> 
-#>   Vihtakari M (2026). _ggFishPlots: Visualise and Calculate Life
-#>   History Parameters for Fisheries Science using 'ggplot2'_. R package
-#>   version 0.4.5, <https://deepwaterimr.github.io/ggFishPlots/>.
-#> 
-#> A BibTeX entry for LaTeX users is
-#> 
-#>   @Manual{,
-#>     title = {ggFishPlots: Visualise and Calculate Life History Parameters for Fisheries
-#> Science using 'ggplot2'},
-#>     author = {Mikko Vihtakari},
-#>     year = {2026},
-#>     note = {R package version 0.4.5},
-#>     url = {https://deepwaterimr.github.io/ggFishPlots/},
-#>   }
+description <- read.dcf("DESCRIPTION")
+utils::bibentry(
+  bibtype = "Manual",
+  title = paste(description[1, "Package"], description[1, "Title"], sep = ": "),
+  author = utils::as.person(eval(parse(text = description[1, "Authors@R"]))),
+  year = substr(description[1, "Date"], 1, 4),
+  note = paste("R package version", description[1, "Version"]),
+  url = description[1, "URL"]
+)
+#> Vihtakari M (2026). _ggFishPlots: Visualise and Calculate Life History
+#> Parameters for Fisheries Science using 'ggplot2'_. R package version
+#> 0.4.9, <https://deepwaterimr.github.io/ggFishPlots/>.
 ```
 
 ## Contributions

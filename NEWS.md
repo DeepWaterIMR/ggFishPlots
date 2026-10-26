@@ -1,3 +1,11 @@
+# ggFishPlots 0.4.10
+
+* Generate source-version citations with R’s standard citation metadata handling, preserving author roles.
+
+# ggFishPlots 0.4.9
+
+* Publish pkgdown directly through GitHub Pages artifacts, with source-version verification and no generated commits.
+
 # ggFishPlots 0.4.8
 
 * Correct the package name in the README attribution and document the named-list return values of the maturity, length-weight, and growth plotting functions.

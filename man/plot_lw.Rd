@@ -21,6 +21,7 @@ plot_lw(
   init.b = NULL,
   log.axes = FALSE,
   outlier.percentile = NULL,
+  outlier.sd = NULL,
   annotate.coefficients = FALSE,
   correct.units = FALSE,
   base_size = 8,
@@ -58,6 +59,8 @@ plot_lw(
 
 \item{outlier.percentile}{Numeric argument giving the probability as a percent value which should be used to calculate residual quantiles for outlier removal. See details. Values >= 99.5 are recommended. If \code{NULL} (default), no outlier removal is conducted.}
 
+\item{outlier.sd}{Numeric threshold for outlier removal using standardised residuals of the log-log regression: observations with \code{|rstandard| > outlier.sd} are outliers. Unlike \code{outlier.percentile}, this removes nothing when no observation deviates strongly. Values of 3-4 are typical. Used instead of \code{outlier.percentile} when both are given. If \code{NULL} (default), not used.}
+
 \item{annotate.coefficients}{Logical indicating whether the a and b coefficients should be annotated into the plot.}
 
 \item{correct.units}{Logical indicating whether the a and b coefficients should be converted for centimeters and grams as in FishBase.}
@@ -82,7 +85,7 @@ The function estimates the a and b coefficients of the length weight relationshi
 
 The a and b coefficients are dependent on the units of length and weight. In models, the length and weight units should often match those of the data going into the model, while in comparisons with FishBase, the units of length and weight should be centimeters and grams, respectively. If the units are wrong, the intercept, a, will be off the FishBase scale by orders of magnitude (see \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{FishBase}). The \code{correct.units} can be used to correct the data units to the FishBase standard (cm and g). The function also returns a warning when the returned parameters are not within expected bounds for cm and g estimation. It is recommended to compare the a and b coefficients with those in FishBase for the species as a quality assurance.
 
-The \code{outlier.percentile} argument enables quick removal of troublesome outliers from the model estimation. The argument is defined as percentile probabilities and used to calculate quantile for absolute residual values from logarithmic regression to identify outliers (\eqn{outlier = |r| > Pr[|r| > outlier.percentile/100]}). These outliers are then removed from model dataset but plotted using crosses in the ggplot output. See Examples.
+The \code{outlier.percentile} argument enables quick removal of troublesome outliers from the model estimation. The argument is defined as percentile probabilities and used to calculate quantile for absolute residual values from logarithmic regression to identify outliers (\eqn{outlier = |r| > Pr[|r| > outlier.percentile/100]}). These outliers are then removed from model dataset but plotted using crosses in the ggplot output. See Examples. A fixed percentile always flags the same share of observations, also when the data contain no errors. The \code{outlier.sd} argument instead flags observations whose standardised residual (\link[stats]{rstandard}) exceeds the given number of standard deviations, so that only clearly deviating records are removed.
 }
 \examples{
 data(survey_ghl)
@@ -98,6 +101,7 @@ plot_lw(survey_ghl, split.by.sex = TRUE, annotate.coefficients = TRUE)$plot
 
 # Outlier removal
 plot_lw(survey_ghl, outlier.percentile = 99)
+plot_lw(survey_ghl, outlier.sd = 4)
 }
 }
 \author{

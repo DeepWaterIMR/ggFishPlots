@@ -10,6 +10,7 @@
 #' @param init.a,init.b Numeric values giving the starting value for a and b coefficients respectively for non-linear least-squares estimation (i.e. when \code{use.nls = TRUE}). If \code{NULL} (default) starting values are guessed.
 #' @param log.axes Logical indicating whether logarithmic axes should be used instead of Cartesian ones.
 #' @param outlier.percentile Numeric argument giving the probability as a percent value which should be used to calculate residual quantiles for outlier removal. See details. Values >= 99.5 are recommended. If \code{NULL} (default), no outlier removal is conducted.
+#' @param outlier.sd Numeric threshold for outlier removal using standardised residuals of the log-log regression: observations with \code{|rstandard| > outlier.sd} are outliers. Unlike \code{outlier.percentile}, this removes nothing when no observation deviates strongly. Values of 3-4 are typical. Used instead of \code{outlier.percentile} when both are given. If \code{NULL} (default), not used.
 #' @param annotate.coefficients Logical indicating whether the a and b coefficients should be annotated into the plot.
 #' @param correct.units Logical indicating whether the a and b coefficients should be converted for centimeters and grams as in FishBase.
 #' @param point.size Numeric defining the size for data points in the plot. See the \code{size} argument in \link[ggplot2]{geom_point}.
@@ -19,7 +20,7 @@
 #'
 #' The a and b coefficients are dependent on the units of length and weight. In models, the length and weight units should often match those of the data going into the model, while in comparisons with FishBase, the units of length and weight should be centimeters and grams, respectively. If the units are wrong, the intercept, a, will be off the FishBase scale by orders of magnitude (see \href{https://www.fishbase.se/manual/english/FishBaseThe_LENGTH_WEIGHT_Table.htm}{FishBase}). The \code{correct.units} can be used to correct the data units to the FishBase standard (cm and g). The function also returns a warning when the returned parameters are not within expected bounds for cm and g estimation. It is recommended to compare the a and b coefficients with those in FishBase for the species as a quality assurance.
 #'
-#' The \code{outlier.percentile} argument enables quick removal of troublesome outliers from the model estimation. The argument is defined as percentile probabilities and used to calculate quantile for absolute residual values from logarithmic regression to identify outliers (\eqn{outlier = |r| > Pr[|r| > outlier.percentile/100]}). These outliers are then removed from model dataset but plotted using crosses in the ggplot output. See Examples.
+#' The \code{outlier.percentile} argument enables quick removal of troublesome outliers from the model estimation. The argument is defined as percentile probabilities and used to calculate quantile for absolute residual values from logarithmic regression to identify outliers (\eqn{outlier = |r| > Pr[|r| > outlier.percentile/100]}). These outliers are then removed from model dataset but plotted using crosses in the ggplot output. See Examples. A fixed percentile always flags the same share of observations, also when the data contain no errors. The \code{outlier.sd} argument instead flags observations whose standardised residual (\link[stats]{rstandard}) exceeds the given number of standard deviations, so that only clearly deviating records are removed.
 #' @return A named list with \code{plot} (a ggplot2 object), \code{text} (a text summary),
 #'   and \code{params} (the estimated length-weight parameters).
 #' @author Mikko Vihtakari // Institute of Marine Research.
@@ -39,6 +40,7 @@
 #'
 #' # Outlier removal
 #' plot_lw(survey_ghl, outlier.percentile = 99)
+#' plot_lw(survey_ghl, outlier.sd = 4)
 #' }
 #' @export
 
@@ -63,6 +65,7 @@ plot_lw <- function(
   init.b = NULL,
   log.axes = FALSE,
   outlier.percentile = NULL,
+  outlier.sd = NULL,
   annotate.coefficients = FALSE,
   correct.units = FALSE,
   base_size = 8,
@@ -188,7 +191,26 @@ plot_lw <- function(
 
   # Outlier removal
 
-  if (!is.null(outlier.percentile)) {
+  if (!is.null(outlier.sd)) {
+    if (!is.numeric(outlier.sd) || length(outlier.sd) != 1 || outlier.sd <= 0) {
+      stop("The outlier.sd argument has to be a single positive number. Values of 3-4 are typical.")
+    }
+    flag_sd <- function(x) {
+      mod <- lm(log(weight) ~ log(length), data = x)
+      abs(stats::rstandard(mod)) > outlier.sd
+    }
+    if (split.by.sex) {
+      dt <- lapply(unique(dt$sex), function(k) {
+        tmp <- dt %>% dplyr::filter(sex == k)
+        tmp$outlier <- flag_sd(tmp)
+        tmp
+      }) %>%
+        dplyr::bind_rows() %>%
+        dplyr::arrange(id)
+    } else {
+      dt$outlier <- flag_sd(dt)
+    }
+  } else if (!is.null(outlier.percentile)) {
     if (!is.numeric(outlier.percentile)) {
       stop(
         "The outlier.percentile argument has to be numeric between 0 and 100.
@@ -538,7 +560,7 @@ plot_lw <- function(
           ),
           alpha = 0.8,
           size = point.size,
-          show.legend = !is.null(outlier.percentile)
+          show.legend = !is.null(outlier.percentile) || !is.null(outlier.sd)
         ) +
         scale_shape_manual(values = c(`FALSE` = 21, `TRUE` = 4)) +
         geom_line(
@@ -717,7 +739,7 @@ plot_lw <- function(
           ),
           alpha = 0.8,
           size = point.size,
-          show.legend = !is.null(outlier.percentile)
+          show.legend = !is.null(outlier.percentile) || !is.null(outlier.sd)
         ) +
         scale_shape_manual(values = c(`FALSE` = 21, `TRUE` = 4)) +
         scale_color_manual(values = c(`FALSE` = "black", `TRUE` = "darkred")) +

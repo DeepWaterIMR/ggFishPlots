@@ -1,3 +1,11 @@
+# ggFishPlots 0.4.12
+
+* `plot_lw()`: conversion from metres to cm is rounded (`round(length * 100, 6)`) so floating-point error (0.57 * 100 = 56.999...) does not shift lengths below a whole centimetre.
+
+# ggFishPlots 0.4.11
+
+* `plot_lw()` gains `outlier.sd` to flag records with absolute standardised residuals above a limit.
+
 # ggFishPlots 0.4.10
 
 * Generate source-version citations with R’s standard citation metadata handling, preserving author roles.

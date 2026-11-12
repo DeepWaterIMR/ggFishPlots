@@ -149,7 +149,7 @@ plot_lw <- function(
       if (verbose) {
         message("length unit converted from m to cm")
       }
-      dt$length <- dt$length * 100
+      dt$length <- round(dt$length * 100, 6) # 0.57 * 100 = 56.999... otherwise
       length.unit <- "cm"
     }
     if (weight.unit == "kg") {

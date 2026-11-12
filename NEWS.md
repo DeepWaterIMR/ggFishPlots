@@ -1,3 +1,7 @@
+# ggFishPlots 0.4.13
+
+* Tests for `plot_lw()`: metre-to-cm conversion and `outlier.sd`.
+
 # ggFishPlots 0.4.12
 
 * `plot_lw()`: conversion from metres to cm is rounded (`round(length * 100, 6)`) so floating-point error (0.57 * 100 = 56.999...) does not shift lengths below a whole centimetre.
